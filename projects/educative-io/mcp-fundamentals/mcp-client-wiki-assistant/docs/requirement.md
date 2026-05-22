@@ -33,4 +33,19 @@ pip install langchain-mcp-adapters
 ## How does the agent choose tools?
 - Upon receiving a user prompt, the LLM interprets the query’s intent and selects the most appropriate MCP tool(s) based on tool descriptions and expected parameters. It then constructs a structured call, passes parameters, receives the result, and translates it into a natural-language response. This architecture enables dynamic, context-aware behavior without hardcoded logic.
 
+## Using prompts from the client
+  - Now that we’ve exposed a prompt on the server, the client needs to discover available prompts, accept user input, and invoke the selected prompt. MCP makes this easy via built-in client APIs like list_prompts() and get_prompt().
+
+## Why prompts matter 
+Prompts introduce flexibility and context awareness to MCP-based assistants. They allow agents to reason, prioritize, or summarize in ways tools cannot. This paves the way for building assistants that are intelligent, explainable, and user-centric.
+
+## Using resources from the client
+  - Once a resource is registered on the MCP server, it becomes accessible to the client via the session interface. Unlike tools or prompts, resources are not invoked as part of the agent’s reasoning loop—they must be explicitly retrieved and used by the client. This opens up a range of client-side use cases, such as:
+    - Displaying static data like topic suggestions or definitions.
+    - Preloading configuration values for dynamic prompts.
+    - Building menus or filters from server-provided datasets.
+
+## Why resources matter#
+  - Resources add a flexible layer to MCP applications. They allow the client to retrieve static, structured data without triggering logic on the server. This enables intelligent assistants to access domain-specific context, populate UI elements, or enrich their reasoning without hardcoding or overloading the model’s context.
+  - With tools, prompts, and now resources in place, your MCP-powered agent is equipped to handle a broad spectrum of natural language tasks with modular, declarative support behind the scenes.
 

@@ -25,3 +25,23 @@ pip install wikipedia_sections
 
 ## overall
 - By exposing get_section_content as a standalone tool, we make it easy for agents to “compose” multi-step workflows, such as: search → list sections → fetch section content. Because these steps are programmable, an agent can decide which tools to use, in what order, and how to handle errors, showcasing the programmability built into MCP.
+
+## What are the prompts in MCP?
+  - In MCP, prompts are predefined text templates that guide the behavior of a language model. Whereas tools are invoked and executed server-side to produce structured outputs, prompts are passive: they return a text string when called. This string typically contains a carefully crafted instruction injected into the LLM’s context.
+
+  - Prompts are particularly useful when:
+    - The task requires summarization, prioritization, or natural language reasoning.
+    - The assistant should express user intent declaratively rather than procedurally.
+  
+  - MCP prompts are:
+    - Defined and hosted on the server, but not executed there.
+    - Discovered and invoked by the client, just like tools.
+    - Parameterized so users can pass in structured inputs like topic: str.
+    - Deterministic in return value, always returning a text block (not JSON or function output).
+
+# What are the resources in MCP?#
+  - Resources in MCP are named, structured data objects exposed by the server but retrieved and used entirely by the client. They’re useful when the assistant needs reference information that doesn’t change frequently and doesn’t require computation, like recommended topics, glossary terms, or API keys.
+  - Resources are typically used to:
+    - Provide contextual background (e.g., a list of predefined topics).
+    - Inject static configuration or preferences.
+    - Support client-side filtering, choices, or menus.
