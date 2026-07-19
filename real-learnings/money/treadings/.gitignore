@@ -1,1 +1,4 @@
 .broker_creds
+
+# macOS
+.DS_Store
