@@ -8,16 +8,18 @@
 2. [Market View](#market-view)
    - [Different Data Points to Form the Market View](#different-data-points-to-form-the-market-view)
    - [1. Price Action / Market Structure](#1-price-action--market-structure)
-   - [2. FII / DII — Cash Market](#2-fii--dii--cash-market)
-   - [3. FII / DII — F&O Participant-wise OI](#3-fii--dii--fo-participant-wise-oi)
+   - [2. Price vs OI Matrix](#2-price-vs-oi-matrix)
+   - [3. FII / DII — Cash Market](#3-fii--dii--cash-market)
+   - [4. FII / DII — F&O Participant-wise OI](#4-fii--dii--fo-participant-wise-oi)
      - [@Fii_Dii_Data on X](#fiidii-data-on-x)
      - [How to Read Participant-wise OI Data](#how-to-read-participant-wise-oi-data)
      - [Market View Scenarios](#market-view-scenarios)
      - [Golden Rule](#golden-rule)
-   - [4. India VIX](#4-india-vix)
-   - [5. Option Chain — PCR, Max Pain, OI](#5-option-chain--pcr-max-pain-oi)
-   - [6. Global Cues](#6-global-cues)
-   - [7. News & Macros](#7-news--macros)
+   - [5. Five Market Views — Quick Reference](#5-five-market-views--quick-reference)
+   - [6. India VIX](#6-india-vix)
+   - [7. Option Chain — PCR, Max Pain, OI](#7-option-chain--pcr-max-pain-oi)
+   - [8. Global Cues](#8-global-cues)
+   - [9. News & Macros](#9-news--macros)
 3. [Glossary](#glossary)
    - [PDH](#pdh)
    - [PDL](#pdl)
@@ -47,13 +49,13 @@
 
 ### Different Data Points to Form the Market View
 
-> **Market view** = Global cues + Domestic data + Derivatives data. Read after **3:30 PM IST** (post-close) and recheck before **9:15 AM IST** (pre-open).
+> **Market view** = Global cues + Domestic data + Derivatives data. Read after **3:30 PM IST** (post-close) and recheck before **9:15 AM IST** (pre-open). **Intraday:** re-check change in OI every **30 minutes** — EOD views often shift in the first 45 minutes of the session.
 
 ---
 
 #### 1. Price Action / Market Structure
 
-**What to look:** NIFTY / BANKNIFTY close vs previous close; position vs key levels ([PDH](#pdh), [PDL](#pdl), [PDC](#pdc), weekly/monthly high-low, round numbers); candle type (bullish / bearish / doji).
+**What to look:** NIFTY / BANKNIFTY close vs previous close; position vs key levels ([PDH](#pdh), [PDL](#pdl), [PDC](#pdc), weekly/monthly high-low, round numbers); candle type (bullish / bearish / doji). **Breadth:** if NIFTY looks bullish but BANKNIFTY or top heavyweights (Reliance, HDFC Bank, ICICI, Infosys, TCS) are weak, treat the move as low conviction.
 
 **Where (open internet):**
 
@@ -65,9 +67,26 @@
 
 ---
 
-#### 2. FII / DII — Cash Market
+#### 2. Price vs OI Matrix
 
-**What to look:** FII net buy/sell and DII net buy/sell (₹ crore). Read the combination (both buying, FII buy + DII sell, FII sell + DII buy, both selling). Track over **5–20 days** — not a single day.
+Absolute OI marks support/resistance walls; **price change + OI change** marks trend **strength and conviction** — the key to separating *slightly* vs *strongly* bullish/bearish.
+
+| Quadrant | Price | OI | Meaning |
+|---|---|---|---|
+| **Long Buildup** | ↑ | ↑ | New longs entering — strong uptrend |
+| **Short Covering** | ↑ | ↓ | Shorts exiting — bounce, often fades at [PDH](#pdh) |
+| **Short Buildup** | ↓ | ↑ | New shorts entering — strong downtrend |
+| **Long Unwinding** | ↓ | ↓ | Longs booking profits — dip, often bounces at [PDL](#pdl) |
+
+Apply to **Index Futures OI** (NSE participant data or Sensibull Fut OI vs Time). See [open_interest.md](./open_interest.md) for chart reading.
+
+> **Ref:** [Zerodha Varsity — Open Interest](https://zerodha.com/varsity/chapter/open-interest/) · [OI Analysis for Traders (YouTube)](https://www.youtube.com/watch?v=5pt-dwdjh_w)
+
+---
+
+#### 3. FII / DII — Cash Market
+
+**What to look:** FII net buy/sell and DII net buy/sell (₹ crore). Read the combination (both buying, FII buy + DII sell, FII sell + DII buy, both selling). Track over **5–20 days** — not a single day. Also check **delivery %** on index heavyweights — breakouts on low delivery/volume are often traps.
 
 **Where (open internet):**
 
@@ -78,7 +97,7 @@
 
 ---
 
-#### 3. FII / DII — F&O Participant-wise OI
+#### 4. FII / DII — F&O Participant-wise OI
 
 **What to look:** FII, DII, Pro, Client positions across Index Futures, Index Options (Call / Put separately), Stock Futures — **Net Change** (today) and **Net OI** (cumulative).
 
@@ -166,7 +185,7 @@ From the same image, under **Net Change**:
 
 Use the participant combinations below to classify the day's setup. The July 14, 2026 reference image maps to **Scenario 2**.
 
-**Scenario 1: The Classic Bullish Rally (Strong Bullish)**
+###### Scenario 1: The Classic Bullish Rally (Strong Bullish)
 
 This is the most reliable bullish setup in the derivatives market.
 
@@ -178,7 +197,7 @@ This is the most reliable bullish setup in the derivatives market.
 
 **Market view:** **Strongly bullish.** Smart money is aggressively building long positions while retail is stuck on the short side. The market almost always rallies in this setup as retail is forced to cover their shorts.
 
-**Scenario 2: The Distribution / Trap Phase (Strong Bearish)**
+###### Scenario 2: The Distribution / Trap Phase (Strong Bearish)
 
 This is the exact setup seen in the data sheet from **14 Jul 2026** (reference image above).
 
@@ -213,7 +232,7 @@ Found by looking closely at Call/Put option data between FIIs and Pros.
 
 **Market view:** **Potential short squeeze.** Pros are professional option writers and usually win, but FIIs have deeper pockets. If the market breaks above a key psychological resistance level, Pros will be forced to panic-buy and cover their short calls, triggering a violent upward spike.
 
-**Scenario 5: The Range-Bound / Sideways Market**
+###### Scenario 5: The Range-Bound / Sideways Market
 
 | Participant | Stance |
 |---|---|
@@ -229,7 +248,21 @@ Always look at **Net Change** (today's action) to see immediate momentum, but va
 
 ---
 
-#### 4. India VIX
+#### 5. Five Market Views — Quick Reference
+
+Combine [Price vs OI Matrix](#2-price-vs-oi-matrix), FII scenarios, PCR, and reality checks to classify the day:
+
+| View | Price + OI | FII / Participants | PCR & Option Chain | Reality Check |
+|---|---|---|---|---|
+| **Strongly Bullish** | Long Buildup | [Scenario 1](#scenario-1-the-classic-bullish-rally-strong-bullish) — FII long, Client short | PCR > 1.3 · heavy Put writing at ATM | Heavyweights breaking resistance |
+| **Slightly Bullish** | Short Covering | FII closing shorts (↓ short OI) | PCR 0.9–1.2 | Rally likely stalls at [PDH](#pdh) |
+| **Strongly Bearish** | Short Buildup | [Scenario 2](#scenario-2-the-distribution--trap-phase-strong-bearish) — FII short, Client long | PCR < 0.7 · heavy Call writing ATM/OTM | VIX spiking |
+| **Slightly Bearish** | Long Unwinding | FII closing longs, not building new shorts | PCR 0.8–0.9 | Dip often holds at [PDL](#pdl) |
+| **Sideways** | Flat price · OI ↑ both sides | [Scenario 5](#scenario-5-the-range-bound--sideways-market) — Pros writing straddles | Max Pain ≈ ATM · PCR ~ 1.0 | VIX falling/crushing |
+
+---
+
+#### 6. India VIX
 
 **What to look:** Current VIX level and direction (rising / falling / stable). Below 12 = calm; 12–16 = normal; 16–20 = moderate fear; 20–25 = high fear; above 25 = panic.
 
@@ -241,14 +274,14 @@ Always look at **Net Change** (today's action) to see immediate momentum, but va
 
 ---
 
-#### 5. Option Chain — PCR, Max Pain, OI
+#### 7. Option Chain — PCR, Max Pain, OI
 
 **What to look:**
 
 - **PCR** (Put OI ÷ Call OI): above 1.3 bullish · 0.9–1.3 neutral · below 0.7 bearish
 - **Max Pain** strike — relevant mainly in expiry week
 - **Highest Call OI** strike = resistance · **Highest Put OI** strike = support
-- **Change in OI** — long buildup, short buildup, short covering, long unwinding
+- **Change in OI** — classify using [Price vs OI Matrix](#2-price-vs-oi-matrix) (not OI alone)
 
 **Where (open internet):**
 
@@ -260,7 +293,7 @@ Always look at **Net Change** (today's action) to see immediate momentum, but va
 
 ---
 
-#### 6. Global Cues
+#### 8. Global Cues
 
 *(Check morning 7:00–8:30 AM IST)*
 
@@ -283,7 +316,7 @@ Always look at **Net Change** (today's action) to see immediate momentum, but va
 
 ---
 
-#### 7. News & Macros
+#### 9. News & Macros
 
 **What to look:** RBI / SEBI policy, Union Budget, Nifty earnings calendar, elections, Fed / FOMC, US CPI & jobs data, China data, geopolitics (Middle East, global risk-off events).
 
