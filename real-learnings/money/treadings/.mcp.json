@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "kotak-neo": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://neo.kotaksecurities.com/mcp-server/mcp"],
+      "env": {
+        "npm_config_registry": "https://registry.npmjs.org"
+      }
+    },
+    "kite": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://mcp.kite.trade/mcp"],
+      "env": {
+        "npm_config_registry": "https://registry.npmjs.org"
+      }
+    }
+  }
+}
