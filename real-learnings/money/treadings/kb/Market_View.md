@@ -20,10 +20,9 @@
    - [7. Option Chain — PCR, Max Pain, OI](#7-option-chain--pcr-max-pain-oi)
    - [8. Global Cues](#8-global-cues)
    - [9. News & Macros](#9-news--macros)
-3. [Glossary](#glossary)
-   - [PDH](#pdh)
-   - [PDL](#pdl)
-   - [PDC](#pdc)
+   - [10. Expiry Week — Special Rules](#10-expiry-week--special-rules)
+
+> **Terms & acronyms:** See [trading_jargon_acronyms.md](./trading_jargon_acronyms.md) for PDH, PDL, PDC, FII, DII, PCR, and other definitions.
 
 ---
 
@@ -55,7 +54,7 @@
 
 #### 1. Price Action / Market Structure
 
-**What to look:** NIFTY / BANKNIFTY close vs previous close; position vs key levels ([PDH](#pdh), [PDL](#pdl), [PDC](#pdc), weekly/monthly high-low, round numbers); candle type (bullish / bearish / doji). **Breadth:** if NIFTY looks bullish but BANKNIFTY or top heavyweights (Reliance, HDFC Bank, ICICI, Infosys, TCS) are weak, treat the move as low conviction.
+**What to look:** NIFTY / BANKNIFTY close vs previous close; position vs key levels ([PDH](./trading_jargon_acronyms.md#pdh), [PDL](./trading_jargon_acronyms.md#pdl), [PDC](./trading_jargon_acronyms.md#pdc), weekly/monthly high-low, round numbers); candle type (bullish / bearish / doji). **Breadth:** if NIFTY looks bullish but BANKNIFTY or top heavyweights (Reliance, HDFC Bank, ICICI, Infosys, TCS) are weak, treat the move as low conviction. **Opening Range (ORH / ORL):** high and low of the first 15-min candle after 9:15 AM — intraday directional confirmation level; trade only after price sustains above ORH or below ORL. **VWAP:** price above VWAP = intraday institutional buying bias; below = selling bias.
 
 **Where (open internet):**
 
@@ -74,9 +73,9 @@ Absolute OI marks support/resistance walls; **price change + OI change** marks t
 | Quadrant | Price | OI | Meaning |
 |---|---|---|---|
 | **Long Buildup** | ↑ | ↑ | New longs entering — strong uptrend |
-| **Short Covering** | ↑ | ↓ | Shorts exiting — bounce, often fades at [PDH](#pdh) |
+| **Short Covering** | ↑ | ↓ | Shorts exiting — bounce, often fades at [PDH](./trading_jargon_acronyms.md#pdh) |
 | **Short Buildup** | ↓ | ↑ | New shorts entering — strong downtrend |
-| **Long Unwinding** | ↓ | ↓ | Longs booking profits — dip, often bounces at [PDL](#pdl) |
+| **Long Unwinding** | ↓ | ↓ | Longs booking profits — dip, often bounces at [PDL](./trading_jargon_acronyms.md#pdl) |
 
 Apply to **Index Futures OI** (NSE participant data or Sensibull Fut OI vs Time). See [open_interest.md](./open_interest.md) for chart reading.
 
@@ -242,6 +241,18 @@ Found by looking closely at Call/Put option data between FIIs and Pros.
 
 **Market view:** **Sideways / consolidation.** Pros are harvesting premium (theta decay) because they anticipate the market will get stuck in a tight range. Avoid buying options in this scenario — premium decay will bleed your capital.
 
+###### Scenario 6: The Wild Volatility / Reversal Trap
+
+| Participant | Stance |
+|---|---|
+| **FII** | Strongly directional (for example, heavily shorting Futures and buying Puts) |
+| **Pro** | **Positive Net Change in both Calls and Puts** — consistent with buying Long Straddles/Strangles |
+| **Client** | Usually trapped on the opposite side of the FII direction |
+
+**Market view:** **Volatile directional — not a hold-and-sleep day.** This is a volatility overlay, not a sixth classification; retain one of the five market-view classifications below based on the full evidence.
+
+*Interpretation:* Price may initially follow the heavy FII direction (for example, downward). But Pro buying on both sides signals an expectation of extreme volatility and a potentially violent reversal at key support or resistance. Do not carry unhedged directional positions all day; take intraday profits promptly and protect them with a trailing stop-loss.
+
 ##### Golden Rule
 
 Always look at **Net Change** (today's action) to see immediate momentum, but validate it against **Net OI** (cumulative position) to see the bigger picture. A single day of FII shorting might just be profit-booking, but **3 consecutive days** of FII shorting combined with Client longing is a confirmed bearish regime.
@@ -255,9 +266,9 @@ Combine [Price vs OI Matrix](#2-price-vs-oi-matrix), FII scenarios, PCR, and rea
 | View | Price + OI | FII / Participants | PCR & Option Chain | Reality Check |
 |---|---|---|---|---|
 | **Strongly Bullish** | Long Buildup | [Scenario 1](#scenario-1-the-classic-bullish-rally-strong-bullish) — FII long, Client short | PCR > 1.3 · heavy Put writing at ATM | Heavyweights breaking resistance |
-| **Slightly Bullish** | Short Covering | FII closing shorts (↓ short OI) | PCR 0.9–1.2 | Rally likely stalls at [PDH](#pdh) |
+| **Slightly Bullish** | Short Covering | FII closing shorts (↓ short OI) | PCR 0.9–1.2 | Rally likely stalls at [PDH](./trading_jargon_acronyms.md#pdh) |
 | **Strongly Bearish** | Short Buildup | [Scenario 2](#scenario-2-the-distribution--trap-phase-strong-bearish) — FII short, Client long | PCR < 0.7 · heavy Call writing ATM/OTM | VIX spiking |
-| **Slightly Bearish** | Long Unwinding | FII closing longs, not building new shorts | PCR 0.8–0.9 | Dip often holds at [PDL](#pdl) |
+| **Slightly Bearish** | Long Unwinding | FII closing longs, not building new shorts | PCR 0.8–0.9 | Dip often holds at [PDL](./trading_jargon_acronyms.md#pdl) |
 | **Sideways** | Flat price · OI ↑ both sides | [Scenario 5](#scenario-5-the-range-bound--sideways-market) — Pros writing straddles | Max Pain ≈ ATM · PCR ~ 1.0 | VIX falling/crushing |
 
 ---
@@ -282,6 +293,9 @@ Combine [Price vs OI Matrix](#2-price-vs-oi-matrix), FII scenarios, PCR, and rea
 - **Max Pain** strike — relevant mainly in expiry week
 - **Highest Call OI** strike = resistance · **Highest Put OI** strike = support
 - **Change in OI** — classify using [Price vs OI Matrix](#2-price-vs-oi-matrix) (not OI alone)
+- **IVP (IV Percentile):** above 60 = elevated premiums, favourable for sellers; below 30 = cheap premiums, buyers' edge.
+- **ATM Straddle Premium** (ATM CE LTP + ATM PE LTP) — market's priced-in expected move for the day; if intraday range stays within it, premium sellers win.
+- **Volatility Skew:** OTM Put IV > OTM Call IV = bearish fear premium present even when PCR looks neutral.
 
 **Where (open internet):**
 
@@ -304,6 +318,9 @@ Combine [Price vs OI Matrix](#2-price-vs-oi-matrix), FII scenarios, PCR, and rea
 - **Asian markets** — Nikkei, Hang Seng, Shanghai
 - **Crude oil** — sharp moves affect INR and inflation
 - **USD/INR** — weakening INR = FII outflow risk
+- **Dollar Index (DXY)** — rising DXY = FII outflow pressure on India; cross-check against FII cash data.
+- **US 10Y Treasury Yield** — rising yield (above 4.5%) = headwind for FII equity inflows into India.
+- **Gold price** — sharp gold rally = risk-off globally; signals institutional demand for downside protection.
 
 **Where (open internet):**
 
@@ -313,6 +330,9 @@ Combine [Price vs OI Matrix](#2-price-vs-oi-matrix), FII scenarios, PCR, and rea
 | NSE India — GIFT Nifty | [nseindia.com](https://www.nseindia.com) |
 | Trading Economics — Crude oil | [tradingeconomics.com/commodity/crude-oil](https://tradingeconomics.com/commodity/crude-oil) |
 | RBI — USD/INR reference | [rbi.org.in](https://rbi.org.in) |
+| Investing.com — Dollar Index | [investing.com/currencies/us-dollar-index](https://www.investing.com/currencies/us-dollar-index) |
+| Investing.com — US 10Y Yield | [investing.com/rates-bonds/u.s.-10-year-bond-yield](https://www.investing.com/rates-bonds/u.s.-10-year-bond-yield) |
+| Trading Economics — Gold | [tradingeconomics.com/commodity/gold](https://tradingeconomics.com/commodity/gold) |
 
 ---
 
@@ -335,32 +355,15 @@ Combine [Price vs OI Matrix](#2-price-vs-oi-matrix), FII scenarios, PCR, and rea
 
 ---
 
-## Glossary
+#### 10. Expiry Week — Special Rules
 
-Short forms used in this document. Click any linked abbreviation in the body to jump here.
+*(Only applies within 3 trading days of Tuesday NIFTY expiry or Thursday SENSEX expiry)*
 
-#### PDH
+- **Max Pain gravity stronger** — spot tends to close near Max Pain if gap to spot is < 100 points.
+- **Theta decays faster** — avoid buying ATM options in the last 3 days; decay is ~20–30% higher per day.
+- **Gamma spikes** — ATM options can double or halve in the final 60 minutes; highest risk/reward window.
+- **PCR signal weakens** — only PCR < 0.7 or > 1.4 carries directional weight in expiry week; 1.0 = neutral.
+- **Monthly vs weekly strikes** — do not use monthly strike OI to judge weekly expiry sentiment if they differ.
 
-| | |
-|---|---|
-| **Full form** | **Previous Day High** |
-| **Meaning** | The highest price NIFTY / BANKNIFTY (or any security) reached during the **previous trading session**. |
-| **How traders use it** | Marked as a horizontal resistance level on the chart. Price reacting at or failing to break above PDH often signals selling pressure; a clean breakout with volume can signal bullish continuation. |
-
-#### PDL
-
-| | |
-|---|---|
-| **Full form** | **Previous Day Low** |
-| **Meaning** | The lowest price reached during the **previous trading session**. |
-| **How traders use it** | Marked as a horizontal support level. Price holding above PDL suggests buyers are defending; a break below PDL with conviction often signals weakness or a bearish continuation. |
-
-#### PDC
-
-| | |
-|---|---|
-| **Full form** | **Previous Day Close** |
-| **Meaning** | The **final closing price** at the end of the previous trading session (after 3:30 PM IST on NSE). |
-| **How traders use it** | Used as a reference for overnight gap analysis and intraday bias — trading above PDC suggests bullish sentiment; below PDC suggests bearish sentiment. Often plotted alongside PDH and PDL as one of the "core four" pre-market levels. |
-
-> **Sources:** [TradingView — PDC indicator](https://in.tradingview.com/scripts/pdc/), [TradingGyaan — Pre-market routine](http://tradinggyaan.com/15-minute-pre-market-trading-routine/), [Capital.com — PDH & PDL](https://capital.com/en-int/analysis/day-traders-toolbox-previous-days-high-and-low-pdh-pdl), [TradeVerse — Support & Resistance (NSE)](https://www.tradeversejournal.com/blog/support-and-resistance)
+**Mark session type before forming market view:**
+**Pre-Expiry** (> 5 days) · **Near-Expiry** (2–4 days) · **Expiry Day**

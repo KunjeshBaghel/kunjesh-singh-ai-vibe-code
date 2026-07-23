@@ -8,11 +8,7 @@
 - [2. Twitter profiles to follow](#2-twitter-profiles-to-follow)
 - [3. learn charts](#3-learn-charts)
   - [3.1 plces from where you can learn the charts](#31-plces-from-where-you-can-learn-the-charts)
-- [4. learn options basics (terminologies)](#4-learn-options-basics-terminologies)
-  - [4.1 Module 5 Options Theory PDF](#41-srcftreadingoptionsdocsmodule-5_options-theory-for-professional-tradingpdf)
-  - [Key points in very plain English](#key-points-in-very-plain-english-from-module-5)
-  - [Short summary](#short-summary)
-  - [Simple examples for beginners](#simple-examples-for-beginners)
+- [4. Options basics & terminology](#4-options-basics--terminology)
 - [5. learn Strategies](#5-learn-strategies)
   - [5.1 Best trusted Indian sources to learn options strategies](#51-best-trusted-indian-sources-to-learn-options-strategies)
   - [5.2 Indian market rules to remember before any strategy](#52-indian-market-rules-to-remember-before-any-strategy)
@@ -144,67 +140,13 @@
 ##### 3.1.1.1 
 
 
-## 4. learn options basics (terminologies)
+## 4. Options basics & terminology
 
-### 4.1 @src/f/treading/options/docs/Module 5_Options-Theory-for-Professional-Trading.pdf
+Option basics, acronyms, Greeks, and Indian market terms are maintained in one place:
 
-#### Key points in very plain English (from Module 5)
+→ **[trading_jargon_acronyms.md](./trading_jargon_acronyms.md)**
 
-- This module starts from basic and then slowly goes to advanced option concepts.
-- **Call option (buy):** Buy this when you think price will go up.
-- **Put option (buy):** Buy this when you think price will go down.
-- In every option trade:
-  - Buyer gets a **right** (can use it or skip it).
-  - Seller has an **obligation** (must honor the contract if buyer uses right).
-- Buyer pays a fee called **premium**. Seller receives this premium.
-- Buyer can lose only the premium paid (limited loss), but profit can become large.
-- Seller can earn only premium (limited gain), but loss can become very large.
-- Option premium changes mainly because of:
-  - **Price move** in market (Delta effect)
-  - **Time passing** (Theta effect)
-  - **Volatility change** (Vega effect)
-  - **Speed of Delta change** (Gamma effect)
-
-#### Short summary
-
-- If you expect market to go **up**: usually `buy call (buy CE)` or `sell put(sell PE)`.
-  - `CE` means `Call Option`
-  - `PE` means `Put Option`
-- If you expect market to go **down**: usually `buy put(buy PE)` or `sell call (sell CE)`.
-- In options, direction alone is not enough. Time and volatility also matter a lot.
-- Better results come from simple calculation and risk control, not guesswork.
-
-#### Simple examples for beginners
-
-1. **Call option buy (you expect up move)**
-   - Suppose stock is `100`.
-   - You buy a call with strike `105` by paying premium `3`.
-   - On expiry:
-     - If stock is `115`, your option value is `10` (`115 - 105`), net profit = `10 - 3 = 7`.
-     - If stock is `102`, option value is `0`, net loss = premium `3` only.
-   - Meaning: loss limited, upside open.
-
-2. **Put option buy (you expect down move)**
-   - Suppose stock is `100`.
-   - You buy a put with strike `95` by paying premium `2`.
-   - On expiry:
-     - If stock falls to `85`, option value is `10` (`95 - 85`), net profit = `10 - 2 = 8`.
-     - If stock stays above `95`, option value is `0`, net loss = premium `2` only.
-   - Meaning: you earn when price falls.
-
-3. **Why time matters (Theta)**
-   - Even if price does not move, option premium can slowly fall day by day.
-   - Example: Premium `10` today, price unchanged, premium may become `8` after some days.
-   - Reason: less time left means less chance for big move.
-
-4. **Why volatility matters (Vega)**
-   - Volatility means expected speed/range of market movement.
-   - If volatility goes up, option premium usually goes up.
-   - Example: Before big event (Budget/Result), premiums often become expensive.
-
-5. **Very easy rule to remember**
-   - Option buyer: small known risk (premium), but needs good move in right direction and time.
-   - Option seller: earns premium often, but must control risk strictly.
+**Source PDF for deeper study:** `@src/f/treading/options/docs/Module 5_Options-Theory-for-Professional-Trading.pdf`
 
 
 ## 5. learn Strategies
@@ -240,10 +182,7 @@ Use Indian official/regulatory sources first, because NSE/BSE rules, expiry, set
 
 ### 5.2 Indian market rules to remember before any strategy
 
-1. **NSE/BSE option symbols use `CE` and `PE`**
-   - `CE` = Call European.
-   - `PE` = Put European.
-   - European style means exercise is at expiry, not whenever you want.
+1. **NSE/BSE option symbols use `CE` and `PE`** — see [trading_jargon_acronyms.md](./trading_jargon_acronyms.md#acronyms--quick-reference). European style means exercise is at expiry, not whenever you want.
 
 2. **Index options and stock options do not settle the same way**
    - Index options like `NIFTY`, `BANKNIFTY`, `FINNIFTY`, `MIDCPNIFTY`, `NIFTYNXT50`, and BSE index options are cash-settled because an index cannot be delivered.
@@ -464,7 +403,7 @@ In India, these are specifically tailored around European-style options (`CE` fo
 
 #### Common example assumptions
 
-- `CE` means call option and `PE` means put option in Indian option symbols.
+- `CE` and `PE` — see [trading_jargon_acronyms.md](./trading_jargon_acronyms.md#acronyms--quick-reference).
 - Ignore brokerage, exchange charges, GST, STT, stamp duty, slippage, and taxes in simple examples. Real trades must include all costs.
 - In all examples, profit/loss is shown per unit. Multiply by the current NSE/BSE lot size for actual rupee impact.
 - `Net premium paid` means debit strategy. `Net premium received` means credit strategy.

@@ -1,5 +1,7 @@
 Based on the [Sensibull Option Chain](https://web.sensibull.com/option-chain?tradingsymbol=NIFTY&expiry=2026-07-21&view=all) you are viewing, here is a detailed breakdown of all the columns, what they mean, and how you can use them in real-world trading.
 
+For acronyms and term definitions, see [trading_jargon_acronyms.md](./trading_jargon_acronyms.md).
+
 To make it easier to digest, I have grouped the columns into four main categories: **Price & Value**, **Liquidity & Market Sentiment**, **Probability & Risk**, and **Option Greeks**.
 
 ---
@@ -13,7 +15,10 @@ To make it easier to digest, I have grouped the columns into four main categorie
 | 3 | [Probability & Risk](#3-probability--risk) | Breakeven, POP |
 | 4 | [Option Greeks](#4-option-greeks) | Delta, Theta, Vega, Gamma |
 | 5 | [Top 3 Columns for Quality Safe Trades](#5-top-3-columns-for-quality-safe-trades) | Delta/POP, OI & OI Chg, IV/IVP — the practical filter for safe premium selling |
-| 6 | [Glossary & Acronyms](#glossary--acronyms) | Full forms and definitions of all financial jargon used in this guide |
+| 6 | [Live Market Monitoring — Smart Money Footprints](#6-live-market-monitoring--smart-money-footprints) | Intraday OI change, heavy writing, real-time squeeze/unwind signals |
+| 7 | [Pre-Trade Go/No-Go Checklist — Session Learnings](#7-pre-trade-gono-go-checklist--session-learnings) | Theta trap pattern, GIFT Nifty caveats, VIX direction, when to sit out |
+
+> **Terms & acronyms:** See [trading_jargon_acronyms.md](./trading_jargon_acronyms.md) for full definitions.
 
 ### Quick Index — Column by Column
 
@@ -38,6 +43,15 @@ To make it easier to digest, I have grouped the columns into four main categorie
 | **Delta / POP** ⭐ | **Top 3 for Safe Trades** | [§5](#5-top-3-columns-for-quality-safe-trades) |
 | **OI & OI Chg** ⭐ | **Top 3 for Safe Trades** | [§5](#5-top-3-columns-for-quality-safe-trades) |
 | **IV / IVP** ⭐ | **Top 3 for Safe Trades** | [§5](#5-top-3-columns-for-quality-safe-trades) |
+| Intraday OI Change | Live Monitoring | [§6](#6-live-market-monitoring--smart-money-footprints) |
+| OI vs Strike Chart | Live Monitoring | [§6](#6-live-market-monitoring--smart-money-footprints) |
+| Multi-Strike OI Chart | Live Monitoring | [§6](#6-live-market-monitoring--smart-money-footprints) |
+| Intraday PCR Slope | Live Monitoring | [§6](#6-live-market-monitoring--smart-money-footprints) |
+| GIFT Nifty Caveat | Pre-Trade Filter | [§7](#7-pre-trade-gono-go-checklist--session-learnings) |
+| Theta Trap Pattern | Pre-Trade Filter | [§7](#7-pre-trade-gono-go-checklist--session-learnings) |
+| VIX Direction Filter | Pre-Trade Filter | [§7](#7-pre-trade-gono-go-checklist--session-learnings) |
+| FII Futures Divergence | Pre-Trade Filter | [§7](#7-pre-trade-gono-go-checklist--session-learnings) |
+| Pre-Trade Go/No-Go Checklist | Pre-Trade Filter | [§7](#7-pre-trade-gono-go-checklist--session-learnings) |
 
 ---
 
@@ -158,7 +172,7 @@ Delta gives you the math; **Open Interest** gives you the market's muscle. It sh
 While Delta and OI find your safe strike, **IV** tells you whether the premium you are collecting is actually *good* or underpriced.
 
 * **Why it's crucial for good premium:** IV measures fear and uncertainty. When IV is high, option premiums swell; when IV is low, premiums shrink.
-* **How to use it for a safe trade:** To collect a *good* premium safely, trade when **IV is relatively high** — or check **IVP** at the top of the Sensibull screen (e.g. IVP at 62 means current IV is higher than 62% of readings over the lookback period). Selling when IV/IVP is elevated means you get paid a larger premium for the same structural risk. When the market calms down, IV collapses and the premium drops rapidly in your favour ([IV Crush](#glossary--acronyms)).
+* **How to use it for a safe trade:** To collect a *good* premium safely, trade when **IV is relatively high** — or check **IVP** at the top of the Sensibull screen (e.g. IVP at 62 means current IV is higher than 62% of readings over the lookback period). Selling when IV/IVP is elevated means you get paid a larger premium for the same structural risk. When the market calms down, IV collapses and the premium drops rapidly in your favour ([IV Crush](./trading_jargon_acronyms.md#volatility--sentiment)).
 
 #### Summary Checklist for a Quality Trade
 
@@ -170,81 +184,126 @@ While Delta and OI find your safe strike, **IV** tells you whether the premium y
 
 ---
 
-## Glossary & Acronyms
+### 6. Live Market Monitoring — Smart Money Footprints
 
-Definitions below are aligned with official NSE terminology and widely cited educational sources: [NSE India Option Chain](https://www.nseindia.com/option-chain), [Zerodha Varsity](https://zerodha.com/varsity/), [Investopedia](https://www.investopedia.com/), and [Economic Times Markets](https://economictimes.indiatimes.com/markets).
+> **Core idea:** Move away from static, lagging indicators (moving averages, RSI) and track **real-time institutional footprints** through live derivatives data. Option writing requires heavy margin (₹1 Lakh+ per lot on NSE/BSE), so aggressive writing is almost always **institutional** — FIIs and Pro Desks placing multi-crore bets you can see in the chain.
 
-### Acronyms — Quick Reference
+During market hours, keep the [Sensibull Live Option Chain](https://web.sensibull.com/option-chain?view=greeks) open. Focus on **OI-lakh** and **OI Chg** on both CE and PE sides as spot moves.
 
-| Acronym | Full Form |
-|---------|-----------|
-| **ATM** | At-The-Money |
-| **CE** | Call European |
-| **F&O** | Futures & Options |
-| **ITM** | In-The-Money |
-| **IV** | Implied Volatility |
-| **IVP** | Implied Volatility Percentile |
-| **LTP** | Last Traded Price |
-| **NSE** | National Stock Exchange of India |
-| **OI** | Open Interest |
-| **OTM** | Out-of-The-Money |
-| **PCR** | Put-Call Ratio |
-| **PE** | Put European |
-| **POP** | Probability of Profit |
+#### 1. Intraday OI Change (Not EOD OI)
 
-### Financial Terms — Full Form & Definition
+Total OI shows where historical walls sit. **Intraday OI Change** (refreshed every ~5 minutes) shows what big players are doing *right now*.
 
-| Term | Full Form / Expansion | Definition |
-|------|----------------------|------------|
-| **Ask / Offer** | — | The lowest price at which a seller is willing to sell an option. Also called the *Offer* price. The price you pay when buying. |
-| **ATM (At-The-Money)** | At-The-Money | An option whose strike price is equal to or closest to the current spot price of the underlying. ATM options have zero intrinsic value and the highest time value. |
-| **Bid** | — | The highest price a buyer is willing to pay for an option. The price you receive when selling (if filled at bid). |
-| **Breakeven** | — | The underlying price at which an option trade neither makes nor loses money at expiry. *Breakeven (%)* expresses this as the percentage move required from the current price. |
-| **Call Option (CE)** | Call European | A derivative contract that gives the buyer the right (not obligation) to buy the underlying asset at the strike price on or before expiry. Index options on NSE are European-style and cash-settled. |
-| **Delta (Δ)** | — | A Greek that measures how much an option's premium changes for a ₹1 (or 1-point) move in the underlying. Call delta ranges 0 to +1; put delta ranges −1 to 0. Also approximates the probability of expiring ITM. |
-| **Expiry** | Expiration Date | The last date on which an options contract is valid. After expiry, the contract ceases to exist and is settled (cash-settled for index options on NSE). |
-| **Extrinsic Value** | — | Same as *Time Value* — the portion of premium above intrinsic value, driven by time remaining and volatility. |
-| **F&O** | Futures & Options | The derivatives segment of the stock market where standardized contracts on indices and stocks are traded. |
-| **Gamma (Γ)** | — | A Greek measuring the rate of change of Delta for a 1-point move in the underlying. Highest for ATM options, especially near expiry. |
-| **Greeks** | — | A set of risk metrics (Delta, Gamma, Theta, Vega, Rho) that quantify how an option's price responds to changes in underlying price, time, and volatility. |
-| **Implied Volatility (IV)** | Implied Volatility | The market's forecast of how much the underlying asset's price is expected to fluctuate, embedded in the option premium. High IV = expensive options; low IV = cheaper options. IV does not indicate direction. |
-| **Intrinsic Value** | — | The immediate exercise value of an option if expired today. For calls: Spot − Strike (if positive); for puts: Strike − Spot (if positive). Zero for OTM options; never negative. |
-| **ITM (In-The-Money)** | In-The-Money | An option with positive intrinsic value. Call ITM when Spot > Strike; Put ITM when Spot < Strike. |
-| **IV Crush** | Implied Volatility Crush | A sharp drop in IV after a major event (budget, RBI policy, earnings), causing option premiums to fall even if the underlying moves favourably. |
-| **IVP (Implied Volatility Percentile)** | Implied Volatility Percentile | Ranks current IV against its own historical range (e.g. IVP 62 = current IV is higher than 62% of past readings). Helps decide if premiums are relatively expensive or cheap before selling or buying options. |
-| **Last Traded Price (LTP)** | Last Traded Price | The price at which the most recent transaction in that option contract occurred. Represents the current market premium. |
-| **Liquidity** | — | How easily an option can be bought or sold without significantly moving its price. High volume and tight bid-ask spread indicate good liquidity. |
-| **LTP Chg / LTP (chg%)** | Last Traded Price Change | Absolute and percentage change in LTP from the previous trading session's closing price. |
-| **Moneyness** | — | Classification of an option as ITM, ATM, or OTM based on the relationship between strike price and current spot price. |
-| **NIFTY / Nifty 50** | National + Fifty | India's benchmark stock market index comprising 50 large-cap companies listed on NSE. The most actively traded index for F&O in India. |
-| **Open Interest (OI)** | Open Interest | Total number of outstanding (unsettled) option contracts at a given strike. Unlike volume, OI counts live positions, not daily turnover. Rising OI = new positions; falling OI = positions being closed. |
-| **Option Chain** | — | A tabular display of all available strike prices for calls and puts of an underlying, showing OI, volume, IV, LTP, and Greeks side by side. Published by NSE at [nseindia.com/option-chain](https://www.nseindia.com/option-chain). |
-| **Option Premium** | — | The price paid by the buyer to the seller for an options contract. Premium = Intrinsic Value + Time (Extrinsic) Value. |
-| **Option Writer** | — | The seller of an option who collects premium and assumes the obligation to fulfil the contract if the buyer exercises. Also called the *option seller*. |
-| **OTM (Out-of-The-Money)** | Out-of-The-Money | An option with zero intrinsic value. Call OTM when Spot < Strike; Put OTM when Spot > Strike. |
-| **PCR (Put-Call Ratio)** | Put-Call Ratio | Sentiment indicator: Total Put OI ÷ Total Call OI. PCR > 1 often read as bullish (more put writing/hedging); PCR < 1 as bearish. Extreme readings can be contrarian signals. |
-| **PE (Put European)** | Put European | A derivative contract giving the buyer the right to sell the underlying at the strike price on or before expiry. |
-| **POP (Probability of Profit)** | Probability of Profit | Estimated statistical probability that a trade will be profitable (typically ≥ ₹1) at expiry, derived from option pricing models and Greeks. |
-| **Premium** | — | See *Option Premium*. |
-| **Put Option** | — | See *PE (Put European)*. |
-| **Resistance** | — | A price level where selling pressure is expected to cap upward movement. In option chain analysis, strikes with high Call OI are often treated as informal resistance zones. |
-| **Slippage** | — | The difference between the expected trade price and the actual fill price, often caused by low liquidity or wide bid-ask spreads. |
-| **Spot Price** | — | The current cash-market price of the underlying asset (e.g., NIFTY index level in the cash segment). |
-| **Spread (Bid-Ask)** | — | The gap between the Bid and Ask prices. A narrow spread indicates high liquidity; a wide spread increases transaction cost. |
-| **Strike Price** | — | The predetermined price at which the option holder can buy (call) or sell (put) the underlying asset. Each row in the option chain represents a different strike. |
-| **Support** | — | A price level where buying interest is expected to prevent further decline. In option chain analysis, strikes with high Put OI are often treated as informal support zones. |
-| **Theta (Θ)** | — | A Greek measuring daily time decay — how much an option's premium erodes per day as expiry approaches, all else equal. Negative for long options; benefits option sellers. |
-| **Time Decay** | — | The erosion of an option's time value as expiry nears. Accelerates sharply in the final days/weeks. Measured by Theta. |
-| **Time Value** | — | The portion of premium remaining after subtracting intrinsic value (`LTP − Intrinsic Value`). Reflects time to expiry and volatility expectations. Goes to zero at expiry. |
-| **Vega (ν)** | — | A Greek measuring sensitivity of option premium to a 1% change in implied volatility. Highest for ATM options with more time to expiry. |
-| **Volume** | — | Total number of contracts traded in a given option during the current session. High volume confirms active participation and better liquidity. |
-| **Volatility Skew / Smile** | — | The pattern of differing IV levels across strikes. Indian index options typically show higher IV on OTM puts (negative skew), reflecting demand for downside protection. |
+* **What to watch:** Strikes where OI is expanding or shedding rapidly within a 15-minute window.
+* **Example — Short Buildup:** Market falling + Call OI expanding fast at ATM → institutions are writing calls to cap upside (high-conviction bearish positioning).
+* **Tool:** [Sensibull Multi-Strike OI Chart](https://web.sensibull.com/open-interest/multistrike-oi?tradingsymbol=NIFTY) — plot 3 CE and 3 PE strikes around spot on a time-series line.
 
-### Sources
+#### 2. Heavy Writing at Specific Strikes
 
-- [NSE India — Option Chain (Equity Derivatives)](https://www.nseindia.com/option-chain)
-- [Zerodha Varsity — Moneyness of an Option Contract](https://zerodha.com/varsity/chapter/moneyness-of-an-option-contract/)
-- [Investopedia — Option Greeks](https://www.investopedia.com/terms/g/greeks.asp)
-- [Investopedia — Using the Greeks to Understand Options](https://www.investopedia.com/trading/using-the-greeks-to-understand-options/)
-- [Economic Times — Components of Option Premium](https://economictimes.indiatimes.com/markets/stocks/news/learn-with-etmarkets-do-you-know-these-components-of-option-premium/articleshow/99687334.cms)
-- [Interactive Brokers — Introduction to Options: The Greeks](https://www.interactivebrokers.com/campus/trading-lessons/introduction-to-options-the-greeks/)
+Option buyers need little capital; **writers need massive margin**. Tall OI bars = institutional conviction, not retail noise.
+
+| Signal | What It Means | Read As |
+|--------|---------------|---------|
+| **Heavy Call Writing (CE)** | Big players selling calls at a strike | Aggressive **resistance** — market unlikely to cross that level |
+| **Heavy Put Writing (PE)** | Big players selling puts at a strike | Hard **support floor** — market unlikely to break below |
+
+* **Tools:** [OI vs Strike Chart](https://web.sensibull.com/open-interest/oi-vs-strike?tradingsymbol=NIFTY) for tallest bars; live option chain for strike-by-strike detail.
+
+#### 3. Real-Time "Sure Shot" Setups
+
+High-probability intraday moves show up when institutions get trapped or double down:
+
+| Setup | What to Watch | What It Signals |
+|-------|---------------|-----------------|
+| **Short Squeeze / Unwinding** | Spot breaks a heavily written strike; Put OI drops fast in real time | Support collapsing — writers panicking, sharp flush likely |
+| **Multi-Strike OI Crossover** | A CE OI line shoots up and crosses a PE OI line near current price | Bears took control of that price zone |
+| **Intraday PCR Slope** | PCR line on a 5-min chart sloping steeply **down** | Aggressive call writing across strikes — structural weakness |
+
+> **Practical workflow:** (1) Identify the heaviest CE/PE writing strikes from OI vs Strike. (2) Track intraday OI change on those strikes every 5 minutes. (3) Watch for unwind (OI drop) or fresh buildup (OI spike) when spot approaches or breaks a level. (4) Confirm with PCR slope, not a single static PCR number.
+
+---
+
+### 7. Pre-Trade Go/No-Go Checklist — Session Learnings
+
+> These filters come from live trading sessions where pre-market analysis looked solid but the market behaved differently. They catch the edge cases that theoretical frameworks miss.
+
+---
+
+#### Filter 1: Never Over-Weight GIFT Nifty Alone
+
+**The trap:** GIFT Nifty showed a 100–115 pt gap-down. Actual open was only 22 pts down. A large pre-market signal does not guarantee a large actual gap.
+
+**Rule:** Treat GIFT Nifty as a *direction* indicator, not a *magnitude* indicator. Before deciding how aggressively to trade the gap, wait for the actual open and the first 5-minute candle to confirm the scale of the move. Cross-check with SGX/Dow futures and dollar-index trend — if global cues are mixed, discount the GIFT Nifty reading by 50%.
+
+---
+
+#### Filter 2: PDL and PDH Are Near-Exact Levels, Not Zones
+
+**The observation:** On 21 July 2026, the PDL was 24,135.85. The intraday low was 24,135.65 — a difference of just 0.20 points. Dip buyers stepped in almost to the tick.
+
+**Rule:** Treat PDH and PDL as **hard lines**, not broad zones. When placing a stop-loss or targeting a breakdown entry, do not buffer these levels by 20–30 points. Watch price action at the exact level first — if it holds twice, it is a structural support/resistance worth respecting.
+
+---
+
+#### Filter 3: VIX Direction Matters as Much as VIX Level
+
+**The trap:** VIX was at 13 (calm zone). Expectation was that it would spike on a gap-down and validate bearish momentum. Instead VIX fell further to 12.6.
+
+**Rule:** Before any directional option buy, check whether VIX is rising or falling:
+
+| VIX Behaviour | Environment | What to Do |
+|---------------|-------------|------------|
+| **Rising (even if below 15)** | Fear entering the market | Directional option buys can work; risk is expanding |
+| **Flat/Falling (even on a falling market)** | Option writers in control | Avoid naked directional buys; theta decay is brutal |
+| **Sudden spike past 16–17** | Panic / institutional unwinding | Only then consider buying OTM puts/calls for momentum |
+
+---
+
+#### Filter 4: Recognise the "Theta Trap" Session Before Entering
+
+A **Theta Trap** is a session deliberately engineered by institutional option writers to make the day range-bound, killing all premium buyers from both sides.
+
+**Signature — watch for all three together:**
+1. VIX is low (≤ 14) **and falling** intraday
+2. Call OI is rapidly building (heavy CE writing at ATM or just OTM)
+3. Put OI is unwinding (put writers covering) rather than building
+
+**What it means:** Institutions are capping both upside (fresh call writing) and already holding enough put writing below to create a floor. The market chops sideways eating up theta. Option buyers on CE and PE both lose even if the underlying moves a little in their favour.
+
+**Rule:** If all three signals are present by 10:00 AM, *do not take any directional option buy*. The correct trade is either:
+- A short Iron Condor / short strangle (if your capital allows the margin), or
+- **Sit out entirely** — sitting out is a valid, profitable decision when the session is a theta trap.
+
+> *From 21-Jul-2026: PCR fell from 1.2 (bullish) to 0.81 (bearish) while VIX dropped. Total Call OI (15.45 Cr) crushed Put OI (12.56 Cr) by end-of-day. The session was a textbook theta trap; not trading was the best outcome.*
+
+---
+
+#### Filter 5: FII Futures Divergence = No Clean Directional Edge
+
+**The trap:** FIIs bought +3,690 Nifty futures (bullish signal) but shorted -6,914 BankNifty futures (bearish signal) on the same day. Acting on either signal alone would have led to a wrong-sided trade.
+
+**Rule:** When FII Index Futures and FII Sector Futures (BankNifty/FinNifty) are pointing in *opposite directions*, treat it as a **mixed / no-signal** day. Do not use FII data to justify a directional trade. Wait for 2–3 consecutive days of alignment before calling an FII-driven regime.
+
+---
+
+#### Filter 6: PCR Shift Intraday Is More Powerful Than Opening PCR
+
+**The observation:** Opening PCR was 1.2 (apparently bullish). By end of day it was 0.81 — a massive shift driven entirely by aggressive Call writing. The direction of PCR *during the session* was more informative than the static opening number.
+
+**Rule:** Check PCR at three points — pre-market, 11:30 AM, and 2:30 PM. If PCR is falling steadily despite a flat or rising market, institutions are writing calls to cap the upside; treat the day as range-bound or mildly bearish regardless of the opening PCR.
+
+---
+
+#### Summary: Pre-Trade Go/No-Go Quick Check
+
+Run this checklist **after the first 15 minutes of trading**:
+
+| # | Check | Green (Trade OK) | Red (Sit Out or Adjust) |
+|---|-------|-----------------|------------------------|
+| 1 | **VIX direction** | Rising or flat | Falling intraday |
+| 2 | **Actual open vs GIFT Nifty** | Gap confirmed within 50% of signal | Gap mostly filled at open |
+| 3 | **Theta trap signs** | Either VIX rising, OI building on both sides, or PCR stable | VIX falling + Call OI surging + Put OI unwinding |
+| 4 | **FII F&O alignment** | Index and sector futures in same direction for 2+ days | Divergent or contradictory (buy index, sell sector) |
+| 5 | **PCR trend (intraday)** | Stable or rising from open | Falling steadily despite flat/sideways price |
+
+**Decision rule:** 3 or more Red signals = sit out or sell premium only (never buy naked options).
