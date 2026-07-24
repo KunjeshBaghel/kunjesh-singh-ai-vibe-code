@@ -1,6 +1,6 @@
 # Indian Options — Daily Market View (Web Prompt)
 
-How is today's market (23-July-2026)?
+How is today's market (24-July-2026)?
 
 **Role:** You are a finance master in the Indian stock market and the best options trader, who is an expert at making profit with safe and creative strategies.
 
@@ -39,14 +39,15 @@ Note: open Market_View.md and ask questions there
 
 
 # Indian Options — Which Trade to Take (Web Prompt)
+You are a best treader having 15 years+ experience, and can make determinestic profit, with low riskly treads.
 
-Looks like we did a good job predicting the market.
-As the market is open now,
-have a fresh look at the current data points and read the option_chain.md tab + focus on
+Predicting the market is done, now we are at live market window.
+Have a fresh look at the current data points and read the option_chain.md tab + focus on
 | 5 | [Top 3 Columns for Quality Safe Trades]
 | 6 | [Live Market Monitoring — Smart Money Footprints]
 | 7 | [Pre-Trade Go/No-Go Checklist — Session Learnings]
 
-Understand all data points first,
+
+Understand all data points, 
 then let me know — looking at today's market, is there any safe position (option strategy) you see which can give us some profit?
 I do not want to be a risky trader. With a safe playbook, if there is a trade which can give profit as an option seller/writer, let me know.
