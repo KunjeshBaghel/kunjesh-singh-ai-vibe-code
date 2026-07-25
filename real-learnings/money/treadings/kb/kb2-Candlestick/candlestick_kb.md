@@ -46,10 +46,6 @@
 - candle close near to its high.
 ![Bullish candle formation](images/bullish_candle_formation.png)
 
-green but not strong bullish candle formation
-- candle close is far from high and green body is small.
-![green but not bullish](images/green_but_not_bullish.png)
-
 ### 2. Bearish candle (Mandi ki candle)
 - **Shape:** Red body; close is below open (close open se neeche).
 - **What it says:** Sellers controlled that timeframe (sellers ki pakad thi).
@@ -57,89 +53,104 @@ green but not strong bullish candle formation
 - **Do not assume:** One red candle is not an automatic short signal.
 - ![bearish](images/strong_bearish.png)
 
-- Red but not strong bearish candle formation
-![weak bearish](images/weak_bearish.png)
-
-
 ### 3. Hammer (Hammer candle)
+![hammer candle](images/hammer_candle.png)
 - **Shape:** Small body near the top, long lower wick, and little/no upper wick.
 - **What it says:** Price fell but buyers recovered it; lower prices were rejected (neeche ke price reject hue).
 - **Useful context:** Only meaningful **after a downtrend**, near support.
 - **Trade caution:** Wait for a bullish candle to close above the hammer high; a hammer anywhere on the chart is not bullish.
 
 ### 4. Hanging man (Hanging man candle)
+![hanging man candle](images/hanging_man_candle.png)
 - **Shape:** Same geometry as a hammer: small body near top and long lower wick.
 - **What it says:** Sellers pushed price down during the period, but buyers only partly recovered it; weakness may be starting.
 - **Useful context:** Only meaningful **after an uptrend**, near resistance.
 - **Trade caution:** Wait for a bearish candle to close below the hanging-man low; never short from the shape alone.
 
 ### 5. Inverted hammer (Ulta hammer)
+![inverted hammer candle](images/inverted_hammer_candle.png)
 - **Shape:** Small body near the bottom with a long upper wick.
 - **What it says:** Buyers tested higher prices; demand may be returning.
 - **Useful context:** Only meaningful **after a downtrend**, near support.
 - **Trade caution:** It needs bullish confirmation; without it, it can be only a pause.
 
 ### 6. Shooting star (Shooting star candle)
+![shooting start candle](images/shooting_start_candle.png)
 - **Shape:** Same geometry as an inverted hammer: small body near bottom and long upper wick.
 - **What it says:** Higher prices were rejected (upar ke price reject hue); supply may be appearing.
 - **Useful context:** Only meaningful **after an uptrend**, near resistance.
 - **Trade caution:** Wait for a bearish close below its low; this shape during a downtrend is not automatically bearish.
 
 ### 7. Bullish spinning top (Bullish spinning top)
+![spinning top candel](images/spinning_top_candel.png)
 - **Shape:** Small green body with upper and lower wicks.
 - **What it says:** Indecision (anischitata); the close is slightly bullish but conviction is weak.
 - **Useful context:** At a key support/resistance level, then observe the next candle.
 - **Do not assume:** It is not strong bullish momentum.
+green but not strong bullish candle formation
+- candle close is far from high and green body is small.
+![green but not bullish](images/green_but_not_bullish.png)
 
 ### 8. Bearish spinning top (Bearish spinning top)
+![spinning top candle bearish](images/spinning_top_candle_bearish.png)
 - **Shape:** Small red body with upper and lower wicks.
 - **What it says:** Indecision; the close is slightly bearish but conviction is weak.
 - **Useful context:** At a key support/resistance level, then observe the next candle.
 - **Do not assume:** It is not strong bearish momentum.
+- Red but not strong bearish candle formation
+![weak bearish](images/weak_bearish.png)
 
 ### 9. Short bullish candle (Chhoti bullish candle)
+![short bulish candle](images/short_bulish_candle.png)
 - **Shape:** Small green body with a limited price range.
 - **What it says:** Mild buying with limited conviction.
 - **Useful context:** Use only when market structure and volume support the idea.
 - **Do not assume:** It confirms a breakout by itself.
 
 ### 10. Short bearish candle (Chhoti bearish candle)
+![short bearish candle](images/short_bearish_candle.png)
 - **Shape:** Small red body with a limited price range.
 - **What it says:** Mild selling with limited conviction.
 - **Useful context:** Use only when market structure and volume support the idea.
 - **Do not assume:** It confirms a breakdown by itself.
 
 ### 11. Bullish marubozu (Bullish marubozu)
+![bullish marubozu candle](images/bullish_marubozu_candle.png)
 - **Shape:** Long green body with tiny or no wicks.
 - **What it says:** Buyers controlled nearly the whole period (lagatar buying).
 - **Useful context:** A valid breakout or support retest with relative volume.
 - **Trade caution:** Do not chase a large marubozu into nearby resistance; calculate stop and reward first.
 
 ### 12. Bearish marubozu (Bearish marubozu)
+![bullish marubozu candle](images/bearish_marubozu_candle.png)
 - **Shape:** Long red body with tiny or no wicks.
 - **What it says:** Sellers controlled nearly the whole period (lagatar selling).
 - **Useful context:** A valid breakdown or resistance rejection with relative volume.
 - **Trade caution:** Do not short a large marubozu directly into nearby support.
 
 ### 13. Long-legged doji (Long-legged doji)
+![Long lgged doji](images/Long_lgged_doji.png)
 - **Shape:** Open and close are almost equal, with long wicks on both sides.
 - **What it says:** Strong tug-of-war (buyers aur sellers ki takkar); high uncertainty.
 - **Useful context:** At a trend extreme, then wait for a directional confirmation close.
 - **Do not assume:** A doji itself is a reversal signal.
 
 ### 14. Dragonfly doji (Dragonfly doji)
+![dragonfly doji](images/dragonfly_doji.png)
 - **Shape:** Open and close near the high, with a long lower wick.
 - **What it says:** Lower prices were rejected (neeche ke price ka rejection).
 - **Useful context:** After a decline at support, with a bullish confirmation candle.
 - **Do not assume:** It is bullish in the middle of a range.
 
 ### 15. Gravestone doji (Gravestone doji)
+![gravestone doji](images/gravestone_doji.png)
 - **Shape:** Open and close near the low, with a long upper wick.
 - **What it says:** Higher prices were rejected (upar ke price ka rejection).
 - **Useful context:** After a rise at resistance, with a bearish confirmation candle.
 - **Do not assume:** It is bearish in the middle of a range.
 
 ### 16. Four-price doji (Four-price doji)
+![four price doji](images/four_price_doji.png)
 - **Shape:** Open, high, low, and close are nearly identical.
 - **What it says:** No meaningful auction or movement.
 - **Useful context:** Usually illiquid, halted, or very low-activity data.
