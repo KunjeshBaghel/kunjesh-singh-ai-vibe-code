@@ -403,7 +403,7 @@ In India, these are specifically tailored around European-style options (`CE` fo
 
 #### Common example assumptions
 
-- `CE` and `PE` — see [trading_jargon_acronyms.md](./trading_jargon_acronyms.md#acronyms--quick-reference).
+- `CE` and `PE` — see [trading_jargon_acronyms.md](./trading_jargon_acronyms.md#acronyms--quick-reference). For Greeks, option-chain columns, and IV, use the canonical definitions in [Greeks](./trading_jargon_acronyms.md#greeks), [Option Chain Columns](./trading_jargon_acronyms.md#option-chain-columns), and [Volatility & Sentiment](./trading_jargon_acronyms.md#volatility--sentiment).
 - Ignore brokerage, exchange charges, GST, STT, stamp duty, slippage, and taxes in simple examples. Real trades must include all costs.
 - In all examples, profit/loss is shown per unit. Multiply by the current NSE/BSE lot size for actual rupee impact.
 - `Net premium paid` means debit strategy. `Net premium received` means credit strategy.
@@ -425,6 +425,57 @@ In India, these are specifically tailored around European-style options (`CE` fo
 - **From where to learn:** Zerodha Varsity Module 5 call option basics, NSE Academy options strategies module, NISM Equity Derivatives.
 - **Best source:** Start with Zerodha Varsity Module 5 for payoff understanding, then use NSE/NISM for Indian rules.
 - `https://web.sensibull.com/learn-options-strategies/long-call-option`
+
+###### Selecting a Long Call strike when the plan is to exit before expiry
+
+> **Educational framework, not a profit guarantee or a live-trade recommendation.** A bullish view alone is insufficient for a long call: the expected move must be large and fast enough to overcome the premium, time decay, and any fall in IV. The objective here is to resell the CE before expiry; the expiry break-even remains a risk reference, not the only way to make a profit.
+
+**Professional-style selection order:** define the underlying price target, deadline, expected IV direction, and maximum rupee loss first. Then choose expiry and strike. Use [Delta and the other Greeks](./trading_jargon_acronyms.md#greeks) to compare directional exposure and decay; use [option-chain columns](./trading_jargon_acronyms.md#option-chain-columns) to assess liquidity and cost; and use [IV context](./trading_jargon_acronyms.md#volatility--sentiment) to judge whether the option may already price a large move. No single field is sufficient.
+
+**The sub-category determines the usual delta range.** The ranges below are starting points, not rules. A trader should move to a higher-delta call when the expected move is slower or less explosive, and should not use a lower-delta call merely to reduce the premium.
+
+| Trader sub-category | Typical holding period | Usual CE moneyness / delta | Why this category chooses it |
+|---|---:|---|---|
+| **Intraday momentum / breakout** | Minutes to one day | ATM to slightly OTM; `0.40–0.60` | Balances immediate response with leverage. Requires a clear breakout, liquid strike, and predefined exit. |
+| **Intraday trend continuation** | Hours | ATM to slightly ITM; `0.50–0.70` | Gives more reliable directional response than a far-OTM CE while the underlying trend is the main thesis. |
+| **Short swing** | 2–5 sessions | ATM to slightly ITM; `0.55–0.70` | Reduces dependence on a sudden, very large move as negative theta accumulates over several days. |
+| **Positional bullish** | 1–3 weeks; normally use an expiry with adequate time remaining | ITM; `0.65–0.80` | Behaves more like the underlying and has less dependence on purely extrinsic value than an OTM CE. Compare a bull call spread if the target is capped or IV is elevated. |
+| **Defined catalyst / event** | Before or immediately after a defined event | ATM to slightly ITM; `0.50–0.65` | Requires an explicit IV and implied-move plan; a post-event IV crush can offset a modest bullish move. |
+| **Low-premium speculation** | Any | Far OTM; below `0.30` | A high-convexity speculation, not a standard income method. It needs a very large, very fast move and can lose its entire premium. |
+
+**How a pre-expiry profit can be estimated:** model a scenario instead of relying only on expiry break-even. With signed Greeks (see [Greek definitions](./trading_jargon_acronyms.md#greeks)), a rough estimate is:
+
+```text
+Option P&L ≈ (Delta × underlying move)
+             + (0.5 × Gamma × underlying move²)
+             + (Vega × IV change in percentage points)
+             + (Theta × days held)
+             − bid–ask cost − charges
+```
+
+Greeks and IV change continuously, so this is a planning estimate—not a prediction or a substitute for checking the live option chain.
+
+**Hypothetical comparison:** If `NIFTY = 22,000` and the target is `22,350` within 4–6 trading days, compare CEs in the same expiry instead of selecting only the cheapest premium:
+
+| Hypothetical CE | Delta / moneyness | Premium | Initial directional estimate for a 350-point rise* | What it means |
+|---|---|---:|---:|---|
+| `21,900 CE` | `0.65`, ITM | `150` | `0.65 × 350 = 227.5` points | Higher capital outlay; more underlying-like response. |
+| `22,000 CE` | `0.50`, ATM | `105` | `0.50 × 350 = 175` points | Balanced directional exposure. |
+| `22,200 CE` | `0.32`, slightly OTM | `45` | `0.32 × 350 = 112` points | Lower initial cost, but much greater dependence on a fast, sustained rally. |
+
+\*Before gamma, theta, IV, spread, charges, and changes in delta. The `22,200 CE` expiry break-even is `22,245`, but it may still be sold for a profit before expiry if the premium rises sufficiently.
+
+**Pre-entry and exit discipline for a long CE:**
+
+1. Write the price target and deadline; if the expected move is too slow or too small, do not force a long-call trade.
+2. Select an expiry that gives the thesis time to work; avoid far-OTM buying close to expiry for a multi-day target.
+3. Choose delta/moneyness for the trade category above, then compare at least the nearest ITM, ATM, and slightly OTM strikes.
+4. Check IV against its own history and the expected event/implied move. Avoid paying elevated IV without a reason to expect a larger move or higher IV after entry.
+5. Check a narrow, executable bid–ask spread, current volume, OI, and adequate quantity at the intended price. Use limit orders where appropriate.
+6. Calculate `premium × current lot size` as maximum loss before charges. Risk only an amount within the daily and per-trade loss limits.
+7. Define before entry: underlying-level invalidation, premium stop, profit target, and a time stop. Close before expiry by default; stock-option ITM contracts can create physical-settlement obligations.
+
+**Source material:** [Zerodha Varsity — strike selection, time to expiry, and IV](https://zerodha.com/varsity/chapter/re-introducing-call-put-options/); [delta and strike behaviour](https://zerodha.com/varsity/chapter/delta-part-2/); [theta/time decay](https://zerodha.com/varsity/chapter/theta/); [NSE — Greeks mastery and risk management](https://www.nseindia.com/static/learn/greeks-mastery-program).
 
 ##### 1.2 Long Put PE (buy PE)
 

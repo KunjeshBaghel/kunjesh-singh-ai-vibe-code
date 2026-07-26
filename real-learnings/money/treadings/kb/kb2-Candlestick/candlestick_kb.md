@@ -3,6 +3,7 @@
 ## Table of Contents (Vishay Suchi)
 - [Candle anatomy](#candle-anatomy-candle-ka-shareer)
 - [Basic forms](#basic-forms-basic-candlestick-roop)
+- [Timeframes and market-session timing](#timeframes-and-market-session-timing-timeframe-aur-market-ka-samay)
 - [How to read a formation](#how-to-read-a-formation-formation-ko-kaise-padhein)
 - [Visual guide](#visual-guide-chitra-se-samjhein)
 - [Trading significance](#trading-significance-trading-mein-mahatva)
@@ -156,15 +157,55 @@ green but not strong bullish candle formation
 - **Useful context:** Usually illiquid, halted, or very low-activity data.
 - **Trade caution:** Avoid treating it as a trade setup.
 
+## Timeframes and market-session timing (Timeframe aur market ka samay)
+
+There is no universally “best” chart timeframe. A candle represents only its own period: a bullish 5-minute candle can be a small pullback inside a bearish 1-hour structure. Use a **top-down process**: higher timeframes set context; lower timeframes refine execution.
+
+### Practical multi-timeframe workflow
+
+| Chart timeframe | Primary job | What to mark or assess | Do not use it for |
+|---|---|---|---|
+| **Daily (1D)** | Broad bias and major structure | Previous-day high/low/close, larger trend, major support/resistance, swing zones | Intraday entry timing |
+| **1-hour (1H)** | Intraday context | Direction, opening gap response, important intraday supply/demand zones | Tick-by-tick decisions |
+| **15-minute (15m)** | Setup and intraday structure | Trend legs, consolidation, breakout/retest, meaningful candle patterns | Chasing every small move |
+| **5-minute (5m)** | Planned entry, stop and management | Confirmation close, retest, local swing high/low and risk-to-reward | Overriding the 15m/1H context |
+| **1–3 minute (1m/3m)** | Optional execution refinement for experienced scalpers | Momentum and micro-structure after a valid higher-timeframe setup | Creating a trade idea by itself |
+
+> **Alignment rule:** Begin with the daily and 1H context, find the setup on 15m, then execute only when the 5m confirms the planned direction. If the timeframes conflict, reduce risk or skip the trade; do not force a lower-timeframe signal.
+
+### NSE session context for candle reading
+
+For NSE equity derivatives, the normal market runs from **09:15 to 15:30 IST**. The time blocks below are trading-context guidelines, not guaranteed behaviours: volatility and liquidity vary by instrument, expiry, news, and global markets.
+
+| Session phase (IST) | Typical context | How to treat candlestick signals |
+|---|---|---|
+| **Before 09:15** | Prepare levels and bias; review overnight/global cues and the opening gap. | No regular-session candle setup exists yet. Do not pre-decide a trade solely from the expected opening direction. |
+| **09:15–09:30** | Opening auction information is being absorbed; spreads and price swings can be unusually large. | Prefer observation. Let the first 5m/15m structure form; avoid treating the first large candle as a confirmed breakout. |
+| **09:30–11:00** | The opening range, gap-fill or gap-and-go decision often becomes clearer. | Use 15m structure and volume; trade only confirmed breaks/retests that agree with the 1H context. |
+| **11:00–13:30** | Participation can reduce and price may rotate in a range, though event-driven moves can occur anytime. | Demand cleaner confirmation. A wick or small breakout inside a range has lower quality. |
+| **13:30–15:00** | Trends can resume or reverse as participants adjust positions. | Recheck 15m/1H structure and option-chain context before a new F&O trade; avoid assuming that a late move must continue. |
+| **15:00–15:30** | Closing flows and expiry-day positioning can make moves fast and risk-to-reward poor. | Manage existing risk; take a new trade only with a clear, time-bound plan and adequate liquidity. Do not carry an intraday trade unintentionally. |
+
+### A repeatable timing routine
+
+1. **Before open:** Mark daily and 1H levels; write one of three working biases—bullish, bearish, or sideways—and the level that would invalidate it.
+2. **After the opening structure forms:** Decide whether price accepts above/below a marked level or returns into the prior range. A gap alone is information, not an entry signal.
+3. **At setup time:** On 15m, wait for location + structure; on 5m, wait for the confirmation close or planned retest. Enter only if stop, target and position size are already defined.
+4. **During the trade:** Reassess only at planned candle closes or invalidation levels. Constantly switching timeframes to find agreement is a warning sign, not confirmation.
+5. **Near close:** Close or convert any position according to its original plan. For options, explicitly check whether overnight risk, theta and event risk justify carrying it.
+
+**Reference:** NSE publishes the current derivatives session timings at [NSE Market Timings](https://www.nseindia.com/resources/exchange-communication-holidays). The multi-timeframe principle above is educational: a timeframe changes the meaning of each candle, but does not make a pattern predictive.
+
 ## How to read a formation (Formation ko kaise padhein)
 
 Use this order; do not start with the candle name:
 
 1. **Trend (rukh):** Is the higher timeframe making higher highs/higher lows, or lower highs/lower lows?
-2. **Location (jagah):** Is the candle at a marked support, resistance, swing level, breakout, or retest? A pattern in the middle of a range has low value.
-3. **Volume (volume):** Relative volume should support the move. A large candle on weak volume can fail.
-4. **Confirmation (pushti):** Wait for the next candle to close in the expected direction, or take a planned retest entry.
-5. **Trade math (hisab):** Define entry, stop, target, and position size before placing an order.
+2. **Timeframe and timing (samay):** Does the 15m/5m signal agree with the daily/1H context, and is the session phase suitable for the setup?
+3. **Location (jagah):** Is the candle at a marked support, resistance, swing level, breakout, or retest? A pattern in the middle of a range has low value.
+4. **Volume (volume):** Relative volume should support the move. A large candle on weak volume can fail.
+5. **Confirmation (pushti):** Wait for the next candle to close in the expected direction, or take a planned retest entry.
+6. **Trade math (hisab):** Define entry, stop, target, and position size before placing an order.
 
 ## Trading significance (Trading mein mahatva)
 
@@ -191,6 +232,8 @@ Only then: calculate entry, stop, target, and size.
 ### Chart setup
 
 - [ ] **Trend:** Have I checked the next higher timeframe?
+- [ ] **Timeframe alignment:** Does the entry signal on 5m/15m agree with the daily/1H structure, or is there a specific counter-trend plan?
+- [ ] **Session context:** Is this a suitable time to take a fresh trade, considering opening volatility, midday range conditions, or the approaching close?
 - [ ] **Location:** Is the formation at support, resistance, a breakout, or a retest—not in the middle of a range?
 - [ ] **Formation:** Does the candle name match its actual context? Example: hammer after decline, hanging man after rise.
 - [ ] **Volume:** Does relative volume support the rejection or breakout?

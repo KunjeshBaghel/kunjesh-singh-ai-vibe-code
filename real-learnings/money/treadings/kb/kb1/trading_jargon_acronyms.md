@@ -98,8 +98,8 @@ Central reference for abbreviations and terms used across the knowledge base (`s
 
 ## Option Basics
 
-- **Call option (CE — buy):** Buy when you expect price to go up. Gives the buyer the **right** (not obligation) to buy the underlying at the strike price on or before expiry.
-- **Put option (PE — buy):** Buy when you expect price to go down. Gives the buyer the **right** to sell the underlying at the strike price on or before expiry.
+- **Call option (CE — buy):** Buy when you expect price to go up. Gives the buyer the **right** (not obligation) to buy the underlying at the strike price **at expiry**.
+- **Put option (PE — buy):** Buy when you expect price to go down. Gives the buyer the **right** to sell the underlying at the strike price **at expiry**.
 - **Option buyer:** Pays **premium**; loss limited to premium paid; profit can be large.
 - **Option seller / writer:** Receives premium; has an **obligation** to honour the contract if the buyer exercises; profit limited to premium, loss can be very large.
 - **Premium:** The price paid by the buyer to the seller for an options contract. Premium = Intrinsic Value + Time (Extrinsic) Value.
@@ -135,9 +135,9 @@ Central reference for abbreviations and terms used across the knowledge base (`s
 | **Spread (Bid-Ask)** | Gap between Bid and Ask. Narrow = liquid; wide = costly to enter/exit. |
 | **Intrinsic Value** | Immediate exercise value if expired today. Calls: Spot − Strike (if positive); Puts: Strike − Spot (if positive). Zero for OTM; never negative. |
 | **Time Value / Extrinsic Value** | `LTP − Intrinsic Value`. Reflects time to expiry and volatility expectations. |
-| **Volume** | Contracts traded in the current session. High volume = better liquidity. |
-| **OI (Open Interest)** | Total outstanding unsettled contracts at a strike. Rising OI = new positions; falling OI = positions closing. |
-| **OI Chg / OI Chg%** | Daily change in Open Interest — shows fresh writing or unwinding. |
+| **Volume** | Contracts traded in the current session. Higher volume can support liquidity, but always confirm the live bid–ask spread and available quantity. |
+| **OI (Open Interest)** | Total outstanding unsettled contracts at a strike. Rising OI indicates a net increase in open contracts; falling OI indicates a net decrease. It does not by itself identify buyers, sellers, or direction. |
+| **OI Chg / OI Chg%** | Daily change in OI. Interpret it with price, premium, IV, and the option's position in the chain; OI change alone cannot prove writing or unwinding. |
 | **Breakeven (%)** | Underlying move required from current price for the trade to profit at expiry. |
 | **POP (Probability of Profit)** | Estimated probability of ≥ ₹1 profit at expiry, derived from pricing models and Greeks. |
 
@@ -147,7 +147,7 @@ Central reference for abbreviations and terms used across the knowledge base (`s
 
 | Greek | Measures | Trading significance |
 |-------|----------|---------------------|
-| **Delta (Δ)** | Premium change for a 1-point move in underlying. Call: 0 to +1; Put: −1 to 0. | Also approximates probability of expiring ITM. Used as safety filter for premium selling (e.g. Delta ~0.15–0.20 ≈ 80–85% POP). |
+| **Delta (Δ)** | Approximate premium change for a 1-point move in underlying. Call: 0 to +1; Put: −1 to 0. | Often used as a rough, model-based approximation of the chance of expiring ITM—not probability of profit. Use it to size directional exposure and compare strikes. |
 | **Gamma (Γ)** | Rate of change of Delta for a 1-point move in underlying. | Highest for ATM options near expiry. Small spot moves can cause large premium swings. |
 | **Theta (Θ)** | Daily time decay — premium erosion per day. | Enemy of option buyers; friend of option sellers. **Theta Trap:** range-bound session engineered by writers where both-side buyers lose to decay. |
 | **Vega (ν)** | Premium sensitivity to a 1% change in implied volatility. | Critical around events. High Vega + falling IV = **IV Crush** — premium drops even if direction is right. |
@@ -219,10 +219,10 @@ Central reference for abbreviations and terms used across the knowledge base (`s
 
 | Term | Definition |
 |------|------------|
-| **IV (Implied Volatility)** | Market's forecast of future price fluctuation embedded in premium. High IV = expensive options; low IV = cheap. Does not indicate direction. |
+| **IV (Implied Volatility)** | Market-implied expectation of future price fluctuation embedded in option premium. Higher IV generally raises otherwise comparable option premiums; assess it versus its own history, the event risk, and realised volatility. IV does not indicate direction. |
 | **IVP (Implied Volatility Percentile)** | Ranks current IV vs its own history (e.g. IVP 62 = higher than 62% of past readings). |
 | **IV Crush** | Sharp IV drop after a major event (Budget, RBI, earnings) — premiums fall even if underlying moves favourably. |
-| **India VIX** | NSE volatility index. Below 12 = calm; 12–16 = normal; 16–20 = moderate fear; 20–25 = high fear; above 25 = panic. **Direction** (rising vs falling) matters as much as level. |
+| **India VIX** | NSE's volatility index, reflecting expected NIFTY volatility over the next 30 calendar days. Compare its level and direction with its own recent history; fixed “calm” or “panic” bands are regime-dependent. |
 | **PCR (Put-Call Ratio)** | Total Put OI ÷ Total Call OI. > 1 often read as bullish; < 1 as bearish. Extreme readings can be contrarian. |
 | **Max Pain** | Strike where option writers would face minimum payout at expiry — relevant mainly in expiry week. |
 | **Volatility Skew / Smile** | Differing IV across strikes; Indian index options often show higher OTM put IV (downside protection demand). |
@@ -260,14 +260,14 @@ Central reference for abbreviations and terms used across the knowledge base (`s
 | **ATM (At-The-Money)** | At-The-Money | Strike equal to or closest to current spot. Zero intrinsic value; highest time value. |
 | **Bid** | — | Highest price a buyer is willing to pay. Price you receive when selling (if filled at bid). |
 | **Breakeven** | — | Underlying price at which a trade neither makes nor loses money at expiry. |
-| **Call Option (CE)** | Call European | Right to buy underlying at strike on or before expiry. NSE index options are European and cash-settled. |
-| **Delta (Δ)** | — | Premium change for a 1-point move in underlying. Also approximates ITM probability. |
+| **Call Option (CE)** | Call European | Right to buy underlying at strike at expiry. NSE index options are European and cash-settled. |
+| **Delta (Δ)** | — | Approximate premium change for a 1-point move in underlying. It is commonly used as a rough model-based approximation of expiring ITM, not probability of profit. |
 | **Expiry** | Expiration Date | Last date the contract is valid; settled cash (index) or physical (stock) per NSE rules. |
 | **Extrinsic Value** | — | Same as Time Value — premium above intrinsic value. |
 | **F&O** | Futures & Options | Derivatives segment for standardized index and stock contracts. |
 | **Gamma (Γ)** | — | Rate of change of Delta. Highest ATM near expiry. |
 | **Greeks** | — | Risk metrics (Delta, Gamma, Theta, Vega, Rho) quantifying option price sensitivity. |
-| **Implied Volatility (IV)** | Implied Volatility | Market's expected future fluctuation embedded in premium. |
+| **Implied Volatility (IV)** | Implied Volatility | Market-implied expected future fluctuation embedded in premium; compare it with its own history and event risk. |
 | **Intrinsic Value** | — | Immediate exercise value if expired today. |
 | **ITM (In-The-Money)** | In-The-Money | Option with positive intrinsic value. |
 | **IV Crush** | Implied Volatility Crush | Sharp IV drop post-event causing premium collapse. |
@@ -283,7 +283,7 @@ Central reference for abbreviations and terms used across the knowledge base (`s
 | **Option Writer** | — | Seller who collects premium and assumes obligation if buyer exercises. |
 | **OTM (Out-of-The-Money)** | Out-of-The-Money | Zero intrinsic value. |
 | **PCR (Put-Call Ratio)** | Put-Call Ratio | Total Put OI ÷ Total Call OI — sentiment indicator. |
-| **PE (Put European)** | Put European | Right to sell underlying at strike on or before expiry. |
+| **PE (Put European)** | Put European | Right to sell underlying at strike at expiry. |
 | **POP (Probability of Profit)** | Probability of Profit | Estimated probability of ≥ ₹1 profit at expiry. |
 | **Premium** | — | See Option Premium. |
 | **Put Option** | — | See PE (Put European). |
