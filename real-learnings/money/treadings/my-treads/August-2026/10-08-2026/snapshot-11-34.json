@@ -1,0 +1,128 @@
+{
+  "meta": {
+    "fetched_at_ist": "2026-08-10T11:34:00+05:30",
+    "source": "market-view-kb skill (claude-sonnet-4-6)",
+    "snapshot_type": "full",
+    "date": "10-08-2026",
+    "brokers_online": ["kite", "kotak-neo"],
+    "brokers_offline": ["dhan"],
+    "notes": "Dhan MCP unauthorized despite user completing auth flow. All option chain data sourced from Kite MCP. Dhan data: null."
+  },
+  "global_cues": {
+    "gift_nifty": "~24,580–24,600 (flat open signal)",
+    "gift_nifty_gap_pts": "~10 flat",
+    "us_dow": "-0.21% (7 Aug)",
+    "us_sp500": "-0.17% (7 Aug)",
+    "us_nasdaq": "-0.18% (7 Aug)",
+    "nikkei": "+0.94% (7 Aug)",
+    "hang_seng": null,
+    "shanghai": "flat (7 Aug)",
+    "brent_crude": "84.35 (Strait of Hormuz tension)",
+    "usd_inr": "~95.14",
+    "dxy": "99.60",
+    "us_10y_yield": null,
+    "gold": "4341"
+  },
+  "price_action": {
+    "nifty_spot_ltp": 24584.55,
+    "nifty_spot_time_ist": "11:34:00",
+    "nifty_net_change": "+13.90",
+    "nifty_pct_change": "+0.057%",
+    "today_open": 24581.25,
+    "today_high": 24620.95,
+    "today_low": 24511.10,
+    "pdh": 24630.40,
+    "pdl": 24522.75,
+    "pdc": 24570.65,
+    "pdl_breach_today": true,
+    "pdl_breach_low": 24511.10,
+    "pdl_breach_recovery": "yes — price recovered to 24584 after breaching 24511",
+    "weekly_high": null,
+    "weekly_low": null,
+    "candle_type": "Inside day (high below PDH 24630, current range 24511–24621)",
+    "orh": 24620.95,
+    "orl": 24511.10,
+    "vwap": null
+  },
+  "india_vix": {
+    "level": 12.49,
+    "today_open": 12.16,
+    "today_high": 12.92,
+    "today_low": 10.82,
+    "pdc": 12.16,
+    "net_change": "+0.33",
+    "direction": "RISING intraday",
+    "zone": "Calm (sub-14)",
+    "note": "VIX rising from open — mild concern. Not confirmed adverse at proposed strike IV level"
+  },
+  "fii_dii_cash": {
+    "fii_net_crore": "+480.24 (07-Aug)",
+    "dii_net_crore": "+235.56 (07-Aug)",
+    "note": "Cash segment both FII and DII net buyers on Friday. F&O stance is bearish (separate)"
+  },
+  "participant_oi": {
+    "source_date": "07-08-2026",
+    "fii_index_futures_net_change": -4940,
+    "fii_calls_net_change": -49986,
+    "fii_puts_net_change": 26785,
+    "fii_stance": "Bearish — sold futures, sold calls, bought puts",
+    "client_futures_net_change": 6519,
+    "client_calls_net_change": -927,
+    "client_puts_net_change": -168000,
+    "client_stance": "Retail sold 1.68L puts (contrarian bullish — trap risk)",
+    "pro_calls_net_change": 49749,
+    "pro_puts_net_change": 140000,
+    "pro_stance": "Long volatility / Bought straddle — expects wide swings",
+    "fii_5day_trend": "Bearish (07/08 bearish, 05/08 bearish, 03/08 bullish, mixed). NOT 3 consecutive bearish — no confirmed regime",
+    "scenario": "Distribution / Trap Phase — FII short + Retail short puts = contrarian trap risk"
+  },
+  "option_chain": {
+    "expiry": "2026-08-11",
+    "dte": 1,
+    "atm_strike": 24600,
+    "spot_vs_atm": "Spot 24584 — 16 pts BELOW ATM 24600",
+    "atm_ce_ltp": 92.65,
+    "atm_pe_ltp": 81.40,
+    "atm_straddle_premium": 174.05,
+    "straddle_vs_friday": "214.15 (Fri) → 174.05 (now) = -40 pts compression (theta working)",
+    "pcr_atm": 1.25,
+    "pcr_note": "Significant improvement from Friday PCR 0.70. Put OI (25.97L) > Call OI (20.8L) at ATM now",
+    "max_pain_strike": 24600,
+    "spot_vs_maxpain_dist": -15.45,
+    "strikes": {
+      "24400PE": { "ltp": 22.45, "oi": 12771785, "oi_high_today": 12771785, "oi_low_today": 5467345, "open": 36.40 },
+      "24500PE": { "ltp": 44.20, "oi": 22624030, "oi_high_today": 22672000, "oi_low_today": 7324525, "open": 54.70, "note": "TESTED — NIFTY hit 24511 (11 pts above strike) and bounced. Strong support" },
+      "24550PE": { "ltp": 60.85, "oi": 17827420, "oi_high_today": 17827420, "oi_low_today": 3446365, "open": 69.00 },
+      "24550CE": { "ltp": 121.85, "oi": 6029920, "oi_high_today": 13770640, "oi_low_today": 3838380, "open": 141.65, "note": "Call OI unwinding: 13.77L → 6.03L (call side covering)" },
+      "24600PE": { "ltp": 81.40, "oi": 25968410, "oi_high_today": 26035165, "oi_low_today": 7651085, "open": 99.90, "note": "HIGHEST PUT OI at ATM. Near day-high OI = strong support" },
+      "24600CE": { "ltp": 92.65, "oi": 20800780, "oi_high_today": 28142855, "oi_low_today": 11981450, "open": 109.65, "note": "Call OI unwinding: 28.14L → 20.8L = short covering on call side (bullish)" },
+      "24700CE": { "ltp": 48.40, "oi": 15105935, "oi_high_today": 17526080, "oi_low_today": 10013835, "open": 66.35, "note": "Resistance wall. OI near low of day = some covering" },
+      "24800CE": { "ltp": 22.10, "oi": 11796655, "oi_high_today": 12462580, "oi_low_today": 9094865, "open": 33.65 }
+    },
+    "key_resistance": "24,700 (15.1L Call OI) and 24,620 (today's high = PDH zone)",
+    "key_support": "24,500 (22.6L Put OI, tested and held today at 24,511)",
+    "iv_atm": "~12.5% implied (from straddle premium of 174 on 1 DTE)",
+    "ivp": 42
+  },
+  "futures_oi": {
+    "nifty_futures_oi": null,
+    "oi_change": null,
+    "futures_premium_discount_pts": null,
+    "price_oi_quadrant": "Short Buildup (as of Friday 7 Aug — not re-confirmed today, Dhan unavailable)",
+    "note": "Dhan offline — cannot re-check futures OI quadrant for today"
+  },
+  "market_breadth": {
+    "banknifty_ltp": 57626.20,
+    "banknifty_vs_pdc": "57857.80 (PDC) → 57626.20 (-0.40%) — BANKNIFTY weaker than NIFTY today",
+    "nifty_banknifty_divergence": "NIFTY slightly green (+0.06%), BANKNIFTY red (-0.40%) = MILD DIVERGENCE",
+    "hdfc_bank_pct": null,
+    "reliance_pct": null,
+    "icici_bank_pct": null,
+    "advance_decline_ratio": null
+  },
+  "news_events_today": [
+    "Brent Crude elevated $84.35 — Strait of Hormuz geopolitical tension ongoing",
+    "CAS (Closing Auction Session) in effect — NIFTY Tuesday expiry hard exit deadline 2:30 PM",
+    "No major domestic event noted in market_view.md for this week"
+  ]
+}

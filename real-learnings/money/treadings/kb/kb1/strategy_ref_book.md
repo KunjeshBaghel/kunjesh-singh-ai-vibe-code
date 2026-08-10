@@ -28,6 +28,7 @@
       - [1.1 Long Call CE](#11-long-call-ce)
       - [1.2 Long Put PE](#12-long-put-pe)
       - [1.3 Bull Call Spread](#13-bull-call-spread)
+        - [Practical Learnings: Selection, Execution & Defence](#practical-learnings-selection-execution--defence)
       - [1.4 Bear Put Spread](#14-bear-put-spread)
       - [1.5 Bull Put Spread](#15-bull-put-spread)
       - [1.6 Bear Call Spread](#16-bear-call-spread)
@@ -492,7 +493,74 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **Best source:** Zerodha Varsity Module 5 for basics; NSE contract specs for strike/expiry rules.
 - `https://web.sensibull.com/learn-options-strategies/long-put-option`
 
-##### 1.3 Bull Call Spread || (buy call -> bullish, sell call bearish)
+##### 1.3 Bull Call Spread || (buy In-the-Money Call -> bullish, sell Out-of-the-Money Call bearish) || net debit || option buyer 
+> A bull call spread is **for an option buyer** (specifically a moderately bullish trader). It targets a trader who wants to profit from a limited price rise while lowering the upfront cost and capping the risk of buying a regular call
+> **What they do:** Buy a call option at a lower strike price and simultaneously sell a call option at a higher strike price (same expiry and asset).
+> **Net cash flow:** It is a `net debit` strategy because the cost of the bought call is higher than the money earned from the sold call.
+> **Target outlook:** A moderately optimistic view where the asset price goes up, but only by a small or limited amount
+> **Capped profit:** The maximum gain stops at the higher strike price
+
+###### Practical Learnings: Selection, Execution & Defence
+
+> **Use this only for a defined, moderately bullish move—not a guaranteed-profit trade or a substitute for a market view.** First classify the market using [Strategies by cash market view](#strategies-by-cash-market-view); a strong breakout with uncapped upside is usually a poor fit because the short CE caps gains.
+
+**1. Decide the target and deadline before selecting strikes**
+
+- Write four values before opening the chain: expected upside target, deadline, chart-based invalidation level, and maximum rupee loss. The short CE is the level where you deliberately agree to stop participating in further upside.
+- Select expiry from the deadline. A move expected over several sessions needs adequate time; near-expiry spreads have rapidly accelerating Theta and Gamma risk.
+- Do **not** use a fixed rule such as `OTM + 50` or `OTM + 500`. Strike distance must be judged against the underlying's expected move, volatility, support/resistance, and time remaining.
+
+**2. Practical strike-selection framework**
+
+- **Long CE:** A common starting shape for a swing/positional view is ATM to slightly ITM, often with a usable Delta range around `0.45–0.65`. It gives better initial directional participation than a far-OTM call and relies less on a sudden large move.
+- **Short CE:** Place it at the realistic upside target or just above it—not merely at the strike with the largest premium. A Call-OI resistance zone can support this choice, but OI alone does not prove writing or direction; use the Price–OI context in [Open Interest & Price–OI Matrix](./trading_jargon_acronyms.md#open-interest--priceoi-matrix).
+- **Spread width:** A wider spread behaves more like a long call: higher debit, more upside room, and higher directional exposure. A narrow spread costs less but may cap the move too early. Compare `net debit ÷ width`, break-even versus target, maximum profit versus maximum loss, and charges/slippage.
+- **Far OTM long CE:** It can give a high percentage return only if a fast, unusually large move occurs. Its low Delta and time-decay dependence make it unsuitable as a default choice.
+
+**3. Parameter priority: evaluate the combined position, not a single leg**
+
+1. **Target, deadline, and maximum rupee loss** — these decide whether the strategy fits.
+2. **Executable liquidity** — check live bid–ask, available quantity, volume, and OI for **both** legs. LTP, volume, or OI alone does not guarantee a fill. Prefer a basket/spread order or have an abort rule for a partial fill.
+3. **Net Delta** — `long-call Delta − short-call Delta`; this is the spread's approximate initial directional exposure. More positive net Delta usually means earlier participation in a rally, but normally costs more.
+4. **Net Theta and Gamma** — the short CE offsets part of the bought CE's negative Theta, but a debit spread can still lose when price stalls. Gamma becomes more acute near expiry, especially around ATM.
+5. **IV, skew, and net Vega** — same-expiry legs partially offset Vega; they do not cancel it completely. A post-event IV fall can still hurt the spread, even if price rises modestly.
+6. **Premium** — a result of the above, not the selection rule. The cheapest spread is often cheap because Delta is too low or the cap is too close.
+
+For canonical option-chain and Greek definitions, see [Option Chain Columns](./trading_jargon_acronyms.md#option-chain-columns), [Greeks](./trading_jargon_acronyms.md#greeks), and [Volatility & Sentiment](./trading_jargon_acronyms.md#volatility--sentiment).
+
+**4. Worked selection example — hypothetical only**
+> **Buy** 1 Lot of Nifty ₹24,200 CE (`In-the-Money Call`) → Premium Paid = ₹150
+> **Sell** 1 Lot of Nifty ₹24,400 CE (`Out-of-the-Money Call`) → Premium Received = ₹50
+> Net Premium Cost (per share): ₹150 - ₹50 = ₹100
+> Spread Width: 24,400 - 24,200 = 200 Points
+> Maximum Risk (Total Capital Outlay): Net Premium * Lot Size -> ₹100 * 25 = ₹2,500
+> Maximum Profit: (Spread Width - Net Premium) * Lot Size -> (200 - 100) * 25 = ₹2,500
+> Breakeven Point: Lower Strike + Net Premium -> 24,200 + 100 = ₹24,300
+
+Assume `NIFTY = 24,000`, target `24,300` within five trading sessions, and 14 calendar days remain:
+
+- Buy `24,000 CE` at `265`: Delta `0.52`, Theta `-12/day`, Vega `9`.
+- Sell `24,300 CE` at `125`: Delta `0.30`, Theta `-10/day`, Vega `7`.
+- Net debit = `140` points; width = `300` points; expiry break-even = `24,140`; maximum profit = `160` points; maximum loss = `140` points, each multiplied by the **current live lot size**, plus charges.
+- Approximate combined exposure: Delta `+0.22`, Theta `-2/day`, Vega `+2` per one-IV-point rise. These are model estimates that change with spot, time, and IV.
+
+This construction matches a gradual, target-defined rise: the ATM long CE participates in the move, while the short CE is deliberately placed at the target. It is **not** automatically best: if the move is expected to be explosive beyond `24,300`, a long CE may be more suitable; if it is late or IV falls, the spread may underperform despite a correct bullish direction.
+
+**5. Go / no-go and defence rules**
+
+- **Go only when:** the target is near the short CE by the deadline; maximum loss (`net debit × lot size + all costs`) fits the trade and daily-loss budget; both legs are liquid; and the expected move still justifies the debit after considering IV and scheduled events.
+- **No-go when:** the target lies beyond the short CE; debit is so close to the width that reward is negligible; an illiquid leg or wide bid–ask makes payoff estimates unreliable; or the thesis requires an expiry-day move.
+- **Exit/defence plan before entry:** define an underlying invalidation level, spread-value loss limit, time stop, and profit-capture rule. Do not hold only because the expiry break-even remains possible.
+- If the thesis fails, close the **entire spread** rather than averaging down. If the thesis remains valid but the deadline was wrong, close first and treat any later-expiry replacement as a **new trade** with a fresh target and risk budget.
+- When spot reaches the short CE early, most possible value may already be captured. Do not remove the short CE casually: that creates a new naked-long-call exposure requiring new sizing and risk approval.
+
+**6. Indian-market and professional-use notes**
+
+- For NSE **index** options, contracts are European style and cash-settled; stock-option physical-settlement rules are separate. Still, close intentionally before expiry unless final-settlement-price exposure is part of the plan. Confirm live contract specifications, expiry, lot size, and basket margin with the exchange and broker.
+- Professionals do use vertical call spreads, but not because they are “beginner-only” or inherently profitable. They model target, timing, IV, liquidity, net Greeks, costs, and portfolio loss first. Market makers generally manage aggregate Delta and volatility risk rather than selecting a retail-style strategy in isolation.
+- A defined-loss payoff does not create an edge. Follow the hard risk limits in [Risk Management Rules](#72-risk-management-rules), and remember that the SEBI study cited in this book found widespread losses among individual equity F&O traders.
+
+**Research sources:** [Zerodha Varsity — Bull Call Spread](https://zerodha.com/varsity/chapter/bull-call-spread/), [NSE — Greeks Mastery](https://www.nseindia.com/static/learn/greeks-mastery-program), [NSE — settlement mechanism](https://www.nseindia.com/products-services/equity-derivatives-settlement-mechanism), [NSE — contract specifications](https://www.nseindia.com/static/products-services/equity-derivatives-contract-specifications), [Options Industry Council — Bull Call Spread](https://www.optionseducation.org/strategies/all-strategies/bull-call-spread-debit-call-spread), and [SEBI equity F&O study](https://www.sebi.gov.in/media-and-notifications/press-releases/sep-2024/updated-sebi-study-reveals-93-of-individual-traders-incurred-losses-in-equity-fando-between-fy22-and-fy24-aggregate-losses-exceed-1-8-lakh-crores-over-three-years%5F86906.html).
 
 - **Basic definition:** Buy a lower strike `CE` and sell a higher strike `CE` of the same underlying and same expiry.
 - **Market view:** Moderately bullish. Used when you expect upside, but not unlimited upside.
@@ -511,11 +579,30 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
   - short 1 `https://youtube.com/shorts/sm0klOGmiY4?si=vHjZOaTIKhO0XX_X`
 - `https://web.sensibull.com/learn-options-strategies/bull-call-spread`
 
-##### 1.4 Bear Put Spread || (buy put -> bearish, sell put bullish)
+###### YT: 
+- https://youtu.be/uZAZAPnsqeo?si=VkVnoIteUwtX3D78
+- https://youtu.be/GlIUbLZHVBo?si=Y987T4BXBZBrhVYp 
+
+##### 1.4 Bear Put Spread || (Buy In-the-Money (ITM) Put and Sell Out-of-the-Money (OTM) Put) || net-debit || option buyer
+> net debit = cash paid out-of-pocket
+> **Viewpoint:** Moderately bearish—expects the underlying asset price to fall, but not crash drastically.
+> **Risk Tolerance:** Risk-averse trader who wants capped, defined risk.
+> **Goal:** Wants a cheaper alternative to buying a single put option outright by using the sold put's premium to offset the cost.
+> **Action:** Buy a higher strike put + Sell a lower strike put (same expiration date).
 
 - **Basic definition:** Buy a higher strike `PE` and sell a lower strike `PE` of the same underlying and same expiry.
 - **Market view:** Moderately bearish. Used when you expect downside, but not a crash.
 - **Basic example:** 
+  - Assume the Nifty 50 Index is trading closely around `24,350`. You expect a moderate correction down to roughly 24,000 over the coming weeks.
+  - **Buy** 1 ATM Put: `24,350` Strike Price @ ₹67.15 premium paid.
+  - **Sell** 1 OTM Put: `24,100` Strike Price @ ₹17.20 premium received.
+  * **Net Debit** (Cost Per Unit): ₹67.15 - ₹17.20 = ₹49.95
+  * **Upfront Cost (Max Risk):** ₹49.95 × 65 = **₹3246.75**
+  * **Maximum Spread:** 24,350 - 24,100 = **250 points**
+  * **Maximum Profit Potential:** (Spread - Net Debit) = 250 - 49.95 = **200.05 points**
+  * **Max Total Profit per Lot:** 200.05 × 25 = **₹13003.25**
+  * **Break-Even Point:** Higher Strike - Net Debit = 24,350 - 49.95 = **24,300.05**
+-------------------------------------------------------------
   - `NIFTY = 22,000`. 
     - Buy `22,000 PE` at `140`, 
     - sell `21,700 PE` at `55`. Net debit = `85`. Maximum loss = `85`. 
@@ -527,10 +614,34 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **Best source:** Zerodha Varsity Module 6 for payoff construction; NSE/NISM for settlement and risk rules.
 - `https://web.sensibull.com/learn-options-strategies/bear-put-spread`
 
-##### 1.5 Bull Put Spread || (sell put bullish, buy put bearish)
+##### 1.5 Bull Put Spread || (sell a higher-strike put (OTM), buy a lower-strike (Deep-OTM) put) || option seller (credit) strategy
+> **Core Action:** You sell a higher-strike put (collecting a larger premium) and simultaneously buy a lower-strike put (paying a smaller premium) for the same expiry.
+> **Market Outlook:** Moderately bullish or sideways; you win if the underlying stays flat, rises, or doesn't drop past your short strike.
+
 - **Basic definition:** Sell a higher strike `PE` and buy a lower strike `PE` of the same underlying and same expiry.
 - **Market view:** Moderately bullish or not bearish. It profits if the underlying stays above the sold put strike.
 - **Basic example:** 
+> Assume the Nifty 50 Spot Price is trading around `24,400`. Since you expect the market to stay flat or rise, you build a protective credit spread.
+> Step 1: Setting up the Trade (Lot Size = 65 Shares)
+    You execute two legs with your broker
+    * **Leg 1 (Short Put):** Sell `24,300` PE (Out-of-the-Money) → Collect ₹120 premium
+    * **Leg 2 (Long Put):** Buy `24,100` PE (Deep Out-of-the-Money) → Pay ₹40 premium
+
+    **Initial Cash Flow Calculations**
+    * **Net Premium Credit per share:** ₹120 (Received) - ₹40 (Paid) = ₹80
+    * **Net Premium Credit per lot:** ₹80 × 65 shares = ₹5,200 *(This is credited to your trading account instantly)*
+> Step 2: Risk and Reward Metrics
+  **Maximum Profit Potential**
+    Limited strictly to the net credit collected.
+  * **Max Profit:** ₹5,200 per lot
+  **Maximum Loss Exposure**
+      Capped at the strike width minus the net premium.
+    * **Strike Width:** 24,300 - 24,100 = 200 points
+    * **Max Loss per share:** 200 - ₹80 = ₹120
+    * **Max Loss per lot:** 120 × 65 = ₹7,800
+  **Break-Even Index Level**
+    * **Break-Even:** Short Strike - Net Credit = 24,300 - 80 = **24,220**
+------------------------------------------------------------------
   - `NIFTY = 22,000`. 
   - Sell `21,900 PE` at `90`, 
   - buy `21,700 PE` at `40`. **Note** - The option you buy protects you from big downmoves.
@@ -542,10 +653,30 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **Best source:** Zerodha Varsity Module 6 plus NSE/NISM risk management sections.
 - `https://web.sensibull.com/learn-options-strategies/bull-put-spread`
 
-##### 1.6 Bear Call Spread
+##### 1.6 Bear Call Spread || (Sell OTM Call + Buy further OTM Call) || option seller (credit) strategy 
+> **Sell a Call (Short Leg):** Choose a lower strike price closer to the current market price to collect a higher premium.
+> **Buy a Call (Long Leg):** Simultaneously buy a higher strike price call to cap potential financial exposure, creating a risk-defined structure.
+
+>> 3 Key `Risks` of Selling ITM Calls in India
+* **Delta Risk:** ITM calls have a delta closer to 1.0, meaning your trade will lose money rapidly at the immediate start of any upward market move.
+* **Early Assignment Risk:** While rare in cash-settled European options like Nifty index options, selling ITM options on individual stocks carries a severe risk of physical settlement and early assignment.
+* **Slippage and Liquidity:** Deep ITM options often suffer from wider bid-ask spreads, making entry and exit execution more expensive.
+
+If you are looking at a specific market setup, tell me your target Nifty index level or current market outlook so we can calculate the exact strike prices and break-even zones for your trade.
+
 - **Basic definition:** Sell a lower strike `CE` and buy a higher strike `CE` of the same underlying and same expiry.
 - **Market view:** Moderately bearish or not bullish. It profits if the underlying stays below the sold call strike.
 - **Basic example:** 
+  > Nifty 50 Example Trade
+    >> Imagine NIFTY 50 is trading at `24,500`. You expect the market to stay range-bound or drop slightly over the next week. You execute a weekly credit spread:
+    >> * **Sell:** `24,600` CE at ₹120 (lower strike, short position)
+    >> * **Buy:** `24,800` CE at ₹40 (higher strike, long protection position)
+    >> **Net Premium Received (Credit):** ₹120 − ₹40 = ₹80 per lot (₹80 × 25 Nifty lot size = ₹2,000 maximum profit)
+    >> Scenario Outcomes at Expiry
+      >>> * **Scenario A (Nifty falls to 24,300 or stays flat at 24,500):** Both options expire worthless. You keep the entire net credit of ₹2,000 (**Maximum Profit**).
+      >>> * **Scenario B (Nifty rallies past 24,600 to 24,700):** Your short call loses value, but your long 24,800 CE cushions severe upward movement. The loss is calculated as the spread width (24,800 − 24,600 = 200 points) minus the credit received (80 points) = 120 points × 25 = ₹3,000 **Maximum Loss**.
+
+------------------------------------------------------------------------------------------------
   - `NIFTY = 22,000`. 
     - Sell `22,100 CE` at `100`, 
     - buy `22,300 CE` at `45`. **Note** - The option you buy protects you from big upmoves
@@ -556,7 +687,7 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **Best source:** Zerodha Varsity Module 6 plus NSE/NISM for margin/risk context.
 - `https://web.sensibull.com/learn-options-strategies/bear-call-spread`
 
-##### 1.7 Covered Call on stock holding || (on shares holdings)
+##### 1.7 Covered Call on stock holding || (on shares holdings) || not now 
 
 - **Basic definition:** Hold shares and sell a `CE` against those shares to earn premium.
 - **Market view:** Neutral to mildly bullish on a stock you already own.
@@ -570,7 +701,7 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **From where to learn:** NISM Equity Derivatives, NSE settlement mechanism, NSE contract specs, SEBI risk material.
 - **Best source:** NISM/NSE for Indian physical settlement rules; use Zerodha Varsity for call payoff basics.
 
-##### 1.8 Protective Put / Married Put on stock holding || (on shares holdings)
+##### 1.8 Protective Put / Married Put on stock holding || (on shares holdings) || not now 
 
 - **Basic definition:** Hold shares and buy a `PE` on the same stock to protect downside.
 - **Market view:** Bullish long-term on the stock but wants protection against near-term fall.
@@ -585,7 +716,7 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 
 #### 2. Hedging strategies
 
-##### 2.1 Protective Put || (on shares holdings)
+##### 2.1 Protective Put || (on shares holdings) || institutional portfolio managers || not now 
 
 - **Basic definition:** Buy a `PE` to hedge an existing long stock or portfolio exposure.
 - **Market view:** You want to stay invested but limit downside for a defined period.
@@ -597,7 +728,7 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **From where to learn:** NISM Equity Derivatives, SEBI derivatives education, NSE Academy options strategies.
 - **Best source:** NISM for hedging concepts and Indian settlement/risk framework.
 
-##### 2.2 Collar || (on shares holdings)
+##### 2.2 Collar || (on shares holdings) || institutional portfolio managers|| not now 
 
 - **Basic definition:** Hold shares, buy a protective `PE`, and sell a higher strike `CE` to reduce hedge cost.
 - **Market view:** You want downside protection and are willing to cap upside.
@@ -612,7 +743,7 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **From where to learn:** NISM Equity Derivatives, NSE Academy options strategies, NSE settlement mechanism.
 - **Best source:** NISM/NSE for Indian hedging and physical settlement rules.
 
-##### 2.3 Covered Call || (on shares holdings)
+##### 2.3 Covered Call || (on shares holdings) || institutional portfolio managers|| not now 
 
 - **Basic definition:** Own shares and sell a `CE` against the holding.
 - **Market view:** Neutral to mildly bullish; used to generate premium income from existing stock holding.
@@ -624,7 +755,16 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **From where to learn:** NISM Equity Derivatives, NSE settlement mechanism, Zerodha Varsity Module 5 call payoff.
 - **Best source:** NSE/NISM for settlement and risk; Varsity for basic call mechanics.
 
-##### 2.4 Synthetic Long Futures / Synthetic Long Stock
+##### 2.4 Synthetic Long Futures / Synthetic Long Stock || institutional portfolio managers|| not now 
+> **Leg 1:** Buy a Call option (Bullish, unlimited upside)
+> **Leg 2:** Sell a Put option (Bullish/Neutral, downside risk if price falls)
+> **Core Goal:** Replicate the linear delta-1 payoff of a futures contract without trading the actual high-margin futures contract.
+> If you are strictly an options trader, do not trade futures, and do not hold an underlying stock portfolio, this strategy is absolutely NOT a hedge.
+> For a retail options trader, this is a highly speculative, high-risk directional bet
+> **No Offsetting Positions:** A hedge requires two opposing forces to balance each other out. If you only trade this options combo by itself, you have nothing to balance.
+> **Pure Downside Exposure:** You are acting as a naked option seller on the Put side. If the NIFTY 50 crashes, your long Call becomes worthless, and your short Put will lose a massive amount of money with no protection.
+> **High Margin Requirement:** Because you are selling an uncovered Put, your broker will block a substantial amount of margin capital (similar to trading a future) because of the immense risk.
+
 
 - **Basic definition:** Buy `CE` and sell `PE` at the same strike and same expiry to create payoff similar to a long futures position.
 - **Market view:** Bullish; behaves like long futures, not like limited-risk option buying.
@@ -640,7 +780,8 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **Best source:** Zerodha Varsity Module 6 for Indian examples.
 - `https://web.sensibull.com/learn-options-strategies/long-synthetic-future`
 
-##### 2.5 Synthetic Short Futures / Synthetic Short Stock
+##### 2.5 Synthetic Short Futures / Synthetic Short Stock || institutional portfolio managers|| not now
+> For a pure options trader with no underlying stock portfolio, a Synthetic Short Future is absolutely NOT a hedge—it is a highly aggressive, high-risk bearish bet.
 
 - **Basic definition:** Buy `PE` and sell `CE` at the same strike and same expiry to create payoff similar to a short futures position.
 - **Market view:** Bearish; behaves like short futures.
@@ -656,7 +797,8 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **Best source:** Zerodha Varsity Module 6 plus NISM for risk.
 - `https://web.sensibull.com/learn-options-strategies/short-synthetic-future`
 
-##### 2.6 Delta Hedging
+##### 2.6 Delta Hedging ||  institutional portfolio managers || not now
+> To delta hedge a single option position, you must trade an underlying asset (like NIFTY futures or an exact basket of NIFTY stocks) to offset the delta. If you refuse to trade futures or hold a stock portfolio, you cannot perform true delta hedging
 
 - **Basic definition:** Adjust stock/futures/options positions so the net delta of the portfolio is close to the desired level, often near zero for market-neutral hedging.
 - **Market view:** Risk management method, not one fixed directional strategy.
@@ -668,7 +810,13 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 
 #### 3. Volatility strategies
 
-##### 3.1 Long Straddle
+##### 3.1 Long Straddle (पैर फैलाकर बैठना) || net debit  || option buyer ||
+> The target trader is a volatility trader who expects a massive price swing in NIFTY 50 in either direction (up or down) but does not know which way it will go.
+> Time decay (Theta) will hurt your position very fast if the market stays still. This is rarely used for a standard straddle because the risk-reward is poor.
+> **Maximum Loss:** Limited to the total premium paid (happens if NIFTY stays right at the strike price at expiry).
+> **Maximum Profit:** Unlimited if NIFTY surges or crashes heavily.
+> **Time Decay:** Time is the buyer's enemy; if NIFTY moves sideways, both options lose value daily.
+> You do not choose a side. You place one "leg" on the bullish side and one "leg" on the bearish side.
 
 - **Basic definition:** Buy one `CE` and one `PE` at the same strike and same expiry.
 - **Market view:** Expect a large move, but direction is uncertain. Usually used before events only if premiums are not too expensive.
@@ -683,7 +831,10 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **Best source:** Zerodha Varsity Module 6 for Indian payoff example.
 - `https://web.sensibull.com/learn-options-strategies/long-straddle`
 
-##### 3.2 Long Strangle
+##### 3.2 Long Strangle (गला घोंटना) || (buy OTM CE & buy OTM PE) || net debit  || option buyer ||
+> The targeted trader is a volatility trader who expects a massive, sharp price swing in the underlying asset before expiration, but does not know whether the market will break upward or downward
+> **Why OTM over ITM:** Using In-the-Money (ITM) strikes would make the trade expensive (like a deep long combination or costly straddle). OTM options are cheaper, lowering the total risk, though they require a larger market breakout to turn a profit.
+> By buying or selling these two separate lines, you are essentially `choking the current market price` between two tight walls.
 
 - **Basic definition:** Buy an OTM `CE` and an OTM `PE` of the same underlying and same expiry.
 - **Market view:** Expect a large move in either direction, but want cheaper entry than straddle.
@@ -698,7 +849,11 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **Best source:** Zerodha Varsity Module 6.
 - `https://web.sensibull.com/learn-options-strategies/long-strangle`
 
-##### 3.3 Short Straddle
+##### 3.3 Short Straddle (पैर फैलाकर बैठना) || net credit || option seller || 
+> targeting neutral or `sideways markets`. The trader sells both an At-The-Money (ATM) call and an ATM put at the same strike price and expiry, collecting maximum upfront premium and profiting from time decay (Theta) and falling volatility
+> **Target Trader:** Advanced/experienced option sellers with high risk tolerance.
+> **Core Goal:** Expect the underlying index to stay flat or range-bound so both options expire worthless.
+> **Risk/Reward:** Limited maximum profit (the total premium collected) and high/unlimited potential risk if NIFTY moves sharply
 
 - **Basic definition:** Sell one `CE` and one `PE` at the same strike and same expiry.
 - **Market view:** Expect the underlying to stay near the sold strike and implied volatility/time value to fall.
@@ -713,7 +868,10 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **Best source:** Zerodha Varsity Module 6 for payoff; SEBI/NISM for risk awareness.
 - `https://web.sensibull.com/learn-options-strategies/short-straddle`
 
-##### 3.4 Short Strangle
+##### 3.4 Short Strangle (गला घोंटना) || net credit || option seller || 
+> **Market Outlook:** Neutral or low volatility. The seller expects the index to stay inside a specific safe zone until expiration.
+> **Profit Source:** Time decay (Theta) and drops in market volatility, which make both OTM contracts lose value so they can expire worthless.
+> **Risk** If a sharp breakout pushes NIFTY past 24,600 or below 23,400, losses can grow rapidly and become theoretically unlimited.
 
 - **Basic definition:** Sell an OTM `CE` and an OTM `PE` of the same underlying and same expiry.
 - **Market view:** Expect range-bound movement between the sold strikes.
@@ -727,10 +885,21 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **Best source:** Zerodha Varsity Module 6 plus SEBI/NISM risk material.
 - `https://web.sensibull.com/learn-options-strategies/short-strangle`
 
-##### 3.5 Long Call Butterfly
+##### 3.5 Long Call Butterfly || option buyer || 
+> It is executed by an option buyer because you pay a net debit upfront to set up the four legs. However, it embeds short options (the body) to cheapen the trade
+> 
+
 - **Basic definition:** A three-strike limited-risk strategy using calls: buy 1 lower strike `CE`, sell 2 middle strike `CE`, buy 1 higher strike `CE`, same expiry and equal strike spacing.
 - **Market view:** Expect expiry near the middle strike with low movement.
 - **Basic example:** 
+  - Assume the NIFTY 50 index is trading at `24,000`. A trader expects NIFTY to stay near 24,000 and expire right there at the end of the month. 
+  - They set up an equidistant 100-point Long Call Butterfly using 4 contracts:
+  - **Buy 1 ITM Call (Lower Wing):** Strike 23,900 Call at a cost of ₹180.
+  - **Sell 2 ATM Calls (The Body):** Strike 24,000 Call, collecting ₹100 each = ₹200 collected.
+  - **Buy 1 OTM Call (Upper Wing):** Strike 24,100 Call at a cost of ₹45.
+  - Net Debit Paid (Max Loss): ₹180 (ITM bought) + ₹45 (OTM bought) - ₹200 (2 ATM sold) = ₹25 net debit. This is your total risk.
+
+
   - `NIFTY = 22,000`. 
   - Buy `21,800 CE`, 
   - sell 2 lots `22,000 CE`, 
@@ -742,7 +911,12 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **Best source:** NSE Academy for strategy payoff; NSE/BSE option chain for tradability.
 - `https://web.sensibull.com/learn-options-strategies/bull-butterfly`
 
-##### 3.6 Long Put Butterfly
+##### 3.6 Long Put Butterfly || option buyer || 
+> **Strategy Structure (1:2:1 Ratio)** Assume NIFTY 50 trades at 24,000. You choose a 200-point strike interval
+  - **Buy 1 Higher-Strike Put (In-The-Money / ITM)** Buy 1 ITM Put at strike 24,200 (Higher strike)
+  - **Sell 2 Middle-Strike Puts (At-The-Money / ATM)** Sell 2 ATM Puts at strike 24,000 (Middle strike)
+  - **Buy 1 Lower-Strike Put (Out-of-The-Money / OTM)** Buy 1 OTM Put at strike 23,800 (Lower strike)
+
 - **Basic definition:** A three-strike limited-risk strategy using puts: buy 1 higher strike `PE`, sell 2 middle strike `PE`, buy 1 lower strike `PE`, same expiry and equal strike spacing.
 - **Market view:** Expect expiry near the middle strike with low movement.
 - **Basic example:** 
@@ -756,10 +930,23 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **From where to learn:** NSE Academy options strategies, NISM Equity Derivatives.
 - **Best source:** NSE Academy for payoff construction.
 
-##### 3.7 Long Iron Butterfly
+##### 3.7 Long Iron Butterfly || option seller || 
+> designed for neutral, range-bound traders who profit from low volatility and time decay.
+> **Target Trader:** Premium seller / neutral market trader.
+> **Market Outlook:** Sideways, stable, or low-volatility.
+
 - **Basic definition:** Buy ATM `CE` and ATM `PE`, then sell one OTM `CE` and one OTM `PE` as wings. It is the debit/long-volatility version of an iron butterfly.
 - **Market view:** Expect a large move away from the middle strike, but want defined risk and capped profit.
 - **Basic example:** 
+  - Assume NIFTY is trading at 24,000 (At-The-Money / ATM). You set up an Iron Butterfly with 500-point wings:
+  - **Sell (Short) 1 ATM Call:** Strike 24,000 CE (Earns premium)
+  - **Sell (Short) 1 ATM Put:** Strike 24,000 PE (Earns premium)
+    - You sell these options. They carry the highest time decay (theta) and highest initial value. Your goal is for NIFTY to stay right here so these expire at zero, letting you pocket the cash.
+  - **Buy (Long) 1 OTM Call:** Strike 24,500 CE (Protection wing, costs less premium)
+  - **Buy (Long) 1 OTM Put:** Strike 23,550/23,500 PE (Protection wing, costs less premium)
+    - buy these options. They act as insurance ("wings"). If NIFTY crashes to 23,000 or surges to 25,000, your losses are strictly capped because your OTM bought options turn into ITM safety nets, preventing catastrophic loss.
+
+---------------------------------------------------------------------------------
   - `NIFTY = 22,000`. 
   - Buy `22,000 CE`, 
   - buy `22,000 PE`, 
@@ -774,27 +961,56 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 
 #### 4. Range-bound / neutral strategies
 
-##### 4.1 Iron Condor
+##### 4.1 Iron Condor (बड़ा गिद्ध) || option seller || Sideways || 
+> **Market Outlook:** Sideways or range-bound (expects the index to stay calm)
+> **Primary Goal:** Collect upfront premium and let time decay erode option values so all legs expire worthless or can be bought back cheaper.
 
 - **Basic definition:** Sell an OTM `PE` spread and sell an OTM `CE` spread together. It is a defined-risk range strategy.
 - **Market view:** Expect underlying to stay between sold put and sold call strikes.
-- **Basic example:** `NIFTY = 22,000`. Buy `21,600 PE`, sell `21,800 PE`, sell `22,200 CE`, buy `22,400 CE`. If net credit is `80`, maximum profit = `80`. Maximum loss = wing width `200 - 80 = 120`.
+- **Basic example:** 
+  - NIFTY 50 Index Example SetupAssume NIFTY 50 is trading at `24,500`. A trader expects NIFTY to stay between 24,000 and 25,000 until expiration. They construct an Iron Condor using 4 legs on the same expiry:
+  - **Sell (Short) 1 OTM Put:** Strike `24,000 PE` (Seller collects premium)
+  - **Buy (Long) 1 Farther OTM Put:** Strike `23,800 PE` (Buyer pays a smaller premium to cap downside risk)
+  - **Sell (Short) 1 OTM Call:** Strike `25,000 CE` (Seller collects premium)
+  - **Buy (Long) 1 Farther OTM Call:** Strike `25,200 CE` (Buyer pays a smaller premium to cap upside risk)
+
+------------------------------------------------------------------------
+
+  - `NIFTY = 22,000`. 
+    - Buy `21,600 PE`, 
+    - sell `21,800 PE`, 
+    - sell `22,200 CE`, 
+    - buy `22,400 CE`. 
+  - If net credit is `80`, maximum profit = `80`. Maximum loss = wing width `200 - 80 = 120`.
+
 - **Risk and reward:** Limited profit and limited loss. Profit comes from time decay if price stays in the range.
 - **Indian market note:** Zerodha Varsity discusses iron condor under Indian margin framework context. Always verify live margin and liquidity.
 - **From where to learn:** Zerodha Varsity Module 6 chapter on Iron Condor, NSE Academy options strategies.
 - **Best source:** Zerodha Varsity Module 6 for Indian example and margin context.
 
-##### 4.2 Iron Butterfly
+##### 4.2 Iron Butterfly || option seller || Sideways || 
+> **Sell** an At-The-Money (ATM) Call and an ATM Put (the short body).
+> **Buy** an Out-Of-The-Money (OTM) Call and an OTM Put (the protective wings).
 
 - **Basic definition:** Sell ATM `CE` and ATM `PE`, then buy protective OTM `CE` and OTM `PE`.
 - **Market view:** Strong range-bound view around one central strike.
-- **Basic example:** `NIFTY = 22,000`. Sell `22,000 CE`, sell `22,000 PE`, buy `22,200 CE`, buy `21,800 PE`. If net credit is `130`, max profit = `130`, max loss = `200 - 130 = 70`.
+- **Basic example:** 
+  - Assume NIFTY 50 is trading at `24,500`.
+  - The Body (Sold ATM options):
+    - **Sell** 1 NIFTY `24,500 CE` (ATM) 
+    - **Sell** 1 NIFTY `24,500 PE` (ATM)
+  - The Wings (Bought OTM options for risk cover):
+    - **Buy** 1 NIFTY `24,800 CE` (OTM Call)
+    - **Buy** 1 NIFTY `24,200 PE` (OTM Put)
+
+
+`NIFTY = 22,000`. Sell `22,000 CE`, sell `22,000 PE`, buy `22,200 CE`, buy `21,800 PE`. If net credit is `130`, max profit = `130`, max loss = `200 - 130 = 70`.
 - **Risk and reward:** Defined risk and defined reward. Narrower profit zone than iron condor.
 - **Indian market note:** Requires four legs and margin. Exit plan matters because risk can expand quickly near either wing.
 - **From where to learn:** NSE Academy options strategies, NISM, Indian broker payoff tools.
 - **Best source:** NSE Academy for payoff; broker margin/payoff calculator for live numbers.
 
-##### 4.3 Call Condor
+##### 4.3 Call Condor || option buyer || SKIPPED
 
 - **Basic definition:** A four-leg call strategy using four increasing `CE` strikes: buy lowest strike, sell next strike, sell next higher strike, buy highest strike.
 - **Market view:** Expect underlying to expire between the two short call strikes.
@@ -806,6 +1022,26 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 
 ##### 4.4 Put Condor
 
+- **Long Put Condor** (For Option Buyers / Low Volatility)
+  - A Long Put Condor is a net debit strategy used by a trader acting primarily as an option buyer who expects the index to stay calm and range-bound within specific middle strikes.
+  - **Target Trader:** Neutral trader expecting low volatility (sideways market).
+    - NIFTY 50 Example Setup (assuming NIFTY is trading at `24,000`):
+      - **Buy** 1 ITM Put at 24,300 (Deep in-the-money / Higher strike)
+      - **Sell** 1 ITM/ATM Put at 24,100 (Higher middle strike)
+      - **Sell** 1 OTM Put at 23,900 (Lower middle strike)
+      - **Buy** 1 OTM Put at 23,700 (Far out-of-the-money / Lowest strike)
+    - **Goal:** You pay a net debit to enter. Maximum profit is achieved if NIFTY expires right between the two short middle strikes (23,900 and 24,100).
+
+- **Short Put Condor** (For `Option Sellers` / High Volatility)
+  - A Short Put Condor is a net credit strategy used by a trader acting primarily as an option seller who expects a sharp breakout or high volatility in either direction.
+  - **Target Trader:** Directional/breakout trader expecting a large price swing up or down.
+  - NIFTY 50 Example Setup (assuming NIFTY is trading at `24,000`):
+    - **Sell** 1 OTM Put at 23,900 (Lower strike - premium collected)
+    - **Buy** 1 OTM Put at 23,700 (Lower middle strike - protection)
+    - **Buy** 1 ITM Put at 24,100 (Higher middle strike - protection)
+    - **Sell** 1 ITM Put at 24,300 (Higher strike - premium collected)
+  - **Goal:** You collect a net credit upfront. Maximum profit is achieved if NIFTY makes a strong move and breaks out past your outer short strikes (either dropping below 23,900 or rallying above 24,300).
+
 - **Basic definition:** A four-leg put strategy using four decreasing `PE` strikes: buy highest strike, sell next strike, sell next lower strike, buy lowest strike.
 - **Market view:** Expect underlying to expire between the two short put strikes.
 - **Basic example:** `NIFTY = 22,000`. Buy `22,300 PE`, sell `22,100 PE`, sell `21,900 PE`, buy `21,700 PE`. If net debit is `75`, maximum loss = `75`. Maximum profit is approximately `200 - 75 = 125` if expiry is between `21,900` and `22,100`.
@@ -814,7 +1050,7 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **From where to learn:** NSE Academy options strategies, NISM, broker payoff tools.
 - **Best source:** NSE Academy for payoff structure.
 
-##### 4.5 Short Straddle
+##### 4.5 Short Straddle || [3.3 Short Straddle](#33-short-straddle) ||
 
 - **Basic definition:** Sell ATM `CE` and ATM `PE` of same strike and expiry.
 - **Market view:** Neutral and low-volatility view.
@@ -824,7 +1060,7 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **From where to learn:** Zerodha Varsity Module 6 Short Straddle, SEBI/NISM risk material.
 - **Best source:** Zerodha Varsity for payoff and SEBI/NISM for risk warning.
 
-##### 4.6 Short Strangle
+##### 4.6 Short Strangle || [4.6 Short Strangle](#46-short-strangle) || 
 
 - **Basic definition:** Sell OTM `CE` and OTM `PE` of same expiry.
 - **Market view:** Neutral/range-bound view with wider range than short straddle.
@@ -846,35 +1082,35 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **From where to learn:** Zerodha Varsity Module 6 spread chapters, NSE Academy options strategies.
 - **Best source:** Zerodha Varsity Module 6.
 
-##### 5.1.1 Bull Call Spread
+##### 5.1.1 Bull Call Spread || [1.3 Bull Call Spread](#13-bull-call-spread)
 
 - **Basic definition:** Buy lower strike `CE`, sell higher strike `CE`, same expiry.
 - **Basic example:** Buy `22,000 CE` at `150`, sell `22,300 CE` at `60`; net debit `90`; max profit `210`; max loss `90`.
 - **From where to learn:** Zerodha Varsity Module 6 Bull Call Spread.
 - **Best source:** Zerodha Varsity Module 6.
 
-##### 5.1.2 Bear Put Spread
+##### 5.1.2 Bear Put Spread || [1.4 Bear Put Spread](#14-bear-put-spread)
 
 - **Basic definition:** Buy higher strike `PE`, sell lower strike `PE`, same expiry.
 - **Basic example:** Buy `22,000 PE` at `140`, sell `21,700 PE` at `55`; net debit `85`; max profit `215`; max loss `85`.
 - **From where to learn:** Zerodha Varsity Module 6 Bear Put Spread.
 - **Best source:** Zerodha Varsity Module 6.
 
-##### 5.1.3 Bull Put Spread
+##### 5.1.3 Bull Put Spread || [1.5 Bull Put Spread](#15-bull-put-spread)
 
 - **Basic definition:** Sell higher strike `PE`, buy lower strike `PE`, same expiry.
 - **Basic example:** Sell `21,900 PE` at `90`, buy `21,700 PE` at `40`; net credit `50`; max profit `50`; max loss `150`.
 - **From where to learn:** Zerodha Varsity Module 6 Bull Put Spread.
 - **Best source:** Zerodha Varsity Module 6 plus broker margin calculator.
 
-##### 5.1.4 Bear Call Spread
+##### 5.1.4 Bear Call Spread || [1.6 Bear Call Spread](#16-bear-call-spread)
 
 - **Basic definition:** Sell lower strike `CE`, buy higher strike `CE`, same expiry.
 - **Basic example:** Sell `22,100 CE` at `100`, buy `22,300 CE` at `45`; net credit `55`; max profit `55`; max loss `145`.
 - **From where to learn:** Zerodha Varsity Module 6 Bear Call Spread.
 - **Best source:** Zerodha Varsity Module 6 plus broker margin calculator.
 
-##### 5.2 Calendar Spread
+##### 5.2 Calendar Spread || not same expiry 
 
 - **Basic definition:** Buy and sell options of the same type and strike but different expiries. Usually sell near expiry and buy later expiry.
 - **Market view:** Expect near-term time decay while maintaining longer-term optionality.
@@ -884,7 +1120,7 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **From where to learn:** NSE Academy options strategies, NISM, broker payoff/margin tools.
 - **Best source:** NSE Academy/NISM for concept; NSE/BSE contract specs for actual expiries.
 
-##### 5.3 Diagonal Spread
+##### 5.3 Diagonal Spread || not same expiry 
 
 - **Basic definition:** Buy and sell options with different strikes and different expiries.
 - **Market view:** Directional plus time-decay/volatility view.
@@ -894,17 +1130,26 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **From where to learn:** NSE Academy options strategies, NISM Greeks/risk sections, broker payoff tools.
 - **Best source:** NSE Academy for structure; NISM for Greeks/risk.
 
-##### 5.4 Ratio Spread
+##### 5.4 Ratio Spread || option seller || Sideways or slightly bullish/bearish || 
+> Who it is for: Primarily an option seller (front ratio spread) because you sell more contracts than you buy. However, variants like the backspread exist for buyers.
+> **Market Outlook:** Range-bound, slightly bullish/bearish, expecting the index to stall at a specific resistance or support.
+> **Core Mechanics:** You buy 1 option and sell 2 (or more) options at a further strike.
 
 - **Basic definition:** Buy options at one strike and sell a larger number of options at another strike, usually same expiry. Example: buy 1 option and sell 2 options.
 - **Market view:** Directional or range view depending on construction, but extra short option can create large risk.
-- **Basic example:** Buy 1 `22,000 CE`, sell 2 `22,300 CE`. If NIFTY rises moderately toward `22,300`, it can profit; if it rises far above `22,300`, the extra short call can create large loss.
+- **Basic example:** 
+  - Assume Nifty 50 is trading at `24,000`. You expect Nifty to rise moderately and stall near 24,300 by expiry. You execute a 1:2 Call Ratio Spread:
+  - **Leg 1 (Long/Buy):** Buy 1 Nifty 24,000 Call (At-The-Money / Near-ITM) at a cost of ₹150.
+  - **Leg 2 (Short/Sell):** Sell 2 Nifty 24,300 Calls (Out-of-The-Money / OTM) at ₹70 each (Total premium received = ₹140).Net Cash Flow: Net debit of ₹10 (₹140 received - ₹150 paid).
+------------------------------------------------------------------------------------------------------------
+
+Buy 1 `22,000 CE`, sell 2 `22,300 CE`. If NIFTY rises moderately toward `22,300`, it can profit; if it rises far above `22,300`, the extra short call can create large loss.
 - **Risk and reward:** Risk can become large because of the uncovered extra short option.
 - **Indian market note:** Margin requirement and gap risk are serious. Beginners should learn it on paper only.
 - **From where to learn:** Zerodha Varsity Module 6 ratio/backspread chapters, NSE Academy options strategies.
 - **Best source:** Zerodha Varsity Module 6 for ratio/backspread mechanics; SEBI/NISM for risk warning.
 
-##### 5.5 Backspread Call / Put
+##### 5.5 Backspread Call / Put || option buyer || SKIPPED 
 
 - **Basic definition:** A ratio strategy where you sell fewer options and buy more options, often designed to benefit from a large move.
 - **Market view:** Call backspread is bullish with large upside move expectation. Put backspread is bearish with large downside move expectation.
@@ -915,7 +1160,7 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **From where to learn:** Zerodha Varsity Module 6 chapters on Call Ratio Back Spread and Put Ratio Back Spread.
 - **Best source:** Zerodha Varsity Module 6.
 
-##### 5.6 Butterfly Spread
+##### 5.6 Butterfly Spread || option buyers || SKIPPED 
 
 - **Basic definition:** A three-strike strategy with limited risk and limited reward, built using calls or puts. Common form: buy 1 lower strike, sell 2 middle strike, buy 1 higher strike.
 - **Market view:** Expect price to expire near the middle strike.
@@ -925,7 +1170,7 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **From where to learn:** NSE Academy options strategies, NISM, broker payoff tools.
 - **Best source:** NSE Academy for payoff framework.
 
-##### 5.7 Box Spread / Conversion-Reversal Arbitrage
+##### 5.7 Box Spread / Conversion-Reversal Arbitrage || institutional portfolio managers
 
 - **Basic definition:** A box spread combines a bull call spread and bear put spread with same strikes and expiry. Conversion/reversal uses options plus stock/futures to exploit put-call parity mispricing.
 - **Market view:** Arbitrage or financing strategy, not a normal directional trade.
@@ -938,7 +1183,7 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 
 #### 6. Income / theta strategies
 
-##### 6.1 Covered Call
+##### 6.1 Covered Call || (on shares holdings) || 1.7 Covered Call || 
 
 - **Basic definition:** Own shares and sell a `CE` to collect premium.
 - **Basic example:** Hold stock at `1,000`, sell `1,050 CE` at `20`; premium gives income, but upside is capped and stock downside remains.
@@ -946,7 +1191,7 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **From where to learn:** NISM Equity Derivatives, NSE settlement mechanism, Zerodha Varsity call basics.
 - **Best source:** NISM/NSE for physical settlement.
 
-##### 6.2 Cash-Secured Put on physically settled stock options
+##### 6.2 Cash-Secured Put on physically settled stock options || Cash-Settled Vs stock-Settled  
 
 - **Basic definition:** Sell a `PE` only when you keep enough cash to take delivery of the stock if assigned/settled.
 - **Market view:** You are willing to buy the stock at an effective lower price.
@@ -956,17 +1201,25 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **From where to learn:** NSE settlement mechanism, NSE contract specs, NISM Equity Derivatives, SEBI investor risk material.
 - **Best source:** NSE/NISM for Indian physical settlement and risk.
 
-##### 6.3 Credit Spreads
+##### 6.3 Credit Spreads || option seller || 1.5 Bull Put Spread
+> **Target Trader:** The net seller of options who wants the high statistical win rate of selling but needs protection against unlimited risk.
+> **Core Action:** You sell one option (collecting a higher premium) and simultaneously buy another option (paying a lower premium). This results in a net cash inflow (credit) into your account.
 
 - **Basic definition:** Defined-risk option spreads entered for net credit, such as bull put spread or bear call spread.
 - **Market view:** Expect the underlying to stay away from the sold strike.
-- **Basic example:** Sell `21,900 PE` at `90`, buy `21,700 PE` at `40`. Net credit `50`; max loss `150`; max profit `50`.
+- **Basic example:** 
+  - Assume the Nifty 50 index is trading flat at `24,000`. A trader using a **Bull Put Spread** (a bullish credit spread) utilizes both ITM/ATM and OTM strikes:
+    - **Sell (Short) Leg (Higher/Near Strike):** Sell a `24,000` Put (At-The-Money / near-the-money) and collect a premium of ₹150.Buy (Long) Leg (Lower/Far Strike): 
+    - **Buy** a `23,800` Put (Out-of-The-Money protection) by paying a premium of ₹60.
+    - **Net Credit Received:** ₹150 (sold) - ₹60 (bought) = ₹90 per share ( Net credit inflow).
+
+Sell `21,900 PE` at `90`, buy `21,700 PE` at `40`. Net credit `50`; max loss `150`; max profit `50`.
 - **Risk and reward:** Profit limited to credit. Loss limited by hedge option but can be larger than profit.
 - **Indian market note:** Requires margin. Credit received is not guaranteed profit.
 - **From where to learn:** Zerodha Varsity Module 6 bull put/bear call spread chapters, NSE Academy options strategies.
 - **Best source:** Zerodha Varsity Module 6 plus broker margin calculator.
 
-##### 6.4 Short Straddle
+##### 6.4 Short Straddle || [3.3 Short Straddle](#33-short-straddle)
 
 - **Basic definition:** Sell ATM `CE` and ATM `PE`.
 - **Basic example:** Sell `22,000 CE` at `150` and `22,000 PE` at `140`; total credit `290`.
@@ -974,7 +1227,7 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **From where to learn:** Zerodha Varsity Module 6 Short Straddle, SEBI/NISM risk material.
 - **Best source:** Zerodha Varsity for payoff; SEBI/NISM for risk.
 
-##### 6.5 Short Strangle
+##### 6.5 Short Strangle || [3.4 Short Strangle](#34-short-strangle)
 
 - **Basic definition:** Sell OTM `CE` and OTM `PE`.
 - **Basic example:** Sell `22,300 CE` at `60` and `21,700 PE` at `55`; total credit `115`.
@@ -982,7 +1235,7 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **From where to learn:** Zerodha Varsity Module 6 Long and Short Strangle, NSE Academy.
 - **Best source:** Zerodha Varsity Module 6.
 
-##### 6.6 Iron Condor
+##### 6.6 Iron Condor || [4.1 Iron Condor](#41-iron-condor)
 
 - **Basic definition:** Sell OTM call spread and OTM put spread together to collect credit with defined risk.
 - **Basic example:** Buy `21,600 PE`, sell `21,800 PE`, sell `22,200 CE`, buy `22,400 CE`; if credit `80`, max loss `120` for `200`-point wings.
@@ -990,7 +1243,7 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **From where to learn:** Zerodha Varsity Module 6 Iron Condor, NSE Academy.
 - **Best source:** Zerodha Varsity Module 6.
 
-##### 6.7 Iron Butterfly
+##### 6.7 Iron Butterfly || [4.2 Iron Butterfly](#42-iron-butterfly)
 
 - **Basic definition:** Sell ATM straddle and buy OTM wings to cap risk.
 - **Basic example:** Sell `22,000 CE`, sell `22,000 PE`, buy `22,200 CE`, buy `21,800 PE`; if credit `130`, max loss `70` for `200`-point wings.
@@ -1000,7 +1253,7 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 
 #### 7. High-risk strategies: learn, but avoid as beginner
 
-##### 7.1 Naked Short Call
+##### 7.1 Naked Short Call || AVOID ||
 
 - **Basic definition:** Sell a `CE` without owning the underlying or buying a protective higher strike `CE`.
 - **Market view:** Bearish or neutral, but risk is very high if market rises.
@@ -1010,7 +1263,7 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **From where to learn:** SEBI investor derivatives risk material, NISM Equity Derivatives, Zerodha Varsity call writing payoff basics.
 - **Best source:** SEBI/NISM for risk awareness.
 
-##### 7.2 Naked Short Put
+##### 7.2 Naked Short Put || AVOID ||
 
 - **Basic definition:** Sell a `PE` without holding cash/hedge sufficient for the downside.
 - **Market view:** Bullish or neutral, but risk is high if market falls sharply.
@@ -1020,7 +1273,7 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **From where to learn:** SEBI investor derivatives risk material, NISM Equity Derivatives, NSE settlement mechanism.
 - **Best source:** SEBI/NISM plus NSE settlement rules.
 
-##### 7.3 Short Straddle
+##### 7.3 Short Straddle || [3.3 Short Straddle](#33-short-straddle)
 
 - **Basic definition:** Sell ATM `CE` and ATM `PE` at same strike and expiry.
 - **Market view:** Very strong view that market will stay near the strike and volatility will fall.
@@ -1030,7 +1283,7 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **From where to learn:** Zerodha Varsity Module 6, SEBI/NISM risk material.
 - **Best source:** Zerodha Varsity for payoff; SEBI for risk awareness.
 
-##### 7.4 Short Strangle
+##### 7.4 Short Strangle || [3.4 Short Strangle](#34-short-strangle)
 
 - **Basic definition:** Sell OTM `CE` and OTM `PE` of same expiry.
 - **Market view:** Market stays inside a wide range.
@@ -1040,7 +1293,7 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **From where to learn:** Zerodha Varsity Module 6, NSE Academy, SEBI/NISM.
 - **Best source:** Zerodha Varsity for payoff; NISM for risk.
 
-##### 7.5 Ratio Spread with extra short option
+##### 7.5 Ratio Spread with extra short option || 5.4 Ratio Spread
 
 - **Basic definition:** A ratio spread where the number of sold options is greater than bought options, leaving uncovered short exposure.
 - **Market view:** Moderate move or range view, but dangerous if the underlying moves too far.
@@ -1050,7 +1303,7 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **From where to learn:** Zerodha Varsity Module 6 ratio/backspread chapters, NSE Academy options strategies.
 - **Best source:** Zerodha Varsity Module 6 plus SEBI/NISM risk material.
 
-##### 7.6 Stock option positions held to expiry without delivery planning
+##### 7.6 Stock option positions held to expiry without delivery planning || Stocks only (not index NIFTY50, BANKNIFTY)
 
 - **Basic definition:** Holding ITM stock options or short stock option positions into expiry without understanding physical settlement and delivery obligation.
 - **Market view:** This is not a strategy; it is an operational and risk-management mistake.
@@ -1059,7 +1312,6 @@ Greeks and IV change continuously, so this is a planning estimate—not a predic
 - **Indian market note:** NSE states options on individual securities are European style and physically settled. Always square off or prepare delivery/cash before expiry according to broker deadlines.
 - **From where to learn:** NSE Clearing settlement mechanism, NSE contract specifications, NISM Equity Derivatives.
 - **Best source:** NSE Clearing settlement mechanism and broker physical settlement policy.
-
 
 
 ## 6. Best references to learn (Books/Blogs/Videos/Websites/Courses)
