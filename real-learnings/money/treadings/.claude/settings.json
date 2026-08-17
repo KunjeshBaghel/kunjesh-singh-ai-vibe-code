@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 20,
+            "statusMessage": "Checking trading MCP connections...",
+            "command": "python3 -c \"\nimport subprocess, json, sys\ntry:\n    out = subprocess.check_output(['claude', 'mcp', 'list'], stderr=subprocess.DEVNULL, timeout=15, text=True)\nexcept Exception:\n    out = ''\nnot_connected = []\nfor name, label in [('kite', 'Kite (Zerodha)'), ('kotak-neo', 'Kotak Neo'), ('dhan', 'Dhan')]:\n    line = next((l for l in out.splitlines() if l.strip().startswith(name + ':')), None)\n    if not line or 'Connected' not in line:\n        not_connected.append(label)\nif not_connected:\n    msg = 'TRADING MCP WARNING: ' + ', '.join(not_connected) + ' not connected.\\nLogin before any trade analysis — see docs/broker-session-startup.md'\n    print(json.dumps({'systemMessage': msg}))\n\""
+          }
+        ]
+      }
+    ]
+  }
+}

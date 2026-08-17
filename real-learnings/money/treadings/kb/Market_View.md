@@ -112,7 +112,7 @@ Apply to **Index Futures OI** (NSE participant data or Sensibull Fut OI vs Time)
 
 ##### @Fii_Dii_Data on X
 
-- **Handler:** FIIDII Data — [@Fii_Dii_Data](https://x.com/Fii_Dii_Data)
+- **Handler:** FIIDII Data — [@Fii_Dii_Data](https://x.com/Fii_Dii_Data) || [@FII_DII_Nifty](https://x.com/FII_DII_Nifty)
 - **Note:** Open the info on tab manually so that the AI is able to read the data for better interpretation.
 
 **Reference image (sample — 14 Jul 2026)**

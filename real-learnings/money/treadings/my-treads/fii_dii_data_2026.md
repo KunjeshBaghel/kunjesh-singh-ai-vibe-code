@@ -55,6 +55,78 @@ Note: The numbers are often denoted with an 'L', which stands for Lakhs (1 Lakh 
 
 Here is the data from the image converted into the requested markdown format:
 
+
+## 14/08/2026 - FII DII FNO ACTIVITY
+
+| Category | Instrument | Change | Activity | Trend |
+| :--- | :--- | :--- | :--- | :--- |
+| **FII** | Future | -7,996 | Sold Futures | Bearish |
+| | CE | 12,196 | Bought Calls | Bullish |
+| | PE | 23,060 | Bought Puts | Bearish |
+| **PRO** | Future | 959 | Bought Futures | Bullish |
+| | CE | 49,637 | Bought Calls | Bullish |
+| | PE | 99,219 | Bought Puts | Bearish |
+| **DII** | Future | 741 | Bought Futures | Bullish |
+| | CE | -40 | Sold Calls | Bearish |
+| | PE | -148 | Sold Puts | Bullish |
+| **RETAIL** | Future | 6,296 | Bought Futures | Bullish |
+| | CE | -61,793 | Sold Calls | Bearish |
+| | PE | -1,22,000 | Sold Puts | Bullish |
+| **OVERALL TREND** | — | — | — | **BULLISH** |
+
+> **Note:** Trend calculated using our proprietary method.  
+> **Get FREE Algo Tools at BluechipAlgos.com**
+
+## 14/08/2026 - FII Activity for Last 5 Days
+
+| Period | Net Value | Sentiment |
+| :--- | :--- | :--- |
+| **Today (T)** | -18860 | Bearish |
+| **T-1 Day** | -35814 | Bearish |
+| **T-2 Day** | -56991 | Bearish |
+| **T-3 Day** | -56963 | Bearish |
+| **T-4 Day** | -4390 | Bearish |
+| **Overall Trend: By Count** | — | **Bearish** |
+| **Overall Trend: By Sentiment** | — | **Bearish** |
+
+
+## 07/08/2026 - FII Activity for last 5 days
+
+| Period / Category | Value / Metric | Sentiment / Trend |
+| :--- | :--- | :--- |
+| Today (T) | -81711 | Bearish |
+| T-1 Day | 152876 | Bullish |
+| T-2 Day | -44168 | Bearish |
+| T-3 Day | -91757 | Bearish |
+| T-4 Day | 98667 | Bullish |
+| **Overall Trend** | By Count | Bullish |
+| | By Sentiment | Bearish |
+
+*Get FREE Algo Tools at BluechipAlgos.com*
+
+### 07/08/2026 - FII DII FNO ACTIVITY
+
+| Category | Instrument | Change | Activity | Trend |
+| :--- | :--- | :--- | :--- | :--- |
+| FII | Future | -4,940 | Sold Futures | Bearish |
+| FII | CE | -49,986 | Sold Calls | Bearish |
+| FII | PE | 26,785 | Bought Puts | Bearish |
+| PRO | Future | -1,436 | Sold Futures | Bearish |
+| PRO | CE | 49,749 | Bought Calls | Bullish |
+| PRO | PE | 1,40,000 | Bought Puts | Bearish |
+| DII | Future | -143 | Sold Futures | Bearish |
+| DII | CE | 1163 | Bought Calls | Bullish |
+| DII | PE | 1,470 | Bought Puts | Bearish |
+| RETAIL | Future | 6,519 | Bought Futures | Bullish |
+| RETAIL | CE | -927 | Sold Calls | Bearish |
+| RETAIL | PE | -1,68,000 | Sold Puts | Bullish |
+
+**OVERALL TREND: BEARISH**
+
+*Note: Trend calculated using our proprietary method*  
+*Get FREE Algo Tools at BluechipAlgos.com*
+
+
 ## 07/08/2026 - FII DII FNO ACTIVITY
 
 | Entity | Instrument | Change | Activity | Trend |

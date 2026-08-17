@@ -257,32 +257,59 @@ Supports `NSE_FNO` and `BSE_FNO` exchange segments with LIMIT, MARKET, STOP_LOSS
 
 ## Login Flow
 
-```
-1. Ask Claude: "Login to Dhan" or "Show my Dhan positions"
-2. Claude calls login → returns a browser auth URL
-3. Click the URL → complete Dhan consent flow in browser
-4. Copy the tokenId from the callback URL
-5. Tell Claude: "complete_login with token <tokenId>"
-6. Session active for the trading day
+Dhan uses a **2-phase auth**: a one-time OAuth setup (per Claude Code install) + a per-session consent login.
+
+### Phase 1 — One-time OAuth Setup (stored in `~/.claude.json`)
+
+```bash
+# Add Dhan as HTTP transport MCP (run once in terminal):
+claude mcp add --transport http --client-id <YOUR_DHAN_CLIENT_ID> dhan https://mcp.dhan.co/mcp
+# YOUR_DHAN_CLIENT_ID = your numeric Dhan account client ID (e.g. 1112807061)
+# stored in .broker_creds as DHAN_CLIENT_ID
+
+# Then authenticate via the /mcp menu in Claude Code → pick dhan → Authenticate
+# Browser opens → complete Dhan consent → "Authentication successful" page appears
+# If you get {"error":"invalid_client"}: remove and re-add with --client-id flag (see above)
 ```
 
-Or type `! npx dhan-mcp login` in the terminal if the CLI flow is configured.
+Config is stored in `~/.claude.json` (NOT `.mcp.json`). The entry looks like:
+```json
+"dhan": {
+  "type": "http",
+  "url": "https://mcp.dhan.co/mcp",
+  "oauth": { "clientId": "<YOUR_DHAN_CLIENT_ID>" }
+}
+```
+
+### Phase 2 — Per-session Dhan Login (every Claude Code session)
+
+```
+1. Ask Claude: "Login to Dhan" or "Show my Dhan positions"
+2. Claude calls mcp__dhan__login → returns a browser consent URL
+   Format: https://auth.dhan.co/consent-login?consentId=...
+3. Click the URL → log in with Dhan credentials in browser
+4. Browser redirects to: https://mcp.dhan.co/auth/callback?tokenId=...&consentId=...
+5a. If auto-binding works → "token already consumed" = SUCCESS, session active
+5b. If not auto-bound → copy tokenId from callback URL → tell Claude:
+    "complete_login with tokenId <value>"
+6. Verify: ask "Show my Dhan funds"
+```
+
+Session is valid for the trading day. Re-login (Phase 2 only) required every new Claude Code session.
 
 ---
 
-## Config (.mcp.json)
+## Config
 
-Already added to project `.mcp.json` — confirmed connected ("Authentication successful. Connected to dhan").
+Dhan uses **HTTP transport** stored in `~/.claude.json` (project-scoped), **not** `.mcp.json`.
 
-```json
-"dhan": {
-  "command": "npx",
-  "args": ["-y", "@dhan-hq/mcp-server"],
-  "env": {
-    "npm_config_registry": "https://registry.npmjs.org"
-  }
-}
-```
+Kite and Kotak Neo use `.mcp.json` with `mcp-remote` (stdio transport). Dhan is different:
+
+| Broker | Transport | Config file |
+|--------|-----------|-------------|
+| Kite (Zerodha) | stdio via `mcp-remote` | `.mcp.json` |
+| Kotak Neo | stdio via `mcp-remote` | `.mcp.json` |
+| Dhan | HTTP (OAuth) | `~/.claude.json` |
 
 ---
 
