@@ -29,7 +29,7 @@ Do **not** read the whole `kb/` tree. Pick the row that matches the ask:
 
 | If the user asks for… | Read, in this order |
 |---|---|
-| **Today's trade / "what should I trade"** | `docs/mcp-usage-log.md` §1 (what data actually works) → today's `my-treads/<Month>/<DD-MM-YYYY>/*-market_view.md` → `my-treads/fii_dii_data_2026.md` → `kb/kb1/strategy_ref_book.md` **§8.5** (regime grid) → **§8.6** (the structure) → **§8.11** (sizing) → `kb/option_chain_n_greeks.md` §7 (Go/No-Go) |
+| **Today's trade / "what should I trade" / "find best trade positions"** | `docs/mcp-usage-log.md` §1 (what data actually works) → today's `my-treads/<Month>/<DD-MM-YYYY>/*-market_view.md` → `my-treads/fii_dii_data_2026.md` → `kb/kb1/strategy_ref_book.md` **§8.5** (regime grid) → **§8.6** (the structure) → **§8.11** (sizing) → `kb/option_chain_n_greeks.md` §7 (Go/No-Go). **Always pull option chain + Go/No-Go for all three indexes: NIFTY50 (NSE, Tue expiry), BANKNIFTY (NSE, Wed expiry), and SENSEX (BSE, Thu expiry).** Compare all three before picking the best opportunity. Never analyse only one index when looking for trade positions. |
 | **A strategy blueprint / which structure** | `strategy_ref_book.md` **§8.5 → §8.6 → §8.7 → §8.10 → §8.11**. §1–§7 is textbook reference only — §8 supersedes it wherever they disagree |
 | **Market view / bias for tomorrow** | `kb/Market_View.md` (9 data points + five views + FII/DII scenarios) → `my-treads/fii_dii_data_2026.md` → prior day's `*-tread.md` |
 | **Greeks, IV, option-chain columns** | `kb/option_chain_n_greeks.md` — but first check `docs/mcp-usage-log.md` §2.1: **IV and Greeks are currently unavailable from every MCP** |
@@ -188,22 +188,21 @@ Flag any red MCP before analysing. If IV/Greeks are needed and Dhan is down, **s
 
 ## Current State / Known Blockers
 
-*Last verified: 17-Aug-2026. Full detail + evidence in `docs/mcp-usage-log.md`.*
+*Last verified: 20-Aug-2026. Full detail + evidence in `docs/mcp-usage-log.md`.*
 
 | Fact | Consequence |
 |---|---|
-| **Dhan Data API is not entitled** — `login` works, `positions`/`funds` work, but `ltp` / `expirylist` / `optionchain` all return `Unauthorized`. It is a **separate paid subscription**; re-login will never fix it. | **No IV and no Greeks from any source.** Delta-band strike selection and the IV/IVP filter are unavailable. Use §8.7.3 (the straddle rule) and §8.6.8's premium-matching proxy instead. |
-| **Do not compute Greeks locally.** The user explicitly rejected a local Black-Scholes fallback. | If Greeks are needed and Dhan is down, state the gap and ask — never silently substitute. |
+| **Dhan Data API is now activated** — full subscription (trading + market data) purchased 20-Aug-2026. Access token stored in `.broker_creds` as `DHAN_ACCESS_TOKEN`. Verify each session with `expirylist` to confirm. | **IV and Greeks from Dhan are now available.** Delta-band strike selection and the IV/IVP filter are unblocked. |
+| **Do not compute Greeks locally.** The user explicitly rejected a local Black-Scholes fallback. | Always use Dhan's pre-calculated Greeks. If Dhan data is unavailable in a session, state the gap and ask — never silently substitute. |
 | **Kite (Zerodha) has ₹500 and no `NFO`/`BFO`** in `get_profile.exchanges`. | Kite = **data source only**. Cannot execute. Data (spot, VIX, OI, `oi_day_high/low`, 5-level depth, historicals) is fully working. |
 | **Trading capital is ₹7,02,275 in Kotak Neo**, and the Kotak MCP is **read-only by design** (no order tools). | **All execution is manual in the Kotak Neo mobile app.** Claude gives structure, strikes, sizing, levels; the user places the orders. |
 | Whether **F&O is enabled on Kotak Neo** is unknown — `get_limits` doesn't expose segment entitlements. | Open question for the user. |
 
-**Effective architecture today:** Kite = data · Kotak = margin + research · Claude = analysis · **Kotak app = manual execution**. Dhan contributes nothing usable. This inverts the designed architecture in the capability map below — treat that map as *designed*, `mcp-usage-log.md` §1 as *verified*.
+**Effective architecture today:** Kite = spot/VIX/OI/depth/historicals · Dhan = option chain + Greeks + IV · Kotak = margin + research · Claude = analysis · **Kotak app = manual execution**.
 
 **Open items** (mirrored in `docs/mcp-usage-log.md` §6):
-1. Activate the Dhan Data API subscription — top blocker on the whole workflow.
-2. Confirm F&O entitlement on Kotak Neo.
-3. Decide the permanent execution venue: fund + activate F&O on Zerodha, fund Dhan, or accept manual Kotak execution.
+1. Confirm F&O entitlement on Kotak Neo.
+2. Decide the permanent execution venue: fund + activate F&O on Zerodha, fund Dhan, or accept manual Kotak execution.
 
 ---
 

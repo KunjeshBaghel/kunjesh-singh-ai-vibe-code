@@ -55,6 +55,43 @@ Note: The numbers are often denoted with an 'L', which stands for Lakhs (1 Lakh 
 
 Here is the data from the image converted into the requested markdown format:
 
+### 19/08/2026 - FII DII FNO ACTIVITY
+
+| Participant | Instrument | Change | Activity | Trend |
+| :--- | :--- | :--- | :--- | :--- |
+| **FII** | Future | -15,649 | Sold Futures | Bearish |
+| | CE | -81,925 | Sold Calls | Bearish |
+| | PE | -39,456 | Sold Puts | Bullish |
+| **PRO** | Future | 7,541 | Bought Futures | Bullish |
+| | CE | 1,05,000 | Bought Calls | Bullish |
+| | PE | 57,977 | Bought Puts | Bearish |
+| **DII** | Future | -3,504 | Sold Futures | Bearish |
+| | CE | 0 | Sold Calls | Bearish |
+| | PE | -3,104 | Sold Puts | Bullish |
+| **RETAIL** | Future | 11,612 | Bought Futures | Bullish |
+| | CE | -22,677 | Sold Calls | Bearish |
+| | PE | -15,419 | Sold Puts | Bullish |
+
+
+
+## 19/08/2026 - FII Activity for last 5 days
+
+| Day | Value | Sentiment |
+| :--- | :--- | :--- |
+| **Today (T)** | -58118 | Bearish |
+| **T-1 Day** | -124707 | Bearish |
+| **T-2 Day** | 37952 | Bullish |
+| **T-3 Day** | -18860 | Bearish |
+| **T-4 Day** | -35814 | Bearish |
+
+---
+
+## Overall Trend
+
+| Metric | Status |
+| :--- | :--- |
+| **By Count** | Bearish |
+| **By Sentiment** | Bearish |
 
 ## 14/08/2026 - FII DII FNO ACTIVITY
 

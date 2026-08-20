@@ -747,7 +747,7 @@ If you are looking at a specific market setup, tell me your target Nifty index l
 - **From where to learn:** NISM Equity Derivatives, NSE settlement mechanism, Zerodha Varsity Module 5 put option basics.
 - **Best source:** NISM/NSE for Indian stock option settlement; Varsity for payoff basics.
 
-#### 2. Hedging strategies
+#### 2. Hedging strategies || all not now
 
 ##### 2.1 Protective Put || (on shares holdings) || institutional portfolio managers || not now 
 

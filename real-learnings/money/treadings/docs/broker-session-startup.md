@@ -21,10 +21,11 @@ Run this **before any trading activity** each Claude Code session. All three MCP
 5. Verify: ask "Show my Zerodha available margin"
 ```
 
-**Troubleshoot `-32000` error:**
-- This means the session expired or MCP lost connection
-- Simply say "Login to Zerodha" again — a fresh auth link will be generated
-- If MCP server itself fails to start, restart Claude Code (it relaunches the MCP process)
+**Troubleshoot `-32000` error (recurring on session start):**
+- Root cause (discovered 20-Aug-2026): the JFrog npm auth config in global `~/.npmrc` blocks `npx` from starting `mcp-remote`
+- **Fix (one-time):** a `.npmrc` file pointing to public registry is already in this project root — it overrides JFrog for this directory
+- If Kite still fails after `/mcp`, run in terminal: `npx -y mcp-remote https://mcp.kite.trade/mcp` — it will connect (output "Proxy established") then shut down. This primes the mcp-remote process. Now run `/mcp` again.
+- If npm itself is broken globally, run `npm config fix` first, then retry
 
 **Session duration:** Valid for one trading day. Re-login required every new Claude Code session.
 
@@ -61,7 +62,7 @@ Run this **before any trading activity** each Claude Code session. All three MCP
 4. Browser redirects to https://mcp.dhan.co/auth/callback?tokenId=...
 5a. If Claude says "token already consumed" → session is active (auto-bound) ✅
 5b. If not auto-bound → copy tokenId from URL → say: "complete_login with tokenId <value>"
-6. Verify: ask "Show my Dhan funds"
+6. Verify: ask for NIFTY `expirylist` from Dhan (never use `funds` — returns zeros even unauthenticated)
 ```
 
 > **Architecture note:** Dhan is primarily used for **option chain + Greeks** (the only MCP with pre-calculated Delta/Theta/Gamma/Vega + OI per strike). It also supports order placement — but execution stays on Kite by default unless you explicitly use Dhan for orders.

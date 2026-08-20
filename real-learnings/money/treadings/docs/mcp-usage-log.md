@@ -10,23 +10,23 @@ Companion to [`broker-session-startup.md`](./broker-session-startup.md) (how to 
 
 Legend: ✅ verified working · ❌ verified failing · ⬜ not yet tested · ⚠️ works but caveated
 
-*Last verified: **17-Aug-2026, 10:45 IST***
+*Last verified: **20-Aug-2026, 12:00 IST***
 
 | Data point / action | Kite (Zerodha) | Kotak Neo | Dhan | We use |
 |---|---|---|---|---|
 | Session login | ✅ `login` → browser 2FA | ✅ `get_login` → QR → `validate_login` | ✅ `login` → consent URL | all three |
 | Account / margin | ⚠️ `get_margins` — ₹500 only | ✅ `get_limits` — **₹7.02L** | ⚠️ `funds` — ₹0.00 | **Kotak** |
-| Index spot (NIFTY / BANKNIFTY / SENSEX) | ✅ `get_ltp` | ⬜ | ❌ `ltp` → Unauthorized | **Kite** |
-| India VIX | ✅ `get_ltp` `NSE:INDIA VIX` | ⬜ | ❌ | **Kite** |
-| Instrument / strike search | ✅ `search_instruments` (`filter_on: underlying`) | ⬜ `search_instrument` | ❌ | **Kite** |
-| Option LTP + OHLC | ✅ `get_quotes` | ⬜ `get_quote` | ❌ | **Kite** |
-| **Open Interest per strike** | ✅ `get_quotes` → `oi`, `oi_day_high`, `oi_day_low` | ⬜ | ❌ | **Kite** |
-| **Bid/ask depth (5 level)** | ✅ `get_quotes` → `depth` | ⬜ | ❌ | **Kite** |
-| **Implied Volatility** | ❌ not provided | ❌ not provided | ❌ **entitlement-blocked** | ⛔ **none** |
-| **Greeks (Δ Γ Θ V)** | ❌ not provided | ❌ not provided | ❌ **entitlement-blocked** | ⛔ **none** |
-| Full option chain object | ❌ (build from `get_quotes`) | ❌ | ❌ `optionchain` → Unauthorized | ⛔ **none** |
-| Expiry list | ⚠️ derive from `search_instruments` | ⬜ | ❌ `expirylist` → Unauthorized | **Kite** |
-| Historical OHLC candles | ✅ `get_historical_data` | ❌ | ❌ | **Kite** |
+| Index spot (NIFTY / BANKNIFTY / SENSEX) | ✅ `get_ltp` | ⬜ | ⬜ `ltp` (subscription active, unverified post-upgrade) | **Kite** |
+| India VIX | ✅ `get_ltp` `NSE:INDIA VIX` | ⬜ | ⬜ | **Kite** |
+| Instrument / strike search | ✅ `search_instruments` (`filter_on: underlying`) | ⬜ `search_instrument` | ⬜ | **Kite** |
+| Option LTP + OHLC | ✅ `get_quotes` | ⬜ `get_quote` | ⬜ | **Kite** |
+| **Open Interest per strike** | ✅ `get_quotes` → `oi`, `oi_day_high`, `oi_day_low` | ⬜ | ⬜ | **Kite** |
+| **Bid/ask depth (5 level)** | ✅ `get_quotes` → `depth` | ⬜ | ⬜ | **Kite** |
+| **Implied Volatility** | ❌ not provided | ❌ not provided | ⬜ **subscription activated 20-Aug-2026 — verify with `expirylist`** | **Dhan** (pending verify) |
+| **Greeks (Δ Γ Θ V)** | ❌ not provided | ❌ not provided | ⬜ **subscription activated 20-Aug-2026 — verify with `optionchain`** | **Dhan** (pending verify) |
+| Full option chain object | ❌ (build from `get_quotes`) | ❌ | ⬜ `optionchain` (unverified post-upgrade) | **Dhan** (pending verify) |
+| Expiry list | ⚠️ derive from `search_instruments` | ⬜ | ⬜ `expirylist` (unverified post-upgrade) | **Dhan** (pending verify) |
+| Historical OHLC candles | ✅ `get_historical_data` | ❌ | ⬜ | **Kite** |
 | Holdings / positions | ✅ | ✅ | ✅ `positions` | any |
 | Basket / SPAN margin | ✅ `get_margins` (account-level only) | ✅ `get_margin` | ⬜ `margin_agent_tool` | **Kotak** |
 | Research reports | ❌ | ✅ `get_research` | ❌ | **Kotak** |
@@ -36,25 +36,29 @@ Legend: ✅ verified working · ❌ verified failing · ⬜ not yet tested · �
 
 ## 2. Known broken — root causes
 
-### 2.1 Dhan: Data API not entitled ⛔ *open*
+### 2.1 Dhan: Data API subscription ✅ *resolved 20-Aug-2026*
 
-Dhan authenticates and serves **trading/portfolio** endpoints, but **every market-data endpoint returns `API Error: Unauthorized`.**
+**Full subscription (trading + market data) activated 20-Aug-2026.**
+
+Access token (24h, Method 1 — direct from web.dhan.co → My Profile → Access DhanHQ APIs) stored in `.broker_creds` as `DHAN_ACCESS_TOKEN`.
 
 ```
-positions    → ✅ "No open positions."
-funds        → ✅ returns (₹0.00)
-ltp          → ❌ API Error: Unauthorized
-expirylist   → ❌ API Error: Unauthorized
-optionchain  → ❌ API Error: Unauthorized
+positions    → ✅ working
+funds        → ✅ returns (note: returns ₹0.00 even when unauthenticated — never use for verify)
+ltp          → ⬜ unverified post-upgrade (was Unauthorized before)
+expirylist   → ⬜ unverified post-upgrade (was Unauthorized before)
+optionchain  → ⬜ unverified post-upgrade (was Unauthorized before)
 ```
 
-**Cause:** Dhan sells **Data APIs as a separate paid subscription** from the trading API. OAuth consent grants the trading scope only. This is an *entitlement* error, not a session error — re-running `login` will never fix it.
+**What the two subscription tiers cover:**
+- **Trading API** — free for all Dhan account holders: login, positions, funds, orders, alerts, margin
+- **Data API** — separate paid subscription: `ltp`, `ohlc`, `quote`, `optionchain`, `expirylist`, historical data
 
-**Impact:** Dhan is the only MCP with pre-calculated IV and Greeks. Until this is resolved we have **no IV and no Greeks from any source**, which blocks delta-band strike selection and the IV/IVP filter in [`option_chain_n_greeks.md` §5](../kb/option_chain_n_greeks.md).
-
-**Fix:** activate the Data API plan in the Dhan account, then re-verify with `expirylist`.
+**How to verify the subscription is active:** the Dhan profile API response includes `dataPlan` and `dataValidity` fields. The practical test is `expirylist` returning dates instead of Unauthorized.
 
 > ⚠️ **Never verify Dhan with `funds`.** It returns a well-formed all-zeros response even when unauthenticated, which reads as "connected". **Always verify with `expirylist`.**
+
+**MCP OAuth vs direct token:** The Dhan MCP uses the OAuth consent flow (`mcp__dhan__login`). The `DHAN_ACCESS_TOKEN` in `.broker_creds` is a direct REST token (Method 1, 24h validity). Both should now carry Data API entitlement. Re-login via MCP each session and verify with `expirylist`.
 
 ### 2.2 Zerodha: F&O segment not activated ⛔ *open*
 
@@ -68,7 +72,7 @@ No order-placement tools exist in the Kotak MCP. Since the capital is here, **al
 
 ---
 
-## 3. Effective architecture (as of 17-Aug-2026)
+## 3. Effective architecture (as of 20-Aug-2026)
 
 ```text
         DATA                    ANALYSIS                 EXECUTION
@@ -84,12 +88,13 @@ No order-placement tools exist in the Kotak MCP. Since the capital is here, **al
   │  research    │                ▲
   └──────────────┘                │
   ┌──────────────┐                │
-  │  DHAN MCP    │╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘
-  │  IV, GREEKS  │   ⛔ BLOCKED — Data API not entitled
+  │  DHAN MCP    │────────────────┘
+  │  IV, GREEKS  │   ✅ Data API subscription active (20-Aug-2026)
+  │  optionchain │   ⬜ verify with expirylist on first use
   └──────────────┘
 ```
 
-This differs from the designed architecture in `CLAUDE.md`, which assumes Dhan for chain/Greeks and Kite for execution. **Both of those are currently inverted or unavailable.**
+Kite remains the data layer for spot/VIX/OI (faster, always working). Dhan adds option chain Greeks + IV which Kite cannot provide. Execution stays manual on Kotak app.
 
 ---
 
@@ -98,6 +103,7 @@ This differs from the designed architecture in `CLAUDE.md`, which assumes Dhan f
 | Date | Kite | Kotak | Dhan | What we used each for | Notes |
 |---|---|---|---|---|---|
 | 17-Aug-2026 | 🟢 data only | 🟢 ₹7.02L | 🔴 data blocked | Kite: NIFTY/BANKNIFTY/VIX spot, 18-Aug option chain prices + OI + depth, `NIFTY26AUGFUT`. Kotak: available margin. Dhan: nothing usable. | 3 consent URLs burned on Dhan before diagnosing entitlement issue — see §5. No Greeks available all session. **Outcome: NO TRADE** (8 red/warning signals vs a 3-signal sit-out threshold; IVP ≈ 2%). Full reasoning: [`17-08-2026-tread.md`](../my-treads/August-2026/17-08-2026/17-08-2026-tread.md). Workaround for the missing Greeks: the straddle rule, [`strategy_ref_book.md` §8.7.3](../kb/kb1/strategy_ref_book.md#873-method-3--the-straddle-rule-the-fastest-works-with-no-greeks-at-all). Session closed 11:55, no position. |
+| 20-Aug-2026 | 🟢 data only | 🟢 ₹7.02L | 🟡 login OK, data unverified | Setup session — no trading. Fixed recurring MCP connection issue (JFrog npm auth blocking mcp-remote). Added project `.npmrc` → public registry. Dhan Data API subscription purchased; access token stored in `.broker_creds`. Greeks/IV pending first live verify with `expirylist`. |
 
 ---
 
@@ -114,12 +120,10 @@ This differs from the designed architecture in `CLAUDE.md`, which assumes Dhan f
 
 ## 6. Open items
 
-- [ ] Activate **Dhan Data API** subscription → restores IV + Greeks (highest priority; blocks normal workflow)
+- [x] ~~Activate **Dhan Data API** subscription~~ — done 20-Aug-2026; full subscription (trading + data). Verify with `expirylist` on next session.
 - [ ] Confirm whether **F&O is enabled on the Kotak Neo account** — `get_limits` does not expose segment entitlements
 - [ ] Decide the long-term execution venue: activate F&O + fund Zerodha, or fund Dhan, or accept permanent manual execution on Kotak
-- [ ] Update `CLAUDE.md` capability map + `docs/dhan_mcp.md` once Dhan Data API is live
-      *(as of 17-Aug-2026 `CLAUDE.md` carries a "Current State / Known Blockers" section and an
-      "Actually usable today" column mirroring §1 — both must be reverted to ✅ when Dhan is fixed)*
+- [ ] First live verify of Dhan data endpoints post-upgrade: `expirylist` → dates, `optionchain` → Greeks
 
 ---
 
