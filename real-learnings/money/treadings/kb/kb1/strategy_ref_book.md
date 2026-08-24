@@ -2167,6 +2167,7 @@ Break-evens ≈ 24,989 (up)  /  24,011 (down)   →  ~2.0% band, vs ~1.5% expect
 > It is the natural NIFTY trade because it **sells the expensive (skewed) put outright and only sells the cheap call as a defined-risk spread.**
 
 **The condition:**
+> [YT](https://youtube.com/shorts/p2P-s-LlM6M?si=1-CVIrGYTciBUAsJ)
 
 ```text
 ZERO-UPSIDE-RISK CONDITION
