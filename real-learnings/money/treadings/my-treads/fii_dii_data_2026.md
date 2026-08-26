@@ -53,9 +53,40 @@ Note: The numbers are often denoted with an 'L', which stands for Lakhs (1 Lakh 
 - open on browser [fii_dii_data_2026.md] /Users/kbaghel/Desktop/my_kb/Git/kunjesh-singh-ai-vibe-code/real-learnings/money/treadings/my-treads/fii_dii_data_2026.md
 - [Prompt] Convert the image data into the markdown file format, like we have in [fii_dii_data_2026.md] (for example) tab at ## Date 28-July-2026
 
-Here is the data from the image converted into the requested markdown format:
+## 25/08/2026 - FII Activity for last 5 days
 
-### 19/08/2026 - FII DII FNO ACTIVITY
+| Period / Metric | Value / Category | Signal |
+| :--- | :---: | :---: |
+| Today (T) | 68928 | Bullish |
+| T-1 Day | -105095 | Bearish |
+| T-2 Day | 28907 | Bullish |
+| T-3 Day | 170195 | Bullish |
+| T-4 Day | -58118 | Bearish |
+| **Overall Trend** | **By Count** | Bullish |
+| **Overall Trend** | **By Sentiment** | Bullish |
+
+## 25/08/2026 - FII DII FNO ACTIVITY
+
+| Category | Instrument | Change | Activity | Trend |
+| :--- | :--- | :--- | :--- | :--- |
+| FII | Future | 35,156 | Bought Futures | Bullish |
+| | CE | 1,250 | Bought Calls | Bullish |
+| | PE | -32,522 | Sold Puts | Bullish |
+| PRO | Future | -3,958 | Sold Futures | Bearish |
+| | CE | 1,35,000 | Bought Calls | Bullish |
+| | PE | -1,74,000 | Sold Puts | Bullish |
+| DII | Future | -7,678 | Sold Futures | Bearish |
+| | CE | -4074 | Sold Calls | Bearish |
+| | PE | -33,089 | Sold Puts | Bullish |
+| RETAIL | Future | -23,520 | Sold Futures | Bearish |
+| | CE | -1,32,000 | Sold Calls | Bearish |
+| | PE | 2,40,000 | Bought Puts | Bearish |
+| **OVERALL TREND:** | | | | **BULLISH** |
+
+*Note: Trend calculated using our proprietary method*
+*Get FREE Algo Tools at BluechipAlgos.com*
+
+## 19/08/2026 - FII DII FNO ACTIVITY
 
 | Participant | Instrument | Change | Activity | Trend |
 | :--- | :--- | :--- | :--- | :--- |

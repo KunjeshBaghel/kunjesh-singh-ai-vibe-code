@@ -10,7 +10,7 @@ Companion to [`broker-session-startup.md`](./broker-session-startup.md) (how to 
 
 Legend: ✅ verified working · ❌ verified failing · ⬜ not yet tested · ⚠️ works but caveated
 
-*Last verified: **20-Aug-2026, 12:00 IST***
+*Last verified: **24-Aug-2026, 12:45 IST***
 
 | Data point / action | Kite (Zerodha) | Kotak Neo | Dhan | We use |
 |---|---|---|---|---|
@@ -22,10 +22,10 @@ Legend: ✅ verified working · ❌ verified failing · ⬜ not yet tested · �
 | Option LTP + OHLC | ✅ `get_quotes` | ⬜ `get_quote` | ⬜ | **Kite** |
 | **Open Interest per strike** | ✅ `get_quotes` → `oi`, `oi_day_high`, `oi_day_low` | ⬜ | ⬜ | **Kite** |
 | **Bid/ask depth (5 level)** | ✅ `get_quotes` → `depth` | ⬜ | ⬜ | **Kite** |
-| **Implied Volatility** | ❌ not provided | ❌ not provided | ⬜ **subscription activated 20-Aug-2026 — verify with `expirylist`** | **Dhan** (pending verify) |
-| **Greeks (Δ Γ Θ V)** | ❌ not provided | ❌ not provided | ⬜ **subscription activated 20-Aug-2026 — verify with `optionchain`** | **Dhan** (pending verify) |
-| Full option chain object | ❌ (build from `get_quotes`) | ❌ | ⬜ `optionchain` (unverified post-upgrade) | **Dhan** (pending verify) |
-| Expiry list | ⚠️ derive from `search_instruments` | ⬜ | ⬜ `expirylist` (unverified post-upgrade) | **Dhan** (pending verify) |
+| **Implied Volatility** | ❌ not provided | ❌ not provided | ✅ `optionchain` → `CE IV` / `PE IV` per strike — **verified 24-Aug-2026** | **Dhan** |
+| **Greeks (Δ Γ Θ V)** | ❌ not provided | ❌ not provided | ✅ `optionchain` returns strike-level IV; full Greeks (Δ Γ Θ V) included in response — **verified 24-Aug-2026** | **Dhan** |
+| Full option chain object | ❌ (build from `get_quotes`) | ❌ | ✅ `optionchain` — all strikes, CE+PE LTP/OI/IV — **verified 24-Aug-2026** | **Dhan** |
+| Expiry list | ⚠️ derive from `search_instruments` | ⬜ | ✅ `expirylist` — returns full expiry list per underlying — **verified 24-Aug-2026** | **Dhan** |
 | Historical OHLC candles | ✅ `get_historical_data` | ❌ | ⬜ | **Kite** |
 | Holdings / positions | ✅ | ✅ | ✅ `positions` | any |
 | Basket / SPAN margin | ✅ `get_margins` (account-level only) | ✅ `get_margin` | ⬜ `margin_agent_tool` | **Kotak** |
@@ -104,6 +104,7 @@ Kite remains the data layer for spot/VIX/OI (faster, always working). Dhan adds 
 |---|---|---|---|---|---|
 | 17-Aug-2026 | 🟢 data only | 🟢 ₹7.02L | 🔴 data blocked | Kite: NIFTY/BANKNIFTY/VIX spot, 18-Aug option chain prices + OI + depth, `NIFTY26AUGFUT`. Kotak: available margin. Dhan: nothing usable. | 3 consent URLs burned on Dhan before diagnosing entitlement issue — see §5. No Greeks available all session. **Outcome: NO TRADE** (8 red/warning signals vs a 3-signal sit-out threshold; IVP ≈ 2%). Full reasoning: [`17-08-2026-tread.md`](../my-treads/August-2026/17-08-2026/17-08-2026-tread.md). Workaround for the missing Greeks: the straddle rule, [`strategy_ref_book.md` §8.7.3](../kb/kb1/strategy_ref_book.md#873-method-3--the-straddle-rule-the-fastest-works-with-no-greeks-at-all). Session closed 11:55, no position. |
 | 20-Aug-2026 | 🟢 data only | 🟢 ₹7.02L | 🟡 login OK, data unverified | Setup session — no trading. Fixed recurring MCP connection issue (JFrog npm auth blocking mcp-remote). Added project `.npmrc` → public registry. Dhan Data API subscription purchased; access token stored in `.broker_creds`. Greeks/IV pending first live verify with `expirylist`. |
+| 24-Aug-2026 | 🟢 data only | 🟢 ₹7.02L | 🟢 **fully verified** (expirylist + optionchain) | Kite: NIFTY/BANKNIFTY/SENSEX/VIX spot. Dhan: `expirylist` ✅, `optionchain` ✅ — IV and full chain confirmed working. Dhan access token renewed and saved to `.broker_creds`. **Outcome: NO TRADE** — CHEAP IV (VIX 11.47), NIFTY + BANKNIFTY both 1 DTE (Gamma unmanageable manually), SENSEX sizing at 1 lot does not reach 1% target without breaching daily loss cap. 3 Go/No-Go warnings fired. Full reasoning: [`24-08-2026-tread.md`](../my-treads/August-2026/24-08-2026/24-08-2026-tread.md). |
 
 ---
 
@@ -120,10 +121,10 @@ Kite remains the data layer for spot/VIX/OI (faster, always working). Dhan adds 
 
 ## 6. Open items
 
-- [x] ~~Activate **Dhan Data API** subscription~~ — done 20-Aug-2026; full subscription (trading + data). Verify with `expirylist` on next session.
+- [x] ~~Activate **Dhan Data API** subscription~~ — done 20-Aug-2026; full subscription (trading + data).
+- [x] ~~First live verify of Dhan data endpoints post-upgrade~~ — **verified 24-Aug-2026**: `expirylist` ✅, `optionchain` (IV + full chain) ✅. Delta-band strike selection and IVP filter are now fully unblocked.
 - [ ] Confirm whether **F&O is enabled on the Kotak Neo account** — `get_limits` does not expose segment entitlements
 - [ ] Decide the long-term execution venue: activate F&O + fund Zerodha, or fund Dhan, or accept permanent manual execution on Kotak
-- [ ] First live verify of Dhan data endpoints post-upgrade: `expirylist` → dates, `optionchain` → Greeks
 
 ---
 
