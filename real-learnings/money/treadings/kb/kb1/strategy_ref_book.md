@@ -122,14 +122,18 @@
     - [8.6.13 The Ladder — a repair, never an entry](#8613-the-ladder--a-repair-never-an-entry)
     - [8.6.14 The Rolling Wing Bank — margin efficiency as a strategy](#8614-the-rolling-wing-bank--margin-efficiency-as-a-strategy)
   - [8.7 Strike selection — the four methods and when each wins](#87-strike-selection--the-four-methods-and-when-each-wins)
+    - [**8.7.1a The forward-basis check — run this before you trust any delta**](#871a-the-forward-basis-check--run-this-before-you-trust-any-delta-added-28-aug-2026)
   - [8.8 Entry timing — the intraday premium and IV curve](#88-entry-timing--the-intraday-premium-and-iv-curve)
   - [**8.9 The adjustment playbook — decision tree**](#89-the-adjustment-playbook--decision-tree)
   - [8.10 Stop-loss architecture — four types and which to use](#810-stop-loss-architecture--four-types-and-which-to-use)
   - [**8.11 Position sizing for ₹6L — size from your stop, not your margin**](#811-position-sizing-for-6l--size-from-your-stop-not-your-margin)
+    - [**8.11.6 The feasibility gate — can today's target be reached at all?**](#8116-the-feasibility-gate--can-todays-target-be-reached-at-all-added-28-aug-2026)
+    - [**8.11.7 The noise-floor test — is your stop inside one candle?**](#8117-the-noise-floor-test--is-your-stop-inside-one-candle-added-28-aug-2026)
   - [8.12 The pattern library — recurring setups a seller trades](#812-the-pattern-library--recurring-setups-a-seller-trades)
   - [**8.13 Trend-day detection — the seller's kill switch**](#813-trend-day-detection--the-sellers-kill-switch)
   - [8.14 Blow-up autopsy — the six ways sellers die](#814-blow-up-autopsy--the-six-ways-sellers-die)
   - [8.15 Metrics that actually matter](#815-metrics-that-actually-matter)
+    - [**8.15.4 Scoring the day — mark at the mandated exit, report MAE and MFE**](#8154-scoring-the-day--mark-at-the-mandated-exit-and-always-report-mae-and-mfe-added-28-aug-2026)
   - [8.16 Quick-reference cards](#816-quick-reference-cards)
   - [8.17 Sources for Section 8](#817-sources-for-section-8)
 
@@ -1863,6 +1867,25 @@ CREATED
 
 > **Practical instruction:** re-read this table at the start of every quarter and check for new SEBI circulars. Every one of these changes invalidated a strategy that a large number of traders were still running six months later.
 
+#### What the CAS exit actually costs — measured, 27-Aug-2026
+
+The hard-exit times (NIFTY 2:30/3:00 · SENSEX 2:15/2:45) are not free, and it is worth having a real
+number for what they give up so the rule is not quietly relaxed on a bad day.
+
+| SENSEX 30-min bar | Move |
+|---|---|
+| 11:00 → 14:30 (3½ hrs, post-entry) | net ≈ **−40 pts**, chopping in a ~230-pt band |
+| **15:00 → 15:30** | **77,274 → 76,933.59 = −340 pts** |
+
+**340 of the day's 539 points — 63% — arrived after 3:00 PM.** A seller obeying the 2:15 PM SENSEX
+time stop captured roughly half of what a rule-breaker did.
+
+> **The rule is still correct.** That 63% was a coin flip until it landed: the same window that paid
+> a short-call position −340 points *down* would have destroyed it −340 points *up*, with no tradable
+> underlying to hedge against and IEP-driven marks. **A favourable auction is not evidence the exit
+> rule is too conservative.** Budget the give-up as a known cost of the CAS regime, and price
+> structures so they pay at the time stop, not at settlement.
+
 ---
 
 ## 8.3 The real cost sheet — charges, slippage, and the friction floor
@@ -2718,6 +2741,45 @@ Sell the strike whose delta falls in your target band. Delta is a usable proxy f
 
 > ⚠️ **Never use `POP = 1 − |Delta|` as a probability of profit.** Delta approximates the probability of finishing **in the money**, which is the probability of *breaching*, not the probability of *losing money* — your breakeven sits beyond the strike by the credit received. See [`option_chain_n_greeks.md` §5](../option_chain_n_greeks.md).
 
+#### 8.7.1a The forward-basis check — **run this before you trust any delta** *(added 28-Aug-2026)*
+
+Options are priced off the **forward**, not the spot. Every vendor that computes Greeks off spot silently shifts your entire strike ladder. On 28-Aug-2026 Dhan's chain put NIFTY's Δ=0.50 point near 24,190 when the true ATM-forward was **24,237** — a **~85-point bearish skew on every strike selected**, invisible unless you check.
+
+**The 30-second test — model-free, uses only chain prices:**
+
+```text
+1.  FORWARD, via put-call parity:        F  =  K  +  C  −  P
+      Compute at 3–4 strikes around ATM. They must agree to within ~1 point.
+      (If they don't agree, the chain is stale — stop, refetch.)
+
+2.  BASIS:                          basis  =  F − Spot
+      NIFTY 01-Sep 2026:   24,237 − 24,155  =  +82 pts  (+0.34%)
+      SENSEX 03-Sep:       77,523 − 77,240  =  +283 pts
+      BANKNIFTY 29-Sep:    57,916 − 57,534  =  +382 pts
+
+3.  VENDOR SANITY CHECK — one strike, one expiry, one underlying = ONE IV.
+      If the vendor reports CE IV ≠ PE IV at the same strike, its Greeks are broken.
+      Observed 28-Aug: NIFTY 24,200 → CE IV 11.47 vs PE IV 6.41.  Gap +5.06.
+      Calls inflated, puts deflated → the classic signature of pricing off spot.
+
+4.  DECISION:
+      basis < 0.1% of spot  →  vendor deltas usable
+      basis > 0.1%          →  DISCARD the delta band. Use §8.7.3 (straddle rule)
+                                and centre it on F, not on spot.
+```
+
+| Vendor symptom | What it means |
+|---|---|
+| CE IV ≠ PE IV at the same strike | Greeks computed off spot. Arithmetically impossible otherwise. |
+| Deep-ITM legs return `IV = 0, Δ = 0, Θ = 0` | Solver failed to converge. Not "zero risk" — **no data**. |
+| Parity forward disagrees strike-to-strike by > 2 pts | Stale or mixed-timestamp snapshot. Refetch before acting. |
+
+> **Parity is arithmetic, not a model.** Using `F = K + C − P` is *not* the locally-computed Black-Scholes the user has ruled out — it assumes nothing about volatility or distribution. Recomputing delta or theta yourself **is** ruled out. When the basis check fails, the sanctioned path is §8.7.3 (the straddle rule, centred on F), plus telling the user the vendor Greeks are unusable — never a silent local substitute.
+
+**Why the basis is not a constant.** It scales with time to expiry (cost of carry). A +82 basis on a 4-day NIFTY forward is steep; on the 32-day BANKNIFTY it was +382. Recheck it each session — do not carry over yesterday's number.
+
+> **Corollary — GIFT Nifty is a futures price.** Comparing GIFT to NIFTY *spot* manufactures a gap that does not exist. On 28-Aug, GIFT at 24,250 against spot 24,090 looked like a +160 gap-up; against the forward it was flat. Always compare GIFT to the **future or forward of matching tenor**. See [`option_chain_n_greeks.md` §7 Filter 1](../option_chain_n_greeks.md).
+
 ### 8.7.2 Method 2 — Expected move
 
 ```text
@@ -3069,6 +3131,38 @@ calendar risk and ~100% of its remaining gamma risk. It is the worst
 risk-adjusted premium on the board. Leave it for someone else.
 ```
 
+### 8.10.5 Abort conditions must match the structure's Greeks — *added 27-Aug-2026*
+
+A stop (§8.10.1–8.10.4) fires on **loss**. An **abort condition** fires on a *thesis* breaking, before
+the loss arrives. Aborts are worth having — but a wrong one is worse than none, because it exits
+winners at the moment they start working.
+
+**The failure mode: importing a neutral-structure abort onto a directional one.**
+
+| Abort | Correct for | ⛔ Wrong for | Why |
+|---|---|---|---|
+| **"Exit if India VIX rises > X%"** | Straddle · iron fly · condor · strangle | **Any one-sided credit vertical** | A vertical's vega is one-sided and small. If price is moving **away** from the short strike, **delta gain dominates vega loss** — the position is *winning* while VIX rises. |
+| "Exit if the range breaks" | Range/pin structures | Trend-aligned verticals | The break is the payoff (§8.12.6a). |
+| "Exit if spot touches the short strike" | ✅ Everything | — | Fires on the actual cause. Keep this one. |
+
+**The rule:**
+
+> **Before attaching an abort, name the Greek it is protecting.** If the structure is not materially
+> exposed to that Greek in that direction, the abort is noise and it will cost you the trade.
+> A vol-based abort belongs on a **vega-dominant** position. A directional credit spread is
+> **delta-dominant** — abort it on *price*, not on volatility.
+
+**Preferred aborts for a one-sided credit vertical:**
+
+1. **Spot reclaims a defined level** (the level that invalidated the directional read) — the primary.
+2. **The OI wall you sold into starts *shrinking*** (§8.12.8) — writers are abandoning the defence.
+3. Combined-premium stop per §8.10.2 — the backstop, not the trigger.
+
+**Evidence — 27-Aug-2026.** A bear call spread was planned with the abort *"exit if India VIX
+re-crosses 11.17."* VIX crossed it at ~11:23 and went on to close +4.73%. **The spread expired
+worthless — a full winner.** Obeying that abort would have exited near flat at 11:23 and forfeited
+the entire move. The plan, not the market, would have destroyed the trade.
+
 ---
 
 ## 8.11 Position sizing for ₹6L — size from your stop, not your margin
@@ -3170,6 +3264,164 @@ EXPECTANCY, WORKED
 
 > **Read the win/loss columns again.** The average loss is *larger* than the average win. That is normal and correct for a premium seller — the edge lives in the **frequency**, not the size. This is precisely why the per-trade cap and the daily cap are the load-bearing rules: a single unstopped loss of ₹25,000 erases fourteen good sessions. Your entire year is decided by the losses you refuse to let run, not by the wins you manage to catch.
 
+> See [§8.11.6](#8116-the-feasibility-gate--can-todays-target-be-reached-at-all-added-28-aug-2026) for the arithmetic that decides, **before any analysis**, whether the day's target is reachable at all.
+
+### 8.11.6 The feasibility gate — can today's target be reached *at all*? *(added 28-Aug-2026)*
+
+Run this **at 9:15, before pricing a single structure.** It takes two minutes and on most days it ends the session's work honestly. Three consecutive no-trades (24, 27, 28-Aug-2026) were each diagnosed only after 2+ hours of chain analysis; all three were decidable at the open by the arithmetic below.
+
+#### The credit-ceiling theorem
+
+The per-trade risk cap does not just cap your loss — **it caps your maximum possible credit**, and therefore your maximum possible profit.
+
+```text
+With a combined-premium stop at k × credit (§8.10.2):
+      loss at stop  =  (k − 1) × credit
+Risk cap R therefore bounds the credit you may collect:
+      MAX CREDIT     =  R / (k − 1)
+
+To net a profit target T you must capture fraction f of that credit:
+      f  =  T / credit  =  T × (k − 1) / R
+
+★ SET T = R  (target 1% of capital, risk cap 1% of capital) :
+
+      REQUIRED CAPTURE  =  (k − 1) × 100%
+```
+
+**The stop multiple alone decides whether the target is arithmetically possible.**
+
+| Structure | k (§8.10.2) | Credit capture needed to net 1% | Verdict |
+|---|---|---|---|
+| Intraday straddle | 1.3 | **30%** | Reachable |
+| 0-DTE hedged fly | 1.5 | **50%** | Reachable on expiry day |
+| Weekly strangle / monthly condor | **2.0** | **100%** | ⛔ **Only arrives at expiry** |
+
+> A wide stop is not free. Every widening of `k` raises the share of the credit you must harvest to hit the same rupee target. **At k = 2.0 the 1% intraday target is not difficult — it is impossible**, because 100% of the credit only exists at settlement.
+
+#### The DTE overlay — how much can you actually capture in one session?
+
+Theta is not linear in the session; what you can harvest between 9:20 and 2:30 depends almost entirely on **sessions remaining**, not calendar days.
+
+| Trading sessions to expiry | Realistic intraday capture (9:20 → 2:30) | Nets 1% at k=1.5? | at k=2.0? |
+|---|---|---|---|
+| **0** (expiry day) | 60 – 100% | ✅ | ⚠️ marginal |
+| **1** | 35 – 50% | ⚠️ marginal | ❌ |
+| **2** | 20 – 30% | ❌ | ❌ |
+| **4+** | 10 – 20% | ❌ | ❌ |
+
+*Measured 28-Aug-2026, 2 sessions out: the NIFTY 24,200 straddle decayed 194.10 → 190.20 in two hours — **3.9 points, ~2% of the straddle** — and that already included a vega tailwind (VIX 11.07 → 10.80). Extrapolated to 2:30 it is ~20–25% of an OTM vertical's credit.*
+
+> ⚠️ **Estimate the capture with the structure's DOMINANT Greek — the table above is a THETA table, and theta stops being dominant past ~10 DTE.** §8.10.5 already says an abort condition must match the dominant Greek; the same is true of the P&L estimate that decides whether to trade at all.
+>
+> **The 28-Aug-2026 self-inflicted error:** I wrote "at 32 DTE the position is vega-dominant" and then estimated the BANKNIFTY 57,900 straddle's intraday P&L **from theta alone** — ₹86/lot. Actual close-to-close: **₹915/lot**, ~7× the estimate, because VIX fell 11.07 → 10.68 and the vega term buried the theta term.
+>
+> The error is **symmetric and that is the whole point**: had VIX risen 0.39 instead, the straddle would have *expanded* ~30 pts and the position would have **lost ₹915/lot** on a day the index moved −13.65 points. A theta-only estimate on a vega-dominant structure does not merely understate the return — it hides the actual risk driver.
+>
+> | Sessions to expiry | Dominant Greek | Estimate the session's P&L from |
+> |---|---|---|
+> | 0 – 2 | **Theta / Gamma** | the DTE table above |
+> | 3 – 10 | Theta, with vega material | the table, then **stress ±0.5 VIX** |
+> | 10+ | **Vega** | **Δstraddle ≈ straddle × (Δσ / σ)**, theta is the rounding error |
+>
+> Rule of thumb at 30+ DTE: a **1 VIX point** move on a ~10.5 VIX is ~10% relative, and moves an ATM straddle ~10%. No amount of theta competes with that in one session.
+
+#### ⛔ The uncomfortable conclusion, stated plainly
+
+> **A 1%-of-capital intraday target and a 1%-of-capital per-trade risk cap are compatible on expiry day and almost nowhere else.**
+>
+> And expiry day is precisely when short gamma is least manageable by hand (§8.6.10, §8.14). **This tension is structural. Do not resolve it by raising size.**
+
+The three ways the target *is* legitimately reached — none of which is "trade bigger":
+
+1. **Trade the expiry-day structure** with a tight stop (k = 1.5), correctly filtered, exited by the §8.3 hard time.
+2. **Accept multi-session holds** — a 4-session vertical reaching ~0.9% is a *weekly* return, not a session's. Measure it against the right denominator, and only if the calendar (§8.4.1) and IVP (§8.12.4) permit.
+3. **Accept the real expectancy** — §8.11.5's ₹1,274/session. Roughly **0.20%, not 1%.** Sitting out is what makes that number positive.
+
+#### The gate, as a checklist
+
+Run in order. **Any ❌ ends the session — do not proceed to chain analysis.**
+
+```text
+□ 1. FETCH the expiry list for all three indexes. Never assume; never guess a date.
+□ 2. SESSIONS to nearest expiry — per index, in trading sessions, not calendar days.
+□ 3. If min(sessions) ≥ 2 AND the mandate is intraday-only
+        →  ❌ the 1% target is unreachable. Say so now. Stop.
+□ 4. Pick k from §8.10.2 for the structure the §8.5.2 grid names.
+□ 5. MAX CREDIT = R / (k − 1).            R = ₹6,000  →  k=1.5: ₹12,000 · k=2.0: ₹6,000
+□ 6. REQUIRED CAPTURE = (k − 1) × 100%.  Compare against the DTE table above.
+□ 7. If required > realistic
+        →  ❌ no size fixes this. Report the ceiling, do not hunt for another structure.
+□ 8. Only if all pass  →  price the structure the grid named (§8.12.6a sequencing rule).
+```
+
+#### The trap this closes
+
+When the target is unreachable, the temptation is to solve for lots instead of admitting it. **Always invert the calculation and quote the capital at risk:**
+
+```text
+28-Aug-2026, NIFTY iron fly, 6-pt straddle decay by 2:30 → ₹234/lot net
+   lots needed for ₹6,000    =  33
+   max loss at 33 lots       =  ₹1,48,005  =  24.7% of capital
+   loss at the 1.5× stop     =  ₹1,40,498  =  23.4% of capital      (cap: 1.0%)
+
+Even at a generous 10-pt Friday markdown → 20 lots → 14.9% of capital at risk.
+```
+
+> **Reaching 1% that day required risking 14–23% of capital: 14× to 23× the cap.** Quote that number. "It doesn't reach the target" invites negotiation; **"it reaches the target at 23× the risk cap" ends the conversation.**
+
+---
+
+### 8.11.7 The noise-floor test — is your stop inside one candle? *(added 28-Aug-2026)*
+
+§8.11.6 asks whether the target is reachable. This asks the mirror question, and it kills a different
+class of trade: **a credit so thin that ordinary noise reaches the stop before the thesis has a chance
+to be right or wrong.**
+
+The stop distance on a combined-premium stop is fixed by the credit:
+
+```text
+      LOSS AT STOP  =  (k − 1) × credit          ← in POINTS, per lot
+```
+
+That number is not a risk parameter you chose. It is whatever the credit happened to be. On a thin
+OTM vertical it can be **smaller than a single 30-minute candle in the short leg.**
+
+```text
+□ 1.  STOP DISTANCE (pts)  =  (k − 1) × credit
+□ 2.  NOISE (pts)          =  the SHORT leg's typical 30-min high−low, today, at this DTE
+                             (pull 30-min candles on the leg itself — not on the index)
+□ 3.  RATIO = stop distance ÷ noise
+         < 1.5×   →  ⛔ the stop is inside the noise. NO TRADE at any size.
+         1.5–3×   →  ⚠️ marginal. Widen the spread or move closer to the money for more credit.
+         > 3×     →  ✅ the stop can distinguish a thesis failing from a candle printing.
+```
+
+**Why widening `k` does not rescue it.** Raising `k` widens the stop *and* raises the required capture
+(§8.11.6) one-for-one. You buy survival with the thing you were trying to earn. The only real fixes are
+**more credit** (closer strikes, wider width) or **a different day**.
+
+#### The 28-Aug-2026 case that produced this rule
+
+```text
+NIFTY 01-Sep bull put 24000/23900 · 2 DTE · entry 11:15 · credit 10.10 pts · k = 2.0
+   stop distance = (2.0 − 1) × 10.10  =  10.10 pts     ( = 0.04% of a 24,100 spot )
+   24000 PE 30-min range that morning  ≈  ±12 pts
+   RATIO = 0.84×   →  ⛔
+```
+
+What actually happened: the spread printed **−9.60 at 11:45 — 95% of the stop distance, 30 minutes
+after entry** — and then finished the day at **+1.25**. Full drawdown, a coin-flip's chance of being
+stopped at the exact low, and no payoff for surviving it.
+
+> **A near-stop-out that ends flat is the worst cell in the matrix.** It is invisible in a win/loss
+> column and it is the single best argument for logging **MAE** (§8.15.3, §8.15.4). A trade can be
+> "green" and still have been a mistake you got away with.
+
+**Where this bites hardest:** far-OTM verticals at low IV. That is exactly the structure a compressed,
+low-VIX tape tempts you into, because it looks safe — the short strike is 100 points away. The strike
+being far away is *why* the credit is thin, and the thin credit is what puts the stop inside the noise.
+**Distance from the money and distance to the stop move in opposite directions.**
+
 ---
 
 ## 8.12 The pattern library — recurring setups a seller trades
@@ -3224,9 +3476,39 @@ Fourteen setups that recur often enough to be worth naming. For each: how to rec
 |---|---|
 | **Recognise** | Bollinger Bands at multi-week narrowest, ATR falling, India VIX at a 3-month low, 4+ sessions of overlapping ranges. |
 | **Trade** | **Nothing.** Or a long-vega structure — Double Calendar ([§8.6.12](#8612-double-calendar--batman--and-the-february-2025-margin-trap)) — the only place in §8 where being long vol is the seller's play. |
-| **Do not** | Sell premium here. It feels like the safest possible market and it is where the expansion starts. Compression resolves into expansion; the only unknown is the direction. **This is the highest-frequency way a seller gets caught.** |
+| **Do not** | Sell **neutral** premium here. It feels like the safest possible market and it is where the expansion starts. Compression resolves into expansion; the only unknown is the direction. **This is the highest-frequency way a seller gets caught.** |
 
 > *This is exactly the state flagged in the 17-Aug-2026 session — IVP ≈ 2%, VIX at a 6-month floor and rising. See `my-treads/August-2026/17-08-2026/17-08-2026-tread.md`.*
+
+#### 8.12.6a The neutral/one-sided distinction — **amendment, 27-Aug-2026**
+
+The "Trade Nothing" verdict above is **about neutral premium selling.** It was written against
+straddles, iron flies and condors, and for those it stands unchanged. It is **too broad as stated**,
+and applying it to every credit structure costs real trades.
+
+| Structure into compression | What the break does to it | Verdict |
+|---|---|---|
+| **Neutral** — straddle, iron fly, condor, strangle | Loses **whichever way** the range breaks. Both wings are exposed; you are short the one thing that is about to happen. | ⛔ **Trade Nothing — the original rule holds** |
+| **One-sided** — bear call spread, bull put spread, credit vertical | Loses on **one** side only. If it is positioned on the side the market is already leaning, **the break is what pays it.** | ✅ **Permitted**, defined-risk, at the size §8.13 allows |
+
+**The test:** does the structure need the range to *hold*, or only to *not reverse*?
+A fly needs a pin. A vertical only needs price not to travel 0.3% the wrong way. Those are different
+bets and the compression veto only applies to the first.
+
+> **Sequencing rule that follows from this:** when the §8.5.2 grid names a structure, **price that
+> structure first.** Do not test a different one against the day's filters and then declare the day
+> dead when it fails — a failed iron fly says nothing about a bear call spread.
+
+**Evidence — 27-Aug-2026 (SENSEX expiry).** IVP 2.5%, VIX at a 6-month floor and rising: textbook
+§8.12.6. The grid cell (Slightly Bearish × CHEAP) named *"small bear call spread only."* The §8.6.10
+iron fly was tested instead, failed 2 of 4 filters, and the day was called a no-trade at 10:30.
+
+The compression **did** break — exactly as §8.12.6 predicts — and it broke **downward**: SENSEX closed
+76,933.59, −0.70%, at the day's low, 192 pts below the 6-session floor. The 77500/77700 bear call
+spread **expired worthless.** The veto was right about the expansion and wrong about the harm,
+because the structure was on the correct side of it.
+
+*Full accounting: `my-treads/August-2026/27-08-2026/27-08-2026-tread.md` §16:12.*
 
 ### 8.12.7 The VIX Spike Fade
 
@@ -3332,6 +3614,21 @@ Fourteen setups that recur often enough to be worth naming. For each: how to rec
 ### 8.13.3 The three rules around the kill switch
 
 1. **Check at fixed times, not when you feel worried.** 9:45, 10:30, 11:30, 1:30. Set the alarms. A check you perform because you are already anxious is a check you will rationalise your way out of.
+
+   **What to re-pull at every check — OI is not optional** *(added 28-Aug-2026)*
+
+   | Pull | Why |
+   |---|---|
+   | Spot, day high/low, VWAP | The three kill-switch markers |
+   | India VIX + day high | Vol regime drift |
+   | ATM straddle | Actual decay vs modelled |
+   | **OI *and* `oi_day_high` at your short strikes and the walls** | **The wall you are leaning on may already be dissolving** |
+
+   > ⛔ **The failure this closes (28-Aug-2026).** At 11:00 the NIFTY 24,200 PE wall read 193.1L and was cited as evidence for a pin. By 13:09 it was **110.6L — a 43% unwind — and 193.1L had been the day's high.** The wall was at its peak in the exact minute it was read. Put support migrated from 24,200/24,250 down to 24,000 while the position thesis still described a floor at 24,200. The 11:27 recheck pulled spot, VIX and the straddle but **not OI**, so the one signal that would have flipped the read was in the field not requested.
+   >
+   > **Compare `oi` against `oi_day_high`, not just against the morning reading.** A number equal to its day high is a *peak*, not a *level*; the same figure means the opposite thing depending on which side of it you are on. This is [§8.7.4](#874-method-4--oi-walls-and-structural-zones)'s "wall being unwound" and [§8.12.8](#8128-the-oi-wall-bounce)'s "watch OI change, not OI level" — both already in this book, both missed in real time because the data was never re-fetched.
+
+   > **A short observation window is not evidence of stability.** At 11:27, 27 minutes with no new high or low was written up as "compression continuing, not resolving." Within 100 minutes both NIFTY and SENSEX had made new lows, VIX a new day high, and the range had gone 0.34% → 0.46%. **Declaring stability ahead of the evidence is the same error as declaring a breakout ahead of the evidence** (27-Aug-2026), and it is the more dangerous one because it argues for inaction while a position bleeds.
 2. **The switch is one-directional.** Once 2 of 3 have fired, the day is a trend day **for the rest of the session**, even if price calms down. Trend days often consolidate mid-day before the second leg. Do not re-enter.
 3. **Log every trend day.** They cluster — around events, around global-risk episodes, at regime turns. Two trend days in a week means the volatility regime has changed and your entire sizing should drop until it settles.
 
@@ -3451,6 +3748,67 @@ Date │ Index │ DTE │ Structure │ Strikes │ Lots │ IVP │ IV−HV20 
 ```
 
 > **The single most valuable column is `Exit reason`.** Sort a quarter of trades by it. If "discretion" is your most frequent exit, you do not have a system — you have a habit with a spreadsheet. If "stop" trades cluster on days where the trend-day markers had already fired at entry, your problem is entry discipline and no amount of adjustment skill will fix it.
+
+---
+
+### 8.15.4 Scoring the day — mark at the mandated exit, and always report MAE and MFE *(added 28-Aug-2026)*
+
+Applies to trades taken **and** to trades declined. Scoring a no-trade day is how a stand-down rule
+earns or loses its keep — but only if the scoring is honest about *when* it marks the book.
+
+#### The rule
+
+> **A mid-session mark is not an outcome. It is one sample from a path.**
+>
+> Score at the structure's **mandated exit time** (§8.3: NIFTY 2:30 PM · SENSEX 2:15 PM), and report
+> **three** numbers, never one:
+>
+> | | What it answers |
+> |---|---|
+> | **MAE** — max adverse excursion over the holding window | *Would the stop have fired?* This decides whether the outcome was even reachable. |
+> | **Mark at the mandated exit** | *What the trade actually pays under the discipline you trade by.* This is **the** outcome. |
+> | **MFE** — max favourable excursion | *How much was left on the table, and was the target ever touchable?* |
+>
+> Marking at the close is also wrong for an intraday mandate — it credits you with hours you were
+> never allowed to hold.
+
+Price both sides honestly: **buy shorts at the ask, sell longs at the bid.** Then subtract the §8.3
+cost sheet. A gross point-count is not a score.
+
+#### Why this is a rule and not a preference — 28-Aug-2026
+
+I validated the day's declined structures at **13:09**, which happened to sit inside the worst
+90-minute window of the session. Two of three conclusions reversed by the mandated exit:
+
+| Structure (entry 11:15) | MAE | **14:30 — §8.3 exit** | 15:30 close | What I claimed at 13:09 |
+|---|---|---|---|---|
+| Iron fly 24250 | −7.20 | **−1.45** (scratch) | +5.70 | "losing, −₹675" ❌ |
+| Bull put 24000/23900 | **−9.60 = 95% of stop** | −5.00 | +1.25 | "76% to its stop" — understated, and mistimed ❌ |
+| Bear call 24250/24450 | — (MFE **+25.90**) | **+19.80** | +4.60 | "+₹1,407/lot" — a peak, not an outcome ❌ |
+
+The bear call, held to the close as the snapshot implied, would have finished a **loss after costs.**
+The bull put's decisive fact — 95% of the stop, 30 minutes in — was invisible at 13:09 and only MAE
+surfaces it. → §8.11.7.
+
+#### The failure mode this prevents
+
+Marking once, mid-session, at a moment you did not choose in advance, and then reasoning from it.
+The mark will confirm whatever the tape is doing at that instant, and you will write the lesson the
+noise dictated. **Pick the mark time from the rulebook before you look at the price.**
+
+#### For a no-trade day specifically
+
+```text
+□ Re-price EVERY declined candidate at its mandated exit time — including any you rejected in analysis
+     and never wrote up. (28-Aug: the best structure of the day was one I never proposed.)
+□ Report MAE / exit-mark / MFE for each.
+□ Size each at the MAXIMUM the risk cap permits — not one lot, not the lots you imagined.
+     The question is "what was the best this book could have done", not "what would one lot have done".
+□ State which of the three stand-down reasons the outcome supports: too dangerous · too small ·
+     stop inside the noise (§8.11.7). They generalise differently and only one of them was right.
+□ If the outcome contradicts the decision, say so plainly. A stand-down that was WRONG is the most
+     valuable entry the journal can hold.
+```
 
 ---
 

@@ -53,6 +53,76 @@ Note: The numbers are often denoted with an 'L', which stands for Lakhs (1 Lakh 
 - open on browser [fii_dii_data_2026.md] /Users/kbaghel/Desktop/my_kb/Git/kunjesh-singh-ai-vibe-code/real-learnings/money/treadings/my-treads/fii_dii_data_2026.md
 - [Prompt] Convert the image data into the markdown file format, like we have in [fii_dii_data_2026.md] (for example) tab at ## Date 28-July-2026
 
+
+## 28/08/2026 - FII DII Data at a Glance**
+
+| Participant | Segment | Net Change | Interpretation | Net OI | Interpretation | T-1 Net OI |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Fii** | Index Futures | -4,841 | Bearish | -2.03L | Bearish | -1.98L |
+| | Index Options | 67,836 | Bullish | -8.24L | Bearish | -8.92L |
+| | Call | 35,836 | Bullish | -2.3L | Bearish | -2.66L |
+| | Put | -32,000 | Bullish | 5.94L | Bearish | 6.26L |
+| | Stock Futures | 7,856 | Bullish | 5.49L | Bullish | 5.41L |
+| **Dii** | Index Futures | 700 | Bullish | 20,213 | Bullish | 19,513 |
+| | Index Options | -950 | Bearish | -30,139 | Bearish | -29,189 |
+| | Call | 25 | Bullish | 4,350 | Bullish | 4,325 |
+| | Put | 975 | Bearish | 34,489 | Bearish | 33,514 |
+| | Stock Futures | -27,612 | Bearish | -41.64L | Bearish | -41.36L |
+| **Pro** | Index Futures | 1,340 | Bullish | 5,461 | Bullish | 4,121 |
+| | Index Options | 1.67L | Bullish | 38,256 | Bullish | -1.29L |
+| | Call | 1.62L | Bullish | 1.34L | Bullish | -27,622 |
+| | Put | -4,892 | Bullish | 96,217 | Bearish | 1.01L |
+| | Stock Futures | 12,906 | Bullish | 4.54L | Bullish | 4.41L |
+| **Client** | Index Futures | 2,801 | Bullish | 1.77L | Bullish | 1.74L |
+| | Index Options | -2.34L | Bearish | 8.16L | Bullish | 10.5L |
+| | Call | -1.98L | Bearish | 91,197 | Bullish | 2.89L |
+| | Put | 35,917 | Bearish | -7.25L | Bullish | -7.61L |
+| | Stock Futures | 6,850 | Bullish | 31.61L | Bullish | 31.54L |
+
+
+## 27/08/2026 - FII Activity for last 5 days**
+
+| Period | Value | Trend |
+| :--- | :--- | :--- |
+| Today (T) | -112312 | Bearish |
+| T-1 Day | -45603 | Bearish |
+| T-2 Day | 68928 | Bullish |
+| T-3 Day | -105095 | Bearish |
+| T-4 Day | 28907 | Bullish |
+| **Overall Trend** | By Count | Bearish |
+| **Overall Trend** | By Sentiment | Bearish |
+
+*Get FREE Algo Tools at BluechipAlgos.com*
+
+## 26/08/2026 - FII DII FNO ACTIVITY
+
+| Participant | Instrument | Change | Activity | Trend |
+| :--- | :--- | :--- | :--- | :--- |
+| FII | Future | -1,833 | Sold Futures | Bearish |
+| FII | CE | -37,455 | Sold Calls | Bearish |
+| FII | PE | 6,315 | Bought Puts | Bearish |
+| PRO | Future | -1,061 | Sold Futures | Bearish |
+| PRO | CE | -58,893 | Sold Calls | Bearish |
+| PRO | PE | 51,150 | Bought Puts | Bearish |
+| DII | Future | 247 | Bought Futures | Bullish |
+| DII | CE | -30 | Sold Calls | Bearish |
+| DII | PE | 1,516 | Bought Puts | Bearish |
+| RETAIL | Future | 2,647 | Bought Futures | Bullish |
+| RETAIL | CE | 96,378 | Bought Calls | Bullish |
+| RETAIL | PE | -58,982 | Sold Puts | Bullish |
+| **OVERALL TREND:** | - | - | - | **BEARISH** |
+
+## 26/08/2026 - FII Activity for last 5 days
+| Period / Metric | Value | Trend |
+| :--- | :--- | :--- |
+| Today (T) | -45603 | Bearish |
+| T-1 Day | 68928 | Bullish |
+| T-2 Day | -105095 | Bearish |
+| T-3 Day | 28907 | Bullish |
+| T-4 Day | 170195 | Bullish |
+| Overall Trend (By Count) | - | Bullish |
+| Overall Trend (By Sentiment) | - | Bullish |
+
 ## 25/08/2026 - FII Activity for last 5 days
 
 | Period / Metric | Value / Category | Signal |

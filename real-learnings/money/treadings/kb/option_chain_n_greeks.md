@@ -533,6 +533,32 @@ After Delta and OI help identify a risk-screened strike candidate, **IV** helps 
 | 2 | **Delta and POP** | Review separately: absolute Delta as a rough single-leg expiry-risk proxy; strategy POP from the full payoff and breakeven model—never `POP = 1 - |Delta|` |
 | 3 | **OI & OI Chg** | Large OI concentration may mark potential support for puts or resistance for calls; confirm with OI change and price action |
 
+#### ⚠️ Step 0 — Validate the vendor's Greeks before screening on them *(added 28-Aug-2026)*
+
+All three columns above assume the feed's Delta and IV are correct. **Two of the three broke on 28-Aug-2026** and the failure was silent — the numbers looked entirely plausible.
+
+**The one-line test: one strike + one expiry + one underlying = exactly ONE implied volatility.** A chain that prints a different CE IV and PE IV at the same strike is arithmetically impossible, and its Deltas are wrong by the same cause.
+
+```text
+Dhan, NIFTY 01-Sep-2026, observed 11:05 IST
+   Strike    CE IV     PE IV     Gap
+   24,100    12.77      7.38    +5.40
+   24,150    11.96      6.97    +4.99
+   24,200    11.47      6.41    +5.06      ← same strike, two "volatilities"
+   24,250    11.01      5.63    +5.38
+   SENSEX showed the same signature (+3.55 to +5.34).
+```
+
+**Cause:** the vendor computed Greeks off **spot** instead of the **forward**. Calls come out inflated, puts deflated — the exact pattern above. Consequence: Dhan placed NIFTY's Δ=0.50 at ~24,190 when the true ATM-forward was **24,237**, skewing every selected strike **~85 points bearish** with no visible error.
+
+| Symptom | Verdict |
+|---|---|
+| CE IV ≠ PE IV at the same strike | ⛔ Greeks broken. Do not screen on Delta. |
+| Deep-ITM legs return `IV = 0, Δ = 0, Θ = 0` | ⛔ Solver failed — **missing data**, not "no risk". |
+| Parity forward disagrees across strikes by > 2 pts | ⛔ Stale snapshot. Refetch before acting. |
+
+**When it fails:** fall back to [`strategy_ref_book.md` §8.7.3](kb1/strategy_ref_book.md) (the straddle rule, centred on the forward) and **tell the user the vendor Greeks are unusable.** Extracting the forward via `F = K + C − P` is permitted — it is arithmetic, not a model. Recomputing Delta/Theta/IV locally is **not** permitted. Full procedure: [§8.7.1a](kb1/strategy_ref_book.md#871a-the-forward-basis-check--run-this-before-you-trust-any-delta-added-28-aug-2026).
+
 ---
 
 ### 6. Live Market Monitoring — Derivatives Context
@@ -585,6 +611,23 @@ Potential intraday moves can develop when participants unwind or add positions:
 **The trap:** GIFT Nifty showed a 100–115 pt gap-down. Actual open was only 22 pts down. A large pre-market signal does not guarantee a large actual gap.
 
 **Rule:** Treat GIFT Nifty as a pre-market context indicator, not a guaranteed direction or magnitude forecast. Before deciding how aggressively to trade the gap, wait for the actual open and the first 5-minute candle to confirm the scale of the move. Cross-check current GIFT Nifty, major global index futures, and the dollar-index trend; when cues conflict, reduce conviction rather than applying a fixed discount.
+
+**⚠️ Second trap — GIFT Nifty is a FUTURES price. Never compare it to NIFTY spot.** *(added 28-Aug-2026)*
+
+The gap you compute by subtracting spot from GIFT is contaminated by the **basis** (cost of carry), which is not small and is not constant.
+
+| 28-Aug-2026, 11:00 IST | Value |
+|---|---|
+| GIFT Nifty | ~24,250 |
+| NIFTY **spot** | 24,155 |
+| Naive "implied gap" (GIFT − spot) | **+160 pts — does not exist** |
+| NIFTY 01-Sep **forward** (put-call parity) | 24,237 |
+| NIFTY 26SEP **future** (Kite) | 24,348.80 |
+| **True read** | **flat** |
+
+**Rule:** compare GIFT only against a **future or forward of matching tenor**. If you have neither, extract the forward from the option chain — model-free, `F = K + C − P` at 3–4 near-ATM strikes, which must agree within ~1 point. Full method: [`strategy_ref_book.md` §8.7.1a](kb1/strategy_ref_book.md#871a-the-forward-basis-check--run-this-before-you-trust-any-delta-added-28-aug-2026).
+
+> On 28-Aug the pre-session view called GIFT "flat" and was right — but by coincidence, having compared a futures price to spot. A right answer from a wrong comparison does not survive the next session, when the basis is a different size.
 
 ---
 

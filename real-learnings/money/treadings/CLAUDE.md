@@ -29,7 +29,7 @@ Do **not** read the whole `kb/` tree. Pick the row that matches the ask:
 
 | If the user asks for… | Read, in this order |
 |---|---|
-| **Today's trade / "what should I trade" / "find best trade positions"** | `docs/mcp-usage-log.md` §1 (what data actually works) → today's `my-treads/<Month>/<DD-MM-YYYY>/*-market_view.md` → `my-treads/fii_dii_data_2026.md` → `kb/kb1/strategy_ref_book.md` **§8.5** (regime grid) → **§8.6** (the structure) → **§8.11** (sizing) → `kb/option_chain_n_greeks.md` §7 (Go/No-Go). **Always pull option chain + Go/No-Go for all three indexes: NIFTY50 (NSE, Tue expiry), BANKNIFTY (NSE, Wed expiry), and SENSEX (BSE, Thu expiry).** Compare all three before picking the best opportunity. Never analyse only one index when looking for trade positions. |
+| **Today's trade / "what should I trade" / "find best trade positions"** | **§8.11.6 FEASIBILITY GATE FIRST** (see below) → `docs/mcp-usage-log.md` §1 (what data actually works) → today's `my-treads/<Month>/<DD-MM-YYYY>/*-market_view.md` → `my-treads/fii_dii_data_2026.md` → `kb/kb1/strategy_ref_book.md` **§8.5** (regime grid) → **§8.6** (the structure) → **§8.11** (sizing) → `kb/option_chain_n_greeks.md` §7 (Go/No-Go). **Always pull option chain + Go/No-Go for all three indexes: NIFTY50 (NSE, Tue expiry), BANKNIFTY (NSE, **monthly only**), and SENSEX (BSE, Thu expiry).** Compare all three before picking the best opportunity. Never analyse only one index when looking for trade positions. |
 | **A strategy blueprint / which structure** | `strategy_ref_book.md` **§8.5 → §8.6 → §8.7 → §8.10 → §8.11**. §1–§7 is textbook reference only — §8 supersedes it wherever they disagree |
 | **Market view / bias for tomorrow** | `kb/Market_View.md` (9 data points + five views + FII/DII scenarios) → `my-treads/fii_dii_data_2026.md` → prior day's `*-tread.md` |
 | **Greeks, IV, option-chain columns** | `kb/option_chain_n_greeks.md` — but first check `docs/mcp-usage-log.md` §2.1: **IV and Greeks are currently unavailable from every MCP** |
@@ -41,6 +41,33 @@ Do **not** read the whole `kb/` tree. Pick the row that matches the ask:
 | **Post-session write-up** | today's folder → write `*-learning.md`; append the session row to `docs/mcp-usage-log.md` §4 |
 
 **The single most important file is `kb/kb1/strategy_ref_book.md` §8** (~1,900 lines). It is the live operating manual, written against the post-CAS / post-2024-SEBI regime. See "The §8 map" below.
+
+---
+
+### 🚦 Run these two gates BEFORE any chain analysis
+
+Both were earned the expensive way. Each takes about two minutes and each has already saved — or would have saved — an entire session of work.
+
+**1. `§8.11.6` — the feasibility gate. Can today's target be reached at all?**
+
+```text
+□ Fetch the expiry list for all 3 indexes.  NEVER guess a date.
+□ Sessions (not calendar days) to nearest expiry, per index.
+□ If min(sessions) ≥ 2 AND the mandate is intraday-only → ❌ 1% is unreachable. Say so. Stop.
+□ MAX CREDIT = risk cap ÷ (k − 1)          k from §8.10.2
+□ REQUIRED CAPTURE = (k − 1) × 100%        k=1.5 → 50% · k=2.0 → 100% (⛔ expiry only)
+□ If required capture > realistic capture → no structure and no size fixes it. Report and stop.
+```
+> **A 1%-of-capital target with a 1%-of-capital risk cap is reachable on expiry day and almost nowhere else.** Three consecutive no-trades (24, 27, 28-Aug-2026) all had this single cause and all were decidable at 9:15. When the target is out of reach, **quote the capital at risk, not the shortfall** — "1% needs 20–33 lots = 15–25% of capital against a 1% cap" ends the discussion; "it doesn't quite reach 1%" invites size creep.
+
+**2. `§8.7.1a` — the forward-basis check. Can you trust the Greeks?**
+
+```text
+□ F = K + C − P at 3–4 near-ATM strikes.   Must agree within ~1 pt (else the chain is stale).
+□ basis = F − Spot.        > 0.1% of spot → DISCARD the vendor delta band, use §8.7.3 on F.
+□ Vendor sanity: one strike + one expiry = ONE IV.  CE IV ≠ PE IV → Greeks are broken.
+```
+> ⛔ **Dhan's Greeks are currently broken this exact way** (spot-based, not forward-based) — see Current State below. Parity (`F = K + C − P`) is **arithmetic and permitted**; recomputing Δ/Γ/Θ/V locally is **not**.
 
 ---
 
@@ -102,7 +129,7 @@ tools/
 my-treads/                        Personal trade journals (one folder per trading day)
   fii_dii_data_2026.md            ★ Persistent tracker — FII/DII data across all 2026 sessions
   July-2026/                      13, 14, 20, 21, 22, 23, 24, 28
-  August-2026/                    03, 04, 05, 10, 17
+  August-2026/                    03, 04, 05, 10, 17, 20, 24, 26, 27, 28
     DD-MM-YYYY/
       DD-MM-YYYY-market_view.md   Pre-session market bias (form after 3:30 PM prior day)
       DD-MM-YYYY-tread.md         Live session: strategy, execution, Q&A log
@@ -126,15 +153,15 @@ There is **no README.md**. This file is the repo index — keep it current.
 | 8.1–8.4 | Why the seller edge exists (**VRP = IV − RV − friction**), the 2024–26 SEBI regime, CAS mechanics, contract specs (NIFTY lot 65 · BANKNIFTY 30 monthly-only · SENSEX 20) | Background / rule checks |
 | **8.5** | **Volatility state (RICH / NORMAL / CHEAP / HOSTILE) + the 5-view × 4-state regime grid** | **First stop every session** — it decides whether to trade at all |
 | **8.6** | **The 14 structures**, each with full worked Indian numbers: 8.6.1–8.6.7 core; 8.6.8 skew-aware condor; 8.6.9 positional 25–40 DTE condor; 8.6.10 0-DTE hedged fly under CAS; 8.6.11 IV-crush event harvest; 8.6.12 double calendar + the Feb-2025 margin trap; 8.6.13 the ladder (a repair, never an entry); 8.6.14 the rolling wing bank | Once the grid says "trade" |
-| 8.7 | Strike selection — delta band · expected move · **the straddle rule (works with zero Greeks)** · OI walls | Picking strikes, especially with Dhan down |
+| 8.7 | Strike selection — delta band · expected move · **the straddle rule (works with zero Greeks)** · OI walls. **§8.7.1a: the forward-basis check — `F = K + C − P`; if basis > 0.1% of spot, discard the vendor delta band. One strike + one expiry = ONE IV; CE IV ≠ PE IV means the Greeks are broken** | Picking strikes — **§8.7.1a runs before any delta is quoted** |
 | 8.8 | Entry timing — intraday clock (9:20–9:45 primary) + weekly calendar | Timing the fill |
 | **8.9** | **Adjustment playbook** — shift the untested side, roll, hedge up, convert, cut; the 4-question martingale test; the adjustment budget; full decision tree | Position is under pressure |
-| 8.10 | Stop-loss architecture — combined-premium SL is the default; per-leg SL un-hedges you; why SL-M on options is a trap | Before entry, always |
-| **8.11** | **Sizing: `Lots = per-trade risk cap ÷ rupee loss per lot at your stop`** (NOT margin ÷ margin-per-lot). §8.11.5 is the honest expectancy reality check | Before entry, always |
-| 8.12 | 14 named patterns (Monday Gap Fade, Expiry-Day Pin, Range-Compression Squeeze, …) | Pattern recognition |
-| **8.13** | **Trend-day kill switch** — 3 markers, 0-1-2-3 escalation, fixed check times | Intraday, at 9:45 / 10:30 / 11:30 / 1:30 |
+| 8.10 | Stop-loss architecture — combined-premium SL is the default; per-leg SL un-hedges you; why SL-M on options is a trap. **§8.10.5: an abort condition must match the structure's dominant Greek — a VIX-based abort on a directional credit vertical exits winners** | Before entry, always |
+| **8.11** | **Sizing: `Lots = per-trade risk cap ÷ rupee loss per lot at your stop`** (NOT margin ÷ margin-per-lot). §8.11.5 is the honest expectancy reality check. **§8.11.6: the feasibility gate — `MAX CREDIT = risk cap ÷ (k−1)`, so netting 1% needs `(k−1)×100%` of the credit; at k=2.0 that is 100% and arrives only at expiry** (+ estimate the capture with the structure's **dominant Greek** — the DTE table is a *theta* table and theta stops dominating past ~10 DTE). **§8.11.7: the noise-floor test — `(k−1)×credit` vs the SHORT LEG's own 30-min range; under 1.5× the stop is inside one candle → no trade at any size** | **§8.11.6 at 9:15, before chain analysis** · **§8.11.7 on every candidate before pricing it further** · §8.11.1 before entry, always |
+| 8.12 | 14 named patterns (Monday Gap Fade, Expiry-Day Pin, Range-Compression Squeeze, …). **§8.12.6a: the compression "Trade Nothing" veto applies to NEUTRAL premium only — a one-sided credit vertical leaning the way the market leans is paid by the break** | Pattern recognition |
+| **8.13** | **Trend-day kill switch** — 3 markers, 0-1-2-3 escalation, fixed check times. **§8.13.3: every check re-pulls spot/VWAP · VIX · ATM straddle · OI *and* `oi_day_high` at the short strikes and walls. OI is not optional — compare it to its day high, not to the morning print** | Intraday, at 9:45 / 10:30 / 11:30 / 1:30 |
 | 8.14 | Six ways sellers die, with real Indian gap dates | Sanity check |
-| 8.15 | Metrics that matter — and why win rate is a vanity metric | Journalling |
+| 8.15 | Metrics that matter — and why win rate is a vanity metric. **§8.15.4: score at the *mandated exit time* (§8.3), never a mid-session snapshot, and always report MAE / exit-mark / MFE at max permitted size — including candidates you rejected in analysis and never wrote up** | Journalling · scoring a no-trade day |
 | 8.16 | Six quick-reference cards | Grab-and-go |
 | 8.17 | Sources + caveats | Provenance |
 
@@ -171,15 +198,18 @@ See `docs/broker-session-startup.md` for the full checklist. Summary:
 ```
 Step 1 → Kite (Zerodha)  → "Login to Zerodha" → auth link → 2FA → verify with get_ltp
 Step 2 → Kotak Neo       → "Login to Kotak Neo" (UCC = V6PZT) → QR scan → "DONE" → get_limits
-Step 3 → Dhan            → "Login to Dhan" → ONE consent URL → complete_login → verify with expirylist
+Step 3 → Dhan            → call `mcp__dhan__authenticate` → browser URL → Dhan login → tools auto-upgrade
+                           If browser shows `{"error":"invalid_client"}` → call `mcp__dhan__authenticate` AGAIN (fresh client_id)
+                           If redirect page fails → paste the full callback URL → call `mcp__dhan__complete_authentication`
+                           Verify with: `mcp__dhan__market_data_agent_tool` action=`expirylist`
 Step 4 → Record the outcome in docs/mcp-usage-log.md §4, then proceed
 ```
 
 **Verify each MCP with a call that exercises the capability you actually need** — a successful login proves nothing about the data endpoints.
 
 Three gotchas that have already cost a session:
-- **Never call `mcp__dhan__login` twice.** The second call kills the first pending consent → `"Target session is not pending login."` Issue **one** URL and wait.
-- **Never verify Dhan with `funds`** — it returns well-formed all-zeros while unauthenticated. Use `expirylist`.
+- **Dhan `invalid_client` → call `mcp__dhan__authenticate` again.** The MCP server generates a new OAuth client_id per call; the first can be stale. A second call is safe when the URL has already failed. Do NOT retry while the user is mid-login on a valid URL.
+- **Never verify Dhan with `funds`/`fundlimit`** — they return data even when unauthenticated. Use `mcp__dhan__market_data_agent_tool` action=`expirylist`.
 - **Kite missing `NFO`/`BFO` blocks orders only, not data.** Don't abandon Kite as a data source over it.
 
 Flag any red MCP before analysing. If IV/Greeks are needed and Dhan is down, **say so and ask** — see Current State below.
@@ -188,21 +218,26 @@ Flag any red MCP before analysing. If IV/Greeks are needed and Dhan is down, **s
 
 ## Current State / Known Blockers
 
-*Last verified: 20-Aug-2026. Full detail + evidence in `docs/mcp-usage-log.md`.*
+*Last verified: 31-Aug-2026. Full detail + evidence in `docs/mcp-usage-log.md`.*
 
 | Fact | Consequence |
 |---|---|
-| **Dhan Data API is now activated** — full subscription (trading + market data) purchased 20-Aug-2026. Access token stored in `.broker_creds` as `DHAN_ACCESS_TOKEN`. Verify each session with `expirylist` to confirm. | **IV and Greeks from Dhan are now available.** Delta-band strike selection and the IV/IVP filter are unblocked. |
-| **Do not compute Greeks locally.** The user explicitly rejected a local Black-Scholes fallback. | Always use Dhan's pre-calculated Greeks. If Dhan data is unavailable in a session, state the gap and ask — never silently substitute. |
+| ⛔ **Dhan's Greeks and IV are computed off SPOT, not the FORWARD** (found 28-Aug-2026, `mcp-usage-log.md` §2.5). Proof: same strike + same expiry returns CE IV 11.47 vs PE IV 6.41 — arithmetically impossible. Deep-ITM legs return IV/Δ/Θ = 0. | **We have NO trustworthy Greeks source.** The fields are populated and plausible, so this fails silently. Dhan's Δ=0.50 sits ~85 pts below the true ATM-forward on NIFTY. **Run §8.7.1a before quoting any delta; fall back to §8.7.3 centred on the parity forward `F`.** |
+| **Near-term basis is large and tenor-dependent** — 28-Aug: NIFTY +82 (4d), SENSEX +283 (6d), BANKNIFTY +382 (32d). | **The true ATM is the forward, not spot** — often more than one strike away. Recheck each session; never reuse yesterday's basis. **GIFT Nifty is a futures price — never compare it to spot.** |
+| ✅ **Dhan MCP tools now working (31-Aug-2026)** — agent-tool style. `mcp__dhan__market_data_agent_tool` action=`expirylist` verified live. Login via `mcp__dhan__authenticate`; if `{"error":"invalid_client"}` call authenticate **again** (fresh client_id). See §2.6 in `mcp-usage-log.md`. | **Use MCP tools directly**. REST (`/tmp/dhan.sh`) still works as fallback. Verify post-auth with `expirylist`, never `funds`. |
+| Dhan Data API subscription **is** active (20-Aug-2026); token in `.broker_creds` as `DHAN_ACCESS_TOKEN`. **Prices, OI, `previous_oi` and bid/ask are trustworthy.** | Dhan is the best full-chain source. **Only its derived analytics (IV/Greeks) are broken.** |
+| **Do not compute Greeks locally.** The user explicitly rejected a local Black-Scholes fallback. | State the gap and ask — never silently substitute. **Permitted:** `F = K + C − P` (put-call parity) and the ATM-forward straddle relation — these are arithmetic, not models. **Not permitted:** solving for Δ/Γ/Θ/V, or presenting a derived number as a vendor number. |
 | **Kite (Zerodha) has ₹500 and no `NFO`/`BFO`** in `get_profile.exchanges`. | Kite = **data source only**. Cannot execute. Data (spot, VIX, OI, `oi_day_high/low`, 5-level depth, historicals) is fully working. |
 | **Trading capital is ₹7,02,275 in Kotak Neo**, and the Kotak MCP is **read-only by design** (no order tools). | **All execution is manual in the Kotak Neo mobile app.** Claude gives structure, strikes, sizing, levels; the user places the orders. |
 | Whether **F&O is enabled on Kotak Neo** is unknown — `get_limits` doesn't expose segment entitlements. | Open question for the user. |
 
-**Effective architecture today:** Kite = spot/VIX/OI/depth/historicals · Dhan = option chain + Greeks + IV · Kotak = margin + research · Claude = analysis · **Kotak app = manual execution**.
+**Effective architecture today:** Kite = spot/VIX/OI/depth/historicals/futures/option minute-bars · **Dhan MCP** = full option chain prices + OI + `previous_oi` + bid/ask (REST fallback also available) · **Greeks/IV = none trustworthy → §8.7.3 straddle rule on the parity forward** · Kotak = margin + research · Claude = analysis · **Kotak app = manual execution**.
 
 **Open items** (mirrored in `docs/mcp-usage-log.md` §6):
-1. Confirm F&O entitlement on Kotak Neo.
-2. Decide the permanent execution venue: fund + activate F&O on Zerodha, fund Dhan, or accept manual Kotak execution.
+1. 🔴 Raise the **spot-vs-forward Greeks defect** with Dhan support. Delta-band strike selection is re-blocked until fixed.
+2. ✅ ~~Fix Dhan MCP OAuth binding~~ — resolved 31-Aug-2026.
+3. Confirm F&O entitlement on Kotak Neo.
+4. Decide the permanent execution venue: fund + activate F&O on Zerodha, fund Dhan, or accept manual Kotak execution.
 
 ---
 
@@ -216,6 +251,9 @@ Flag any red MCP before analysing. If IV/Greeks are needed and Dhan is down, **s
 |-------|----------|------------|
 | NIFTY 50 | NSE | Every Tuesday |
 | SENSEX | BSE | Every Thursday |
+| **BANKNIFTY** | NSE | ⚠️ **MONTHLY ONLY — no weekly** (last Tuesday). Post-2024-SEBI. |
+
+⚠️ **Always fetch the expiry list; never assume or infer a date.** A guessed date returns *Invalid Expiry Date* (Dhan) and, worse, a *plausible* wrong one silently prices the wrong contract. **Count trading sessions, not calendar days** — this is the input to the §8.11.6 gate. On Fri 28-Aug-2026 the nearest expiries were NIFTY 01-Sep (**2 sessions**), SENSEX 03-Sep (**4**), BANKNIFTY 29-Sep (**22**) — no 0-DTE or 1-DTE instrument existed anywhere, which alone decided the session.
 
 Monthly contracts expire the last Tuesday (NSE) / last Thursday (BSE) of the month. A holiday shifts expiry to the previous trading day.
 
@@ -235,9 +273,30 @@ Monthly contracts expire the last Tuesday (NSE) / last Thursday (BSE) of the mon
 
 **Safe trade filter (`kb/option_chain_n_greeks.md §5`):** Top-3 columns when screening option-selling setups: Delta/POP, OI & OI Change, and IV/IVP. Never use `POP = 1 - |Delta|`.
 
-**Risk parameters (user's profile):** moderate to low risk; deploy ~₹6L per session; target ~1% net return *after* brokerage and taxes; per-trade max loss + daily max loss must be defined before entry. Concrete caps on ₹6L (`strategy_ref_book.md` §8.11): **per-trade ₹6,000 (1.0%) · daily ₹9,000 (1.5%) · weekly ₹24,000 (4%) · max deploy 60–70% · max 3 concurrent structures.** Sizing is `Lots = per-trade risk cap ÷ rupee loss per lot at your stop` — usually 1–2 lots.
+**Risk parameters (user's profile):** moderate to low risk; trading capital ₹7,02,275 in Kotak Neo; target ~1% net return per session *after* brokerage and taxes; max deploy 60–70% of capital per session; max 3 concurrent structures; daily max loss ~1.5% of capital.
 
-**There is no obligation to trade.** §8.11.5 records the honest expectancy: ~2–5% per month, average loss larger than average win. If 1% of ₹6L would require ~10% single-trade risk, the answer is **no trade** — that call was made and documented on 17-Aug-2026.
+**Sizing — updated 31-Aug-2026:** Do NOT use the rigid `Lots = risk cap ÷ loss per lot` formula. That formula capped at 5 lots and prevented 1% returns even on clean setups. **New approach:**
+
+1. **Identify the structure and stop level first** (price-based or premium-based, per §8.10).
+2. **Size by conviction and available margin** — deploy up to 60–70% of capital in margin. On a 1-DTE expiry-eve day with clear direction, 10–20 lots is appropriate.
+3. **Define the stop in rupee terms BEFORE entry** — user knows the loss amount going in and accepts it.
+4. **Exit is fully manual and actively supervised** — the user watches the position in real-time alongside Claude and will manually trigger exit on stop or target. There is no "set and forget." Claude monitors and alerts; user executes.
+
+The old ₹6,000 per-trade cap made the reward:risk approximately 1:1 (earn ₹1,200 net, risk ₹6,000). At 10–15 lots, the same structure earns ₹4,000–8,000 net on a good day while risking ₹12,000–18,000 — still within 2–3% of capital, acceptable for an actively-watched session.
+
+> **Why this matters (31-Aug-2026 lesson):** At 5 lots, the trade earned ₹2,950 (0.49%). At 20 lots, the same trade would have earned ₹12,500 (2.08%) with the stop never remotely threatened (spread was 168 pts OTM at exit). The rigid cap prevented a better outcome on a setup where the risk was well-managed. Capital was never in danger — margin used was only ₹2.13L of ₹7L available.
+
+**There is no obligation to trade.** §8.11.5 records the honest expectancy: ~2–5% per month, **≈₹1,274 (0.20%) per traded session** at minimum size. At 10–15 lots on a good setup, expectancy is ₹4,000–8,000 per session. If the setup is unclear or the stop level is undefined, do not trade — that discipline does not change.
+
+**Three distinct reasons to stand down — say which one, they generalise differently:**
+
+| Reason | Diagnosis | What changes it |
+|---|---|---|
+| **Too dangerous** | Kill switch fires, 3+ Go/No-Go reds, compression squeeze, gap risk | Wait for the **regime** to change (17-Aug, 27-Aug-2026) |
+| **Too small** | Day is clean but no permitted size reaches the target — §8.11.6 | Wait for the **calendar** to change (24-Aug, 28-Aug-2026) |
+| **Too thin** | Credit so small the stop sits inside one candle — §8.11.7. `(k−1)×credit` < 1.5× the short leg's 30-min range | Pick a **different structure**: closer strikes or wider width. More size makes it worse, not better |
+
+Conflating them buries the fixable cause. On 28-Aug-2026 the kill switch was 0/3, Go/No-Go 0 red, VRP positive and VIX falling — a **clean** day on which ~1% still needed 20–33 lots (**14.9–24.7% of capital** against a 1.0% cap). **When the target is out of reach, quote the capital at risk, not the shortfall.**
 
 **Post-CAS hard exit times (`strategy_ref_book.md` §8.3):** NIFTY target 2:30 PM / hard 3:00 PM · SENSEX target 2:15 PM / hard 2:45 PM. Never carry an expiring leg into the 3:15 PM auction.
 
@@ -260,8 +319,10 @@ Monthly contracts expire the last Tuesday (NSE) / last Thursday (BSE) of the mon
 
 | Capability | Dhan | Kite (Zerodha) | Kotak Neo | **Actually usable today** |
 |-----------|------|---------------|-----------|---|
-| Full option chain + Greeks | ✅ (pre-calculated) | ❌ | ❌ | ⛔ **none** (Dhan blocked) |
-| Implied Volatility | ✅ | ❌ | ❌ | ⛔ **none** (Dhan blocked) |
+| Full option chain (price/OI/bid-ask) | ✅ **REST only** | ❌ | ❌ | **Dhan via curl** |
+| Greeks (Δ Γ Θ V) | ⚠️ populated but **computed off spot** | ❌ | ❌ | ⛔ **none** → §8.7.3 straddle rule |
+| Implied Volatility | ⚠️ **CE IV ≠ PE IV**, unusable | ❌ | ❌ | ⛔ **none** → VIX + ATM-fwd straddle |
+| Forward / basis | ✅ parity from chain | ✅ futures via `get_quotes` | ⬜ | **parity, cross-checked vs Kite** |
 | Live quotes & OHLC | ✅ | ✅ | ✅ | **Kite** |
 | Open Interest per strike + depth | ✅ | ✅ (`get_quotes`) | ⬜ | **Kite** |
 | Historical OHLC candles | ✅ | ✅ | ❌ | **Kite** |
@@ -300,7 +361,10 @@ Kite and Dhan MCPs can place real orders. Always draft, then explicitly confirm 
 - Scope is **Indian NSE/BSE only** — no crypto, forex, CFDs, or foreign exchanges.
 - Daily max loss, per-trade max loss, and mandatory stop-loss must be part of every strategy recommendation.
 - **CAS rule:** always flag if a position is likely to be held past 3:15 PM — the user should exit before the Closing Auction Session.
-- **No silent substitutes for missing data.** If Dhan's Greeks/IV are unavailable, say so and ask. Do not back out Greeks locally.
+- **No silent substitutes for missing data.** If Dhan's Greeks/IV are unavailable **or unreliable**, say so and ask. Do not back out Greeks locally.
+  - ✅ **Permitted (arithmetic, not models):** put-call parity `F = K + C − P`; the ATM-forward straddle relation `≈ 0.7979 × F × σ√T`; HV from Kite candles; §8.7.3 straddle-rule strikes.
+  - ⛔ **Not permitted:** solving Black-Scholes for Δ / Γ / Θ / V, or presenting any derived figure as if it came from the vendor.
+- **A populated field is not a verified field.** Dhan's Greeks returned plausible-but-wrong numbers for four sessions before anyone checked. Verify with a call that exercises the capability **and** a sanity check on the value (§8.7.1a: one strike + one expiry = one IV).
 
 ---
 
@@ -314,5 +378,7 @@ This file is the repo index — there is no README. Whenever any of these change
 | Dhan Data API gets activated | `mcp-usage-log.md` §1/§2.1/§6, `docs/dhan_mcp.md`, "Current State" above, the capability map's *Actually usable* column |
 | A trading session happens | append a row to `docs/mcp-usage-log.md` §4 |
 | A new §8 chapter or structure is added | the "§8 map" table above + the §8 index block at the top of `strategy_ref_book.md` |
+| **A vendor's data is found to be wrong (not just missing)** | `mcp-usage-log.md` §2 (new root-cause subsection) + §1 matrix + §7 substitutes, then "Current State" above + the capability map. **Downgrade the ✅ — a populated field is not a verified field.** |
+| **A session earns a KB amendment** | the target §/filter, its parent index block, the `§4` session row in `mcp-usage-log.md`, and the day's `*-learning.md`. If it changes the *routing*, also the ⚡ Fast Load table and the gates block above. |
 | A new file or folder is added to the repo | the Directory Layout above |
 | Capital or execution venue moves | "Current State" above + the memory note on where capital sits |
