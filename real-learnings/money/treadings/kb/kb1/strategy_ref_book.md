@@ -1,5 +1,17 @@
 # Options treading in BSE/NSE markets.
 
+> 🔒 **PRECEDENCE — read this before taking any number from this file.**
+>
+> `TRADING_CONSTANTS.md` → skill `SKILL.md` → `CLAUDE.md` → **this file, §8 only** → everything else.
+>
+> - **[`TRADING_CONSTANTS.md`](../../TRADING_CONSTANTS.md) holds every cap, target, time and threshold.**
+>   If a number here disagrees with it, that file wins and this one is a bug. Don't copy numbers out
+>   of it — link to the row.
+> - **§1–§7 below is a textbook catalogue and NEVER governs a live decision.** It predates CAS and the
+>   2024 SEBI regime. §8 supersedes it wherever they disagree.
+> - **§8 is the reasoning; the constants file is the parameters.** Read §8 to understand *why* a rule
+>   exists, then take the actual number from the constants file.
+
 ## Index
 
 - [1. Tools which will help during the treads](#1-tools-which-will-help-during-the-treads)
@@ -126,7 +138,7 @@
   - [8.8 Entry timing — the intraday premium and IV curve](#88-entry-timing--the-intraday-premium-and-iv-curve)
   - [**8.9 The adjustment playbook — decision tree**](#89-the-adjustment-playbook--decision-tree)
   - [8.10 Stop-loss architecture — four types and which to use](#810-stop-loss-architecture--four-types-and-which-to-use)
-  - [**8.11 Position sizing for ₹6L — size from your stop, not your margin**](#811-position-sizing-for-6l--size-from-your-stop-not-your-margin)
+  - [**8.11 Position sizing — two caps, take the smaller**](#811-position-sizing--two-caps-take-the-smaller)
     - [**8.11.6 The feasibility gate — can today's target be reached at all?**](#8116-the-feasibility-gate--can-todays-target-be-reached-at-all-added-28-aug-2026)
     - [**8.11.7 The noise-floor test — is your stop inside one candle?**](#8117-the-noise-floor-test--is-your-stop-inside-one-candle-added-28-aug-2026)
   - [8.12 The pattern library — recurring setups a seller trades](#812-the-pattern-library--recurring-setups-a-seller-trades)
@@ -637,7 +649,7 @@ This construction matches a gradual, target-defined rise: the ATM long CE partic
   * **Upfront Cost (Max Risk):** ₹49.95 × 65 = **₹3246.75**
   * **Maximum Spread:** 24,350 - 24,100 = **250 points**
   * **Maximum Profit Potential:** (Spread - Net Debit) = 250 - 49.95 = **200.05 points**
-  * **Max Total Profit per Lot:** 200.05 × 25 = **₹13003.25**
+  * **Max Total Profit per Lot:** 200.05 × 65 = **₹13,003.25**
   * **Break-Even Point:** Higher Strike - Net Debit = 24,350 - 49.95 = **24,300.05**
 -------------------------------------------------------------
   - `NIFTY = 22,000`. 
@@ -708,10 +720,10 @@ If you are looking at a specific market setup, tell me your target Nifty index l
     >> Imagine NIFTY 50 is trading at `24,500`. You expect the market to stay range-bound or drop slightly over the next week. You execute a weekly credit spread:
     >> * **Sell:** `24,600` CE at ₹120 (lower strike, short position)
     >> * **Buy:** `24,800` CE at ₹40 (higher strike, long protection position)
-    >> **Net Premium Received (Credit):** ₹120 − ₹40 = ₹80 per lot (₹80 × 25 Nifty lot size = ₹2,000 maximum profit)
+    >> **Net Premium Received (Credit):** ₹120 − ₹40 = ₹80 per lot (₹80 × 65 = ₹5,200 maximum profit — NIFTY lot size is **65**, not the pre-2024 25)
     >> Scenario Outcomes at Expiry
       >>> * **Scenario A (Nifty falls to 24,300 or stays flat at 24,500):** Both options expire worthless. You keep the entire net credit of ₹2,000 (**Maximum Profit**).
-      >>> * **Scenario B (Nifty rallies past 24,600 to 24,700):** Your short call loses value, but your long 24,800 CE cushions severe upward movement. The loss is calculated as the spread width (24,800 − 24,600 = 200 points) minus the credit received (80 points) = 120 points × 25 = ₹3,000 **Maximum Loss**.
+      >>> * **Scenario B (Nifty rallies past 24,600 to 24,700):** Your short call loses value, but your long 24,800 CE cushions severe upward movement. The loss is calculated as the spread width (24,800 − 24,600 = 200 points) minus the credit received (80 points) = 120 points × 65 = ₹7,800 **Maximum Loss**.
 
 ------------------------------------------------------------------------------------------------
   - `NIFTY = 22,000`. 
@@ -1257,7 +1269,7 @@ Buy 1 `22,000 CE`, sell 2 `22,300 CE`. If NIFTY rises moderately toward `22,300`
 
 ##### 6.3 Credit Spreads || option seller || 1.5 Bull Put Spread
 
-> ▶ **Live practice:** the credit spread is the workhorse of a moderate-risk book — it is what [§8.5.2](#852-step-2--the-grid) returns for most directional cells. Size it from the **stop**, not the margin ([§8.11](#811-position-sizing-for-6l--size-from-your-stop-not-your-margin)); stop at **2× the entry credit** on the *structure*, never leg-by-leg ([§8.10](#810-stop-loss-architecture--four-types-and-which-to-use)); and when a genuine trend runs through it, **convert to a ladder** rather than roll ([§8.6.13](#8613-the-ladder--a-repair-never-an-entry)).
+> ▶ **Live practice:** the credit spread is the workhorse of a moderate-risk book — it is what [§8.5.2](#852-step-2--the-grid) returns for most directional cells. Size it from the **stop**, not the margin ([§8.11](#811-position-sizing--two-caps-take-the-smaller)); stop at **2× the entry credit** on the *structure*, never leg-by-leg ([§8.10](#810-stop-loss-architecture--four-types-and-which-to-use)); and when a genuine trend runs through it, **convert to a ladder** rather than roll ([§8.6.13](#8613-the-ladder--a-repair-never-an-entry)).
 
 > **Target Trader:** The net seller of options who wants the high statistical win rate of selling but needs protection against unlimited risk.
 > **Core Action:** You sell one option (collecting a higher premium) and simultaneously buy another option (paying a lower premium). This results in a net cash inflow (credit) into your account.
@@ -1705,7 +1717,7 @@ Return:
 >
 > **What this section is not.** It is not a signal service, not a guaranteed-return system, and not a replacement for the Pre-Trade Go/No-Go checklist in [`option_chain_n_greeks.md` §7](../option_chain_n_greeks.md#7-pre-trade-gono-go-checklist--session-learnings). Every structure below still requires a five-view classification, a defined maximum loss, a mandatory stop-loss, a per-trade rupee cap and a daily rupee cap **before entry**.
 >
-> **Capital anchor.** Worked examples are sized to the profile in `CLAUDE.md`: **moderate-to-low risk, ~₹6,00,000 deployed per session, ~1% net session target.** The `pro_option_seller_playbook.md` is sized to a ₹20L dedicated book. Where the two disagree on contract specs or charges, [§8.0.3](#803-reconciliation--which-numbers-in-this-repo-supersede-which) is authoritative.
+> **Capital anchor.** ⚠️ **Superseded — see [`TRADING_CONSTANTS.md`](../../TRADING_CONSTANTS.md).** Worked examples below were sized to *~₹6,00,000 deployed per session, ~1% net session target*. **Both figures are now wrong.** The book is **₹7,02,275**, the margin cap is **40%** (~₹2.8L, and margin is not a sizing input), and the **1%-per-session target is deleted** — it annualises to ~250% and, under a ₹3,500 planned-stop cap, requires capturing 200% of the credit. The live target is **2–4% per month**. Treat every worked example here as illustrating *method*, not size. The `pro_option_seller_playbook.md` is sized to a ₹20L dedicated book. Where the two disagree on contract specs or charges, [§8.0.3](#803-reconciliation--which-numbers-in-this-repo-supersede-which) is authoritative.
 
 ---
 
@@ -1724,7 +1736,7 @@ Return:
 | [8.8](#88-entry-timing--the-intraday-premium-and-iv-curve) | Entry timing | The intraday IV curve; the windows that pay |
 | [8.9](#89-the-adjustment-playbook--decision-tree) | **The adjustment playbook** | Shift, roll, convert, hedge-up, cut — and when not to |
 | [8.10](#810-stop-loss-architecture--four-types-and-which-to-use) | Stop-loss architecture | Leg SL vs combined-premium SL vs MTM vs level |
-| [8.11](#811-position-sizing-for-6l--size-from-your-stop-not-your-margin) | **Position sizing for ₹6L** | The one formula that keeps you alive |
+| [8.11](#811-position-sizing--two-caps-take-the-smaller) | **Position sizing** | The one formula that keeps you alive |
 | [8.12](#812-the-pattern-library--recurring-setups-a-seller-trades) | The pattern library | 14 recurring weekly/intraday patterns |
 | [8.13](#813-trend-day-detection--the-sellers-kill-switch) | Trend-day detection | The single most important survival skill |
 | [8.14](#814-blow-up-autopsy--the-six-ways-sellers-die) | Blow-up autopsy | Six failure modes and the rule that stops each |
@@ -1766,7 +1778,7 @@ Three files in this repo quote contract specs and charges. They disagree. Use th
 | **BANKNIFTY expiry** | `CLAUDE.md` + §8.2 — **monthly only** (weekly BANKNIFTY was withdrawn 20-Nov-2024) | `pro_option_seller_playbook.md` §3 — "Wednesday (weekly)" | Playbook row is stale. Do not plan a weekly BANKNIFTY income leg. |
 | **Charges per round trip** | §8.3 of this file (itemised build-up) | `pro_option_seller_playbook.md` §4 — "~₹2,520 for 12 lots" | The playbook figure over-states charges by roughly **8×** (its STT line of ~₹900 should be ~₹70; STT is 0.1% of *sale premium*, not of notional). Conservative in direction, but it makes small-credit trades look unviable when they are not. **The real cost is slippage — see §8.3.2.** |
 | **Per-lot margin figures** | None — compute live | `pro_option_seller_playbook.md` §3 margin table | Those rupee figures were derived at a different lot size and cannot be scaled linearly. Always price margin with a **basket margin call** before entry (`mcp__dhan__margin_agent_tool`, or the Zerodha SPAN calculator). See §8.3.3. |
-| **Expiry-day time stops** | `rules_constrints.md` §1.10 (post-CAS) | `pro_option_seller_playbook.md` §11 Rule 3 ("2:45 PM") | Post-CAS rules supersede: **NIFTY target 2:30 PM / hard 3:00 PM; SENSEX target 2:15 PM / hard 2:45 PM.** |
+| **Expiry-day time stops** | ⭐ [`TRADING_CONSTANTS.md` §7](../../TRADING_CONSTANTS.md) — nothing else | `rules_constrints.md` §1.10 · `pro_option_seller_playbook.md` §11 Rule 3 ("2:45 PM") · the two-tier scheme formerly quoted here | **HARD FLAT: NIFTY/BANKNIFTY 2:30 PM · SENSEX 2:15 PM. One time per index.** The two-tier "target / hard" scheme is **deleted** — a later fallback deadline is what a losing position reaches for (20-Jul-2026 exited ~3:16 PM). |
 
 ---
 
@@ -1869,7 +1881,7 @@ CREATED
 
 #### What the CAS exit actually costs — measured, 27-Aug-2026
 
-The hard-exit times (NIFTY 2:30/3:00 · SENSEX 2:15/2:45) are not free, and it is worth having a real
+The hard flats (NIFTY/BANKNIFTY 2:30 · SENSEX 2:15 — one time per index) are not free, and it is worth having a real
 number for what they give up so the rule is not quietly relaxed on a bad day.
 
 | SENSEX 30-min bar | Move |
@@ -2019,13 +2031,13 @@ Three tradable index option books, three different jobs. Choosing the wrong one 
 MONDAY      Form the view (Market_View.md 9 data points). No entry before 9:45 AM.
             Optional: enter the NIFTY weekly structure 10:15–10:45 AM (1 DTE).
 TUESDAY     NIFTY EXPIRY.
-            Target 50% exit. HARD CLOSE all expiring NIFTY legs by 3:00 PM (CAS).
+            Exit at 50% of credit. HARD FLAT all NIFTY legs by 2:30 PM. No later tier exists.
             2:00–2:30 PM: nothing new that expires today.
 WEDNESDAY   "Dead zone" — no near expiry on either exchange.
             Best day to place the POSITIONAL 25–40 DTE structure (§8.6.10).
             Optional: enter SENSEX weekly structure 10:15–10:45 AM (1 DTE).
 THURSDAY    SENSEX EXPIRY.
-            Target 50% exit. HARD CLOSE all expiring SENSEX legs by 2:45 PM (CAS).
+            Exit at 50% of credit. HARD FLAT all SENSEX legs by 2:15 PM. No later tier exists.
 FRIDAY      Manage the positional book only. No new weekly entries —
             you would carry a weekend gap for two sessions of theta.
             Journal: ROM, MAE, adjustment count, attribution to Theta/Vega/Gamma.
@@ -2049,22 +2061,46 @@ This is the heart of §8. Most traders pick a strategy and then look for a marke
 | **VRP proxy = ATM IV − HV20** | Chain IV vs 20-day realised | **Positive and widening → the seller's best regime.** Negative → the market is moving more than it is paying you for. Stand down. |
 | **India VIX slope** (today vs 5-day average) and level | NSE / `Market_View.md §6` | Rising VIX = your short Vega is bleeding. Falling VIX = Vega tailwind. |
 
-```text
-VOLATILITY STATE — decision rule
+⛔ **The IVP / `IV − HV20` decision rule that stood here is DELETED (02-Sep-2026).** It was the better
+test on paper and it is unusable in practice: **both inputs need a trustworthy ATM IV series, and no
+vendor available here has one.** Dhan returns CE IV 11.47 and PE IV 6.41 at the *same strike and same
+expiry* — arithmetically impossible, so every IVP percentile and every `IV − HV20` computed from it is
+noise wearing a decimal point. Recomputing IV locally is not permitted (see §8.17 / the Greeks rule).
 
-  IVP > 60  AND  IV − HV20 > +2    →  RICH        (sell aggressively, wide)
-  IVP 30–60 AND  IV − HV20 > 0     →  NORMAL      (standard size, standard width)
-  IVP < 30  AND  IV − HV20 > 0     →  CHEAP       (small size, tight structures, defined risk only)
-  ANY IVP   AND  IV − HV20 < 0     →  HOSTILE     (do not sell premium — the market is
-                                                   realising more than it is paying you)
-  VIX up > 10% intraday                          →  ABORT new entries. Manage existing only.
+**The live rule is VIX only** — the one volatility number that is measured and published rather than
+derived from a broken chain:
+
+```text
+VOLATILITY STATE — live rule (TRADING_CONSTANTS.md §10)
+
+  VIX < 12                →  CHEAP     (credit will be thin; expect the §8.11.7 noise floor to fail)
+  VIX 12–16               →  NORMAL    (the working state — full formula size)
+  VIX 16–20               →  RICH      (full formula size; better credit for the same width)
+  VIX ≥ 20                →  HOSTILE   (⛔ nothing, not one lot)
+  VIX up ≥ 8% intraday    →  HOSTILE regardless of level. No new entries. Manage existing only.
 ```
 
-> **The single most under-used filter in Indian retail selling.** Everyone checks India VIX. Almost nobody checks **IV minus realised**. VIX at 12 sounds low, but if NIFTY has been realising 9% then IV − HV = +3 and it is a *good* selling regime. VIX at 18 sounds high, but if NIFTY is realising 21% you are selling insurance below cost.
+> **What was lost, honestly.** VRP (`IV − RV − friction`) is still the correct theory of why the edge
+> exists — §8.1 stands. What is gone is the ability to *measure* it per-session. VIX is a cruder
+> instrument: it is a 30-day NIFTY-wide number, so it says nothing about SENSEX specifically or about
+> today's expiry specifically. It is used because a crude number that is real beats a precise number
+> that is fabricated. If a trustworthy IV source ever appears, restore the two-input test and re-open
+> [open item 1 in `docs/mcp-usage-log.md` §6](../../docs/mcp-usage-log.md).
 
 ### 8.5.2 Step 2 — the grid
 
-Read across: your five-view classification, then your volatility state. The cell gives the structure and the section number.
+> ⚠️ **Read this grid for the SIZE column and the STAND-DOWN cells. Ignore every structure name in
+> it** — the cells below name iron flies, condors, Jade Lizards and BWBs, and **all of them are locked**
+> (see the §8.6 banner). The IVP headers are also retired; map them to the VIX bands above.
+>
+> ⛔ **Two cells are outright dangerous and are overridden here:** "Slightly Bearish + NORMAL → bear
+> call spread **+ far bull put spread**" and any other cell pairing both sides. A bull put leg under a
+> bearish view is forbidden by Gate 5A with **no override**, and pairing it with a bear call does not
+> launder it — it makes it a condor, which is separately locked. Under a bearish view you sell **the
+> call side only**; under a bullish view, **the put side only**.
+>
+> For the structure, go to [Card 3](#card-3--structure-by-situation). It is two lines long, which is
+> the correct length for a list with two items on it.
 
 | | **RICH** (IVP > 60) | **NORMAL** (IVP 30–60) | **CHEAP** (IVP < 30) |
 |---|---|---|---|
@@ -2087,9 +2123,93 @@ Read across: your five-view classification, then your volatility state. The cell
 
 > **Theta/Gamma ratio, said plainly:** Theta is roughly proportional to `1/√DTE`; Gamma is roughly proportional to `1/√DTE` too, but Gamma's *damage* scales with the square of the move while Theta's *benefit* is linear in time. That is why the seller's efficiency peaks around **5–10 DTE** and collapses inside 1 DTE, even though the raw Theta number looks best on expiry day.
 
+### 8.5.4 Step 4 — The PE-first principle: sell the expensive side
+
+> **Expert-sourced rule (31-Aug-2026):** "CE selling is risky...try PE selling better." Validated below as structurally correct for neutral/sideways sessions. The directional regime grid in §8.5.2 overrides it when the view is explicitly bearish.
+
+Indian index options (NIFTY, SENSEX, BANKNIFTY) carry a persistent **negative volatility skew**: OTM puts have higher IV than equidistant OTM calls. This is not a mispricing — it is compensation for the asymmetric crash risk in Indian equities (markets grind up, crash down). The skew is a permanent structural feature of the chain.
+
+**What this means for a credit seller:**
+
+| Side | Skew effect | Consequence |
+|------|-------------|-------------|
+| **PE sell (short put / bull put spread)** | Puts carry HIGHER IV → **you receive more credit** per unit of delta risk | Better paid, better risk/reward ratio; put buyers systematically overpay for protection |
+| **CE sell (short call / bear call spread)** | Calls carry LOWER IV → **you receive less credit** per unit of delta risk | Appropriate only when the directional view explicitly demands it |
+
+**The PE-first rule:**
+
+```text
+□ Is the market view Sideways, Slightly Bullish, or Strongly Bullish?
+  → DEFAULT to PE selling (Bull Put Spread, Jade Lizard, put-heavy condor).
+  → Selling calls on a non-bearish day = selling cheap premium on the wrong side of the skew.
+
+□ Is the market view Slightly Bearish or Strongly Bearish?
+  → CE selling (Bear Call Spread) is appropriate — directional thesis justifies the skew disadvantage.
+  → Confirm: is overhead resistance identified? Is the call wall visible on the OI chain?
+  → If yes → Bear Call Spread is the §8.5.2 grid call. Proceed.
+  → If no → reconsider. A flat market with a weak bearish lean is not enough justification.
+
+□ Compression break (§8.12.6)?
+  → The direction of the break decides the side:
+  → Break DOWN → Bear Call Spread (CE selling) — §8.12.6a explicitly permits this
+  → Break UP   → Bull Put Spread (PE selling) — you sell puts, collecting rich skew premium
+```
+
+**Why "CE selling is risky" in a non-bearish market:**
+
+1. **You sell cheap premium** — calls have lower IV, so you collect less for the same strike distance.
+2. **You are directionally wrong** — if the market is flat-to-bullish, the call spread can rally into your short strike.
+3. **You miss the structural edge** — the entire skew premium (the excess IV that puts carry) accrues to the put seller, not the call seller.
+4. **Put walls provide visible support** — OI walls on the put side (e.g., 24,000 PE on 31-Aug-2026) give the PE seller a defined floor that the call seller never has on the other side.
+
+**When CE selling IS the correct trade (override of PE-first):**
+
+| Condition | Why CE selling wins |
+|---|---|
+| §8.5.2 grid → Slightly/Strongly Bearish + CHEAP/NORMAL | Directional regime. The skew disadvantage is accepted for directional edge. |
+| §8.12.6a → compression break DOWN | Market has broken the floor; selling the overhead is the §8.12.6a-sanctioned structure. |
+| Overhead OI wall visible and unbroken (e.g., 181.8L at 24,200 CE on 31-Aug-2026) | The call wall acts as resistance; the short strike has structural support from sellers. |
+
+**31-Aug-2026 context (the trade this rule was sourced from):**
+
+The Bear Call Spread (24,200/24,400 CE) was the **right trade** on 31-Aug-2026 despite the PE-first principle, because:
+- Market view: Slightly Bearish ✅ — §8.5.2 grid points to Bear Call Spread
+- Compression break: DOWN ✅ — §8.12.6a permits one-sided CE selling
+- Call wall: 181.8L at 24,200 CE visible and building ✅
+- OI put wall (24,000 PE): already acting as floor, so PE selling below it had less directional backing
+
+The expert's "PE sell is better" principle would have applied perfectly on a **flat/sideways day** — where selling calls without a bearish thesis means selling cheap premium on the wrong side. That day, a Bull Put Spread below the 24,000 wall would have been the structurally superior choice.
+
+> **The one-line rule:** *Sell the expensive side. In NIFTY, puts are almost always the expensive side. Override only when you have a genuine directional reason to sell calls.*
+
 ---
 
 ## 8.6 The structure library — what real sellers actually put on
+
+> ## ⛔ NOT EXECUTABLE. Reference only.
+>
+> **Every structure in §8.6 is LOCKED as of 02-Sep-2026.** Not one of the thirteen below may be
+> traded. See [`TRADING_CONSTANTS.md` §5](../../TRADING_CONSTANTS.md) — the permitted list is
+> **two items**: the bear call spread and the bull put spread, both two-legged and defined-risk.
+>
+> Each structure here fails at least one live constraint:
+>
+> | Failure | Structures |
+> |---|---|
+> | **4 legs** — four fills, four exits, four things to get wrong manually in a mobile app | iron fly (8.6.1), condors (8.6.7, 8.6.8, 8.6.9), 0-DTE fly (8.6.10), IV-crush fly (8.6.11), double calendar (8.6.12) |
+> | **Exceeds the ₹10,500 structural cap at ONE lot** | hedged strangle (8.6.2), Jade Lizard (8.6.3), BWB (8.6.6) |
+> | **Increases short exposure while losing** — banned outright at any hour, on any day | ladder (8.6.13) |
+> | **A repair, never an entry** — and §8.9 is closed on expiry day, which is when this book trades | ladder (8.6.13), roll/convert throughout |
+> | **Standing inventory, not a trade** — sound practice, but it presumes a multi-position book | wing bank (8.6.14) |
+>
+> **Why keep them?** The worked Indian numbers are the best part of this book and the payoff
+> reasoning transfers. Read §8.6 to understand *why* a wing is non-negotiable or how skew prices a
+> Jade Lizard. Do not read it to pick today's trade — for that, go to
+> [Card 3](#card-3--structure-by-situation).
+>
+> **The key out:** the 4-leg family unlocks after **30 clean two-leg verticals** (constants §11).
+> "Clean" means gates written before strikes, resting SL within 90 seconds, and exit by stop, target
+> or time — not profitable. Profit is not the qualification; process is.
 
 **How to read every entry.** Each structure follows the same 10 fields. All examples assume **NIFTY 24,500 / lot 65**, **SENSEX 81,000 / lot 20**, **BANKNIFTY 55,000 / lot 30** and are *illustrative pricing* — always re-price live off the Dhan option chain before acting.
 
@@ -2121,14 +2241,20 @@ MAX LOSS   = (300 − 108) × 65   =  ₹12,480 per lot   ← defined, this is y
 
 **Management — the part that makes it work:**
 
+> ⚠️ **Read the base before you read the number.** The rows below are computed off the **NET
+> credit of 108**, not the 130 "credit" line in the construction block above. A trader who
+> reads "rises to 140" against 130 hard-stops on a **+7.7%** adverse move instead of +30% —
+> a live misfire on a 4-leg structure being managed by hand in a phone app. Every stop
+> percentage must name its base in the same cell.
+
 | Trigger | Action |
 |---------|--------|
-| Combined premium falls to **70 pts** (−35%) | **Book. This is the target.** ₹2,470/lot. Do not get greedy for the last 20%. |
-| Combined premium rises to **140 pts** (+30%) | **Hard stop. Exit both sides.** −₹2,080/lot. |
-| Net position Delta exceeds **±0.15 per lot** (i.e. spot moves ~1× the short strike's initial gamma budget) | **Delta-repair**, do not exit: shift the untested short leg toward spot by one strike. See [§8.9.2](#892-adjustment-2--shift-the-untested-side-delta-repair). |
+| **Structure NET value** (entry net = 108) falls to **70 pts** (−35%) | **Book. This is the target.** ₹2,470/lot. Do not get greedy for the last 20%. |
+| **Structure NET value** (entry net = 108) rises to **140 pts** (+30%) | **Hard stop. Exit both sides.** −₹2,080/lot. |
+| ⛔ ~~Net position Delta exceeds ±0.15 per lot~~ — **UNAVAILABLE, no trustworthy Greeks (§8.7.1a).** Substitute: **the tested short's mark reaches 3× the untested short's mark** | **Delta-repair**, do not exit: shift the untested short leg toward spot by one strike. See [§8.9.2](#892-adjustment-2--shift-the-untested-side-delta-repair). |
 | Any single leg's premium **doubles** from entry | Exit that leg's spread only; run the winning side to the time stop. |
 | **2:30 PM** (NIFTY) / **2:15 PM** (SENSEX) on expiry day | **Time stop — flatten regardless of P&L.** |
-| **3:00 PM** (NIFTY) / **2:45 PM** (SENSEX) | Absolute hard close. Nothing expiring survives into CAS. |
+| **2:30 PM** (NIFTY/BANKNIFTY) / **2:15 PM** (SENSEX) | ⭐ **HARD FLAT — the only exit time.** Close at any P&L. Nothing survives into CAS. |
 
 **Why the 9:20 entry and not 9:15:** the first five minutes have the widest spreads of the day. You would pay 2–4 points of slippage across four legs (₹650–₹1,300 per lot) for a marginally better price. Enter after the first 5-minute candle closes.
 
@@ -2179,7 +2305,7 @@ Break-evens ≈ 24,989 (up)  /  24,011 (down)   →  ~2.0% band, vs ~1.5% expect
 | Structure value reaches **2× credit** (178 pts) | Hard stop. −₹5,785/lot. |
 | One short leg's delta reaches **30Δ** | Adjustment trigger — go to [§8.9](#89-the-adjustment-playbook--decision-tree). |
 | **2 DTE reached and position is at < 25% profit** | Close it. Beyond this point the Gamma is no longer worth the remaining Theta. |
-| VIX up > 10% intraday | Close the tested side; keep the untested side only if it is > 40% profitable. |
+| **VIX up > 8% intraday** | HOSTILE (`TRADING_CONSTANTS.md` §10). Close the position. The old 10% figure is retired — one threshold, used everywhere. |
 
 ---
 
@@ -2329,7 +2455,7 @@ MAX LOSS = (wide wing width − narrow wing width) − credit
 | Spot breaks **below the body** with < 5 DTE | Danger zone. Either close, or buy back the extra short (converting to a plain balanced fly with defined smaller risk). |
 | Spot approaches the **wide wing** | Close. You are near max loss and the structure has no recovery mechanism. |
 
-**Sizing note:** because max loss ≈ ₹16,055/lot, a ₹6L book with a 2.5% per-trade cap (₹15,000) can hold **1 lot** if you are willing to ride to max loss, or 2 lots with a stop at 50% of max loss. See [§8.11](#811-position-sizing-for-6l--size-from-your-stop-not-your-margin).
+**Sizing note:** because max loss ≈ ₹16,055/lot, a ₹6L book with a 2.5% per-trade cap (₹15,000) can hold **1 lot** if you are willing to ride to max loss, or 2 lots with a stop at 50% of max loss. See [§8.11](#811-position-sizing--two-caps-take-the-smaller).
 
 ---
 
@@ -2479,7 +2605,7 @@ EXIT AT 50% ON DAY 15   :  29 pts over 15 days  =  1.93 pts/day   ← higher rat
 - Bid-ask spread on the **wing** < 8% of its premium. Far monthly wings on NIFTY routinely quote 14 / 19 — a 26% spread. That wing costs you more to buy and is nearly unsellable in a hurry.
 - Never sell a monthly strike whose wing you have not confirmed you can *buy back*. A hedge you cannot exit is not a hedge; it is a decoration that satisfies the margin engine.
 
-> **Capital reality for a ₹6L book.** Margin on this structure is roughly max-loss-plus-a-little, so ≈ ₹23,000–28,000 per lot. At the ₹6,000 per-trade risk cap of [§8.11](#811-position-sizing-for-6l--size-from-your-stop-not-your-margin) with a 2×-credit stop (₹3,770/lot), you can carry **1 lot** comfortably. This is not a get-rich structure at ₹6L. It is the **base layer** — put 30–40% of the book here, run the weekly workhorse on top, and let the monthly do the compounding while the weekly does the earning.
+> **Capital reality for a ₹6L book.** Margin on this structure is roughly max-loss-plus-a-little, so ≈ ₹23,000–28,000 per lot. At the ₹6,000 per-trade risk cap of [§8.11](#811-position-sizing--two-caps-take-the-smaller) with a 2×-credit stop (₹3,770/lot), you can carry **1 lot** comfortably. This is not a get-rich structure at ₹6L. It is the **base layer** — put 30–40% of the book here, run the weekly workhorse on top, and let the monthly do the compounding while the weekly does the earning.
 
 ---
 
@@ -2522,12 +2648,12 @@ Its edge does not come from the structure. It comes from the FILTER.
 
 | Time / Trigger | Action |
 |---|---|
-| Combined premium falls to **51** (−40%) | **Book.** +34 pts = ₹2,210/lot. |
-| Combined premium reaches **127** (+50%) | **Hard stop.** −42 pts = −₹2,730/lot. |
+| **Structure NET value** (entry net = 85) falls to **51** (−40%) | **Book.** +34 pts = ₹2,210/lot. |
+| **Structure NET value** (entry net = 85) reaches **127** (+50%) | **Hard stop.** −42 pts = −₹2,730/lot. |
 | Spot touches either **breakeven** (24,415 / 24,585) | Reassess immediately. Either roll the tested short to ATM (converting to a wider fly) or cut. Do **not** hope. |
 | **12:30 PM** | If P&L is flat or negative, close. The remaining theta is not worth the remaining gamma. |
 | **2:30 PM (NIFTY) / 2:15 PM (SENSEX)** | **Time stop — flatten regardless of P&L.** |
-| **3:00 PM (NIFTY) / 2:45 PM (SENSEX)** | Absolute hard close. |
+| **2:30 PM (NIFTY/BANKNIFTY) / 2:15 PM (SENSEX)** | ⭐ **HARD FLAT — the only exit time.** Close at any P&L. |
 
 #### The CAS rules that specifically govern this structure
 
@@ -2539,7 +2665,7 @@ Since **3-Aug-2026** the last 15 minutes are a Closing Auction Session. For a 0-
 | **Settlement is the IEP, and the close is randomised between 3:28–3:30** | You cannot know your settlement price and you cannot manage into it. A short ATM straddle settling on an IEP you did not see is an **unhedgeable blind expiry**. |
 | **Premium decay stalls inside CAS** | The one thing you were being paid for — decay — stops working precisely when your gamma is at its maximum. You are carrying the risk without the compensation. |
 
-> **Non-negotiable:** no expiring leg survives past **3:00 PM (NIFTY) / 2:45 PM (SENSEX)**. Not the shorts, not the wings, not "just the far one, it's worthless anyway". A worthless-looking wing is exactly what stops being worthless in an auction. Full mechanics in [`rules_n_regulations/rules_constrints.md`](../rules_n_regulations/rules_constrints.md).
+> **Non-negotiable:** no leg survives past the hard flat — **2:30 PM (NIFTY/BANKNIFTY) / 2:15 PM (SENSEX)**. Not the shorts, not the wings, not "just the far one, it's worthless anyway". A worthless-looking wing is exactly what stops being worthless in an auction. Full mechanics in [`rules_n_regulations/rules_constrints.md`](../rules_n_regulations/rules_constrints.md).
 
 **Expiry-day margin surprise (Feb-2025 rule).** SEBI removed the calendar-spread margin benefit on expiry day, and exchanges levy **additional ELM on expiry-day positions**. Margin required on expiry morning for the same structure can be **20–40% higher** than the previous afternoon's number. Price the margin *on the day*, not from yesterday's basket call.
 
@@ -2727,9 +2853,31 @@ The risk cap is the bonus.
 
 Everyone has a favourite method and defends it as if it were the only one. In practice each method answers a different question, and the professional habit is to run **two** and let the disagreement tell you something.
 
-### 8.7.1 Method 1 — The delta band *(the default)*
+### 8.7.1 Method 1 — The delta band *(⛔ NOT USABLE — no trustworthy delta exists)*
 
-Sell the strike whose delta falls in your target band. Delta is a usable proxy for the probability of the strike being breached at expiry.
+> ## ⛔ Do not quote a vendor delta. Use `credit ÷ width`.
+>
+> This method needs a delta, and **there is no trustworthy delta available in this setup.** Dhan's are
+> computed off spot rather than the forward (§8.7.1a below); Kite and Kotak publish none; and computing
+> Black-Scholes locally is **not permitted**. Every Δ figure in the table below is therefore reference
+> material describing what the bands *mean*, not an instruction to go and read one.
+>
+> **The live substitute — model-free, vendor-free, unbreakable:**
+>
+> ```text
+>       credit ÷ width   ≈   the short strike's delta
+> ```
+>
+> As width narrows, a vertical's price → Δ × W exactly, so the ratio *is* the delta, computed from two
+> numbers you can see on any chain. It cannot go stale, cannot be computed off the wrong underlying,
+> and cannot silently disagree between the CE and PE side.
+>
+> **Read the bands below through it:** `c/W` **≥ 15%, 20% preferred** (`TRADING_CONSTANTS.md` §6) — so
+> the live band is roughly the **15–25Δ** row, which is where a directional credit vertical belongs.
+> The floor is a tail-control rule, not a preference: at `c/W = 3.5%` max loss is 28× the credit and
+> the breakeven win rate is 96.5%. **01-Sep-2026 sold exactly that and lost ₹15,564.**
+
+Delta is a usable proxy for the probability of the strike being breached at expiry.
 
 | Band | Approx. probability OTM | Use for |
 |---|---|---|
@@ -2860,21 +3008,27 @@ ATM PREMIUM / IV THROUGH AN INDIAN TRADING DAY (typical range day)
   │█████████▄▄▄▄                                 ▄▄▄▄████████
   │██████████████▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄███████████████
   └─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬────
-      9:15  9:45 10:30 11:30 12:30  1:30  2:15  2:45  3:15 3:30
+      9:15  9:30 10:30 11:15 12:30  1:30  2:15  2:30  3:15 3:30
        ▲     ▲         └──── the dead zone ────┘         ▲   ▲
      avoid  SELL         lowest RV, best decay        EXIT  CAS
 ```
 
+> ⚠️ **The clock below is the market's shape; the windows are `TRADING_CONSTANTS.md` §7's.** Where the
+> two disagree, the constants win. Three retired items are corrected inline: the entry window is
+> **9:30–11:15**, not 9:20–9:45; there is **no "last clean entry" at 10:30**; and the exit times are
+> **one per index**, not a target/hard pair.
+
 | Window | Character | Seller's action |
 |---|---|---|
-| **9:15 – 9:20** | Widest spreads of the day. Opening auction imbalance. Overnight premium still in the price. | **Do not trade.** You will pay 2–4 points × 4 legs in slippage for a marginally better mid. |
-| **9:20 – 9:45** | Auction cleared, premium still full. **The best fresh-entry window on a range day.** | **Primary entry window.** This is why the 9:20 structure exists ([§8.6.1](#861-intraday-delta-neutral-hedged-short-straddle--the-920-structure)). |
-| **9:45 – 10:30** | The day reveals its character. Opening range resolves. | **Run the trend-day filter** ([§8.13](#813-trend-day-detection--the-sellers-kill-switch)). Entered already? Decide hold vs cut. Not entered? This is your last clean entry. |
-| **10:30 – 12:30** | **The dead zone.** Lowest realised volatility of the session, steadiest decay, tightest spreads. | **Best window to *add* to a working position or to roll.** Poor window to enter fresh — much of the day's premium has already decayed. |
-| **12:30 – 1:30** | Lunch lull. Volumes thin, spreads widen relative to volume. | **Avoid new entries.** Fills are poor for no compensating edge. |
-| **1:30 – 2:30** | European open, US futures wake up. **The second directional leg of the day starts here.** | Manage, do not initiate. Most afternoon trend legs begin in this window. |
-| **2:30 – 3:15** | Expiry-day exit window. Non-expiry days: last chance to adjust with real liquidity. | **Expiry: flatten.** Non-expiry: final adjustment window. |
-| **3:15 – 3:30** | **CAS.** Continuous trading has stopped. | **Be flat in anything expiring. No exceptions.** |
+| **9:15 – 9:30** | Widest spreads of the day. Opening auction imbalance. Overnight premium still in the price. | ⛔ **Do not trade.** You will pay 2–4 points per leg in slippage for a marginally better mid. The opening bar is also **excluded from the §8.11.7 noise-floor measurement** — it is not representative of the day's range. |
+| **9:30 – 11:15** | ✅ **THE ENTRY WINDOW.** Auction cleared, premium still substantially intact, the day has shown enough character to score Gates 3–5 honestly. | **The only entry window there is.** Widened from the old 9:20–9:45 because gates take time to run properly and a 25-minute window pressures you into scoring them fast. Nothing enters after 11:15 — not a "second look", not a re-rack at better strikes. |
+| **11:15 – 12:30** | Realised volatility falls, decay steadies, spreads tighten. | **Manage only.** ⛔ Not an entry window, and ⛔ **not an "add" window either** — one structure per calendar day (`TRADING_CONSTANTS.md` §3), and no order may increase short exposure in a losing structure at any hour. The old "best window to add or roll" line is retired. |
+| **12:30** | — | 🔍 **MIDDAY GATE.** A scheduled re-score, not a glance at P&L. |
+| **12:30 – 1:30** | Lunch lull. Volumes thin, spreads widen relative to volume. | Manage. Fills are poor for no compensating edge. |
+| **1:30 – 2:15** | European open, US futures wake up. **The second directional leg of the day starts here.** | Manage. Most afternoon trend legs begin in this window, and you are already past any entry. |
+| **2:15** | — | 🚪 **SENSEX HARD FLAT.** Close at any P&L. |
+| **2:30** | — | 🚪 **NIFTY / BANKNIFTY HARD FLAT.** Close at any P&L. |
+| **3:15 – 3:30** | **CAS.** Continuous trading has stopped. | **Be flat long before this.** CAS is not the deadline — it is what the deadline exists to keep you away from. |
 
 ### 8.8.2 The weekly calendar for entries
 
@@ -2883,7 +3037,7 @@ ATM PREMIUM / IV THROUGH AN INDIAN TRADING DAY (typical range day)
 | **Monday** | 1 | 3 | Poor entry day for the workhorse — too little DTE on NIFTY, and weekend news is still being digested. Manage existing. |
 | **Tuesday** | **0 (expiry)** | 2 | Morning: 0-DTE fly if and only if the filter is clean ([§8.6.10](#8610-0-dte-hedged-iron-fly-under-cas--expiry-day-done-properly)). **Afternoon: the best entry of the week** — the new NIFTY weekly opens at 7 DTE with a full premium and no event risk yet priced. |
 | **Wednesday** | 6 | **1** | ✅ **Prime entry day.** NIFTY at 6 DTE sits exactly in the 5–10 DTE Theta/Gamma sweet spot. |
-| **Thursday** | 5 | **0 (expiry)** | ✅ Good NIFTY entry. SENSEX expiry-day rules apply — hard exit 2:45 PM. |
+| **Thursday** | 5 | **0 (expiry)** | SENSEX expiry day — **hard flat 2:15 PM**. NIFTY at 5 DTE is ⛔ blocked by Gate 1 (≥3 sessions). |
 | **Friday** | 4 | 6 | Acceptable. Weekend gap risk is *already in the price* — see below. |
 
 > **The weekend-theta myth, restated because it costs people money.** Options do not decay over the weekend in the way retail folklore claims. Market makers mark down the Friday close in anticipation of two non-trading days, and mark up Monday's open for weekend gap risk. **You are not paid to hold theta over a weekend — you are paid to hold gap risk over a weekend.** Selling Friday afternoon specifically "for the weekend decay" is selling gap risk for a premium that has already been removed. Covered in [§8.4](#84-instrument-selection--nifty-vs-banknifty-vs-sensex).
@@ -2988,7 +3142,7 @@ Add long options *without* touching the existing legs.
 | Combined structure value hits your stop ([§8.10](#810-stop-loss-architecture--four-types-and-which-to-use)) | The stop is the plan. Adjusting at the stop is abandoning the plan. |
 | **Two of three trend-day markers have fired** ([§8.13](#813-trend-day-detection--the-sellers-kill-switch)) | Mean reversion — the thing you sold — is not available today. |
 | You have already used your **two adjustments** | §8.9.7. |
-| India VIX up **> 10%** intraday | Regime break. Short vega in a vol expansion is not a position you adjust; it is one you exit. |
+| India VIX up **> 8%** intraday | Regime break → HOSTILE (`TRADING_CONSTANTS.md` §10). Short vega in a vol expansion is not a position you adjust; it is one you exit. |
 | You cannot state, in one sentence, why the *adjusted* position is a trade you would enter fresh right now | The only honest test there is. |
 
 ```text
@@ -3091,15 +3245,37 @@ A stop-loss on a multi-leg position is not one decision. It is four, and using t
 
 ### 8.10.2 Setting `k` for the combined-premium stop
 
-| Structure | Stop multiple `k` | Loss at stop |
-|---|---|---|
-| 0-DTE Iron Fly | **1.5×** | 0.5 × credit |
-| Intraday hedged straddle (§8.6.1) | **1.3×** | 0.3 × credit |
-| Weekly strangle 5–8 DTE | **2.0×** | 1.0 × credit |
-| Monthly condor 25–40 DTE | **2.0×** | 1.0 × credit |
-| BWB / defined-risk fly | 50% of max loss | — |
+### ★ `k = 1.6`. It is a constant, not a choice.
 
-> **Why not a wider stop?** Because credit-structure losses are convex. A structure at 2× credit is not "halfway to max loss" — it is typically 25–30% of the way there and accelerating. Every point of further adverse move costs more than the last. **2× credit is where the position stops being a theta trade and becomes a gamma trade.**
+```text
+  Defined-risk two-leg credit vertical  →  k = 1.6  →  loss at stop = 0.6 × credit
+```
+
+There is one permitted structure family, so there is one `k`. It is not an input to `size-it`, it is
+not tuned per setup, and **`k = 2.0` is ⛔ permanently retired.**
+
+> **The table that stood here listed 1.3 / 1.5 / 2.0 by structure — and had no row for the credit
+> vertical**, which is the only thing now traded. So the vertical inherited `k = 2.0` from the nearest-
+> looking row. That is how a stop got set at twice the credit on a structure where twice the credit
+> can sit *beyond max loss* and never trigger at all.
+
+**Stop reachability — check this before accepting any `k`:**
+
+```text
+  k × credit  <  width          ⟺        c/W  <  1/k        (at k = 1.6, c/W < 62.5%)
+
+  Above that line the premium stop is unreachable: the structure hits its wing before it
+  ever prints k × credit, and you sit holding a position you believe is stopped, all the
+  way to max loss. §8.6.2's "your stop at 1.5–2× credit should always trigger long before
+  the wing does" is true for a wide-wing strangle and FALSE for any near-ATM vertical.
+```
+
+With the c/W floor at 15–20%, reachability is comfortable in practice — but it is checked, not assumed.
+
+> **Why not a wider stop?** Credit-structure losses are convex. A structure at 1.6× credit is not
+> "halfway to max loss" — it is typically 25–30% of the way there and accelerating. Every point of
+> further adverse move costs more than the last. **This is where the position stops being a theta
+> trade and becomes a gamma trade.**
 
 ### 8.10.3 Execution — why SL-M orders on options are a trap
 
@@ -3117,19 +3293,33 @@ A stop-loss on a multi-leg position is not one decision. It is four, and using t
 3. **If exiting manually leg by leg is unavoidable: buy back the shorts FIRST, sell the wings second.** Never the other way around. The seconds you are un-hedged are the only seconds that can produce an unbounded loss.
 4. **Dhan Super Orders** attach bracket legs at entry and are the closest thing to a reliable automated structure stop currently available across the three brokers in this repo.
 
-### 8.10.4 The trailing rule
+### 8.10.4 The trailing rule — ⛔ SUSPENDED
 
 ```text
-Once the position reaches +50% of credit:
-    move the stop to BREAKEVEN (structure value = entry credit).
+  THE LIVE RULE:   +50% of credit captured  →  CLOSE.  That is the whole rule.
 
-Once the position reaches +70% of credit:
-    CLOSE. Do not trail further.
-
-The last 30% of a credit structure's value is ~70% of its remaining
-calendar risk and ~100% of its remaining gamma risk. It is the worst
-risk-adjusted premium on the board. Leave it for someone else.
+  ⛔ Do NOT move the stop to breakeven at +50%.
+  ⛔ Do NOT trail.
+  ⛔ Do NOT scale out.
 ```
+
+The retired version made +50% a *stop-move* and pushed the exit out to +70%. Two problems:
+
+1. **It contradicted the exit target.** +50% is where the trade closes. A rule that turns the exit
+   into a stop adjustment means the target is never actually taken.
+2. **It adds a manual decision at the worst possible moment.** Moving a stop means cancelling a live
+   order and placing a new one, in a mobile app, on a position that is currently winning and moving.
+   The documented failure mode of this book is **freezing on exactly one such decision** — on
+   01-Sep-2026 the exit trigger fired and what followed six minutes later was a *ninth lot sold*, not
+   an exit. Every removed decision is a removed opportunity to freeze.
+
+The reasoning behind the old rule was sound and still holds — the last 30% of a credit structure's
+value carries ~70% of its remaining calendar risk and ~100% of its remaining gamma risk. **That is an
+argument for closing at 50%, which is what the live rule does.** It was never an argument for staying
+in until 70%.
+
+> **Unlocks after 20 clean trades** (`TRADING_CONSTANTS.md` §11). Until then the position has exactly
+> three ways out: **stop, target, or time.**
 
 ### 8.10.5 Abort conditions must match the structure's Greeks — *added 27-Aug-2026*
 
@@ -3165,7 +3355,7 @@ the entire move. The plan, not the market, would have destroyed the trade.
 
 ---
 
-## 8.11 Position sizing for ₹6L — size from your stop, not your margin
+## 8.11 Position sizing — two caps, take the smaller
 
 > If you read one subsection of §8, read this one. Every other decision in this document can be wrong and survivable. This one cannot.
 
@@ -3180,35 +3370,83 @@ the entire move. The plan, not the market, would have destroyed the trade.
   ⛔ NOT:  Lots = Available margin ÷ Margin per lot
 ```
 
+> ⚠️ **This single-cap formula is superseded. It caps the loss at your STOP but not the loss if the
+> stop never executes** — which is exactly what happened on 01-Sep-2026. The live rule is **two caps,
+> take the minimum** ([`TRADING_CONSTANTS.md` §4](../../TRADING_CONSTANTS.md)):
+>
+> ```text
+> lots_A = floor( 10,500 ÷ ((width − credit) × lot_size) )    structural — if the stop never fires
+> lots_B = floor(  3,500 ÷ (0.6 × credit × lot_size) )        planned stop, k = 1.6
+> LOTS   = min(lots_A, lots_B)          ⛔ LOTS < 2 → narrow the width, or no trade
+> ```
+>
+> **Width is chosen AFTER the cap, never before** — never widen the strikes to afford more lots.
+> The rest of §8.11 below explains *why* sizing comes from the stop and not from margin; that
+> reasoning is intact. Take the numbers from the constants file.
+
 Margin tells you what the exchange will *permit*. It has no relationship to what you can *survive*. The margin engine is sizing for the exchange's risk, not yours.
 
-### 8.11.2 The caps for a ₹6,00,000 book *(moderate-to-low risk profile)*
+### 8.11.2 The caps for a ₹7,02,275 book *(moderate-to-low risk profile)*
+
+> ⛔ **Every row below except the two new ones caps the loss AT YOUR STOP. None of them caps
+> the payoff.** §8.11.1's denominator is explicitly "rupee loss per lot *at your stop*". When
+> the stop fails — a gap, an exchange freeze, a missed alert, or a 100-minute lag between
+> "EXIT NOW" at 13:12 and the actual fill at 14:51 — the binding constraint is **max loss**,
+> and until 02-Sep-2026 this table had no line for it.
+>
+> The gap was not theoretical. §8.11.3's own worked row — "Bear call spread (100 wide), 7 lots,
+> ~₹6,000 at the stop" — carries `7 × (6,500 − 764) = ₹40,152` of max loss, **5.7% of capital
+> and 3.8× the daily cap, in one structure the table calls compliant.** Three of them, all
+> permitted, is 17% of the account.
 
 | Cap | Value | Rationale |
 |---|---|---|
-| **Per-trade max loss** | **₹6,000 (1.0%)** | You can take two full losers in a day and still be inside the daily cap. |
-| **Daily max loss** | **₹9,000 (1.5%)** | Hit it → **stop for the day.** Close the terminal. Not "one more small one to recover". |
-| **Weekly max loss** | **₹24,000 (4.0%)** | Hit it → stop for the week and review entries, not adjustments. |
-| **Maximum margin deployed** | **₹3,60,000 – ₹4,20,000 (60–70%)** | The 30–40% buffer is not idle capital — see §8.11.4. |
-| **Maximum concurrent structures** | **3** | Beyond three you cannot manage them in a fast market. Correlated index structures are one structure wearing three costumes. |
-| **Maximum correlated exposure** | 2 structures | NIFTY and SENSEX are ~0.95 correlated. Two "diversified" index condors is one position at double size. |
+| ★ **Per-structure MAX LOSS** *(payoff, not stop)* | **₹10,500 (1.5%)** | **New, 02-Sep-2026.** Set deliberately EQUAL to the daily cap, so that total failure of the stop still lands inside the day's limit. This is the only cap that does not depend on you pressing a button. |
+| ★ **Aggregate MAX LOSS, all open structures** | **₹10,500 (1.5%)** | **New.** One structure per day (see below) makes this the same number. |
+| **Per-trade loss at the stop** | **₹3,500 (0.5%)** | Three consecutive stops = the daily cap. |
+| **Daily max loss** | **₹10,500 (1.5%)** | Hit it → **stop for the day**, and the next session is a mandatory no-trade day. Not "one more small one to recover". |
+| **Weekly max loss** | **₹21,000 (3.0%)** | Hit it → stop for the week, and the following week is paper-only. Review entries, not adjustments. |
+| ★ **Minimum credit ÷ width** *(defined-risk vertical)* | **≥ 15%, 20% preferred** | **New.** A tail-control rule: at c/W = 3.5% max loss is 28× the credit; at 20% it is 4×. **01-Sep-2026 sold a 200-wide spread for 6.99 points — c/W = 3.5%, breakeven win rate 96.5%, max loss ₹12,545/lot — and lost ₹15,564.** Nothing in §8.3.3, §8.6, §8.7, §8.10 or §8.11 forbade it. Note `c/W ≈ the short strike's delta` — this is a model-free Greek that no vendor can break. |
+| ★ **Stop reachability** | `k × credit < width` | **New.** Above `c/W = 1/k` the premium stop sits *beyond* max loss: it can never trigger, and you hold a position you believe is stopped all the way to the wing. §8.6.2's claim that "your stop-loss at 1.5–2× credit should always trigger long before the wing does" is true for a wide-wing strangle and **false for any near-ATM vertical.** |
+| **Maximum margin deployed** | **₹2,80,000 (40%)** | ⚠️ **Revised down from 60–70% on 02-Sep-2026.** And note what it is *for*: margin is a **backstop, not a sizing input.** It never appears in the lot formula. If margin is what is limiting your size, the two loss caps above have already been breached and you are reading the wrong constraint. |
+| **Maximum concurrent structures** | **ONE per calendar day** | ⚠️ **Revised down from 3 on 02-Sep-2026.** Three structures is three stops to watch manually in a mobile app during a fast market — and the aggregate cap above is a single ₹10,500, so a second structure cannot be sized without shrinking the first. One trade, watched properly, beats three watched partially. |
+| **Maximum correlated exposure** | n/a — one structure | NIFTY and SENSEX are ~0.95 correlated, so "diversifying" across them was always one position at double size. The one-per-day rule makes the question moot. |
 
-### 8.11.3 Sizing table — every §8.6 structure at a ₹6,000 per-trade cap
+### 8.11.3 Sizing table — the two permitted structures, at the two live caps
 
-Margin figures are **indicative only** — always confirm with a live basket margin call.
+⛔ **The previous version of this table is DELETED (02-Sep-2026).** It sized eight §8.6 structures at
+a retired ₹6,000 per-trade cap and returned 1–7 lots for structures that are now **locked outright**
+(§5 of the constants). Worse, it sized every row from the loss *at the stop* only — the same
+single-cap error that let 01-Sep's ₹12,546-per-lot structure through. It is not repaired here because
+there is nothing in it to repair: seven of its eight rows are un-tradeable.
 
-| Structure | § | Credit / lot | Loss at stop / lot | **Lots at ₹6,000 cap** | Approx. margin / lot | Margin used |
-|---|---|---|---|---|---|---|
-| Intraday hedged straddle (9:20) | 8.6.1 | ₹7,020 | ₹2,080 | **2** | ~₹55,000 | ₹1.10L |
-| Delta-banded hedged strangle | 8.6.2 | ₹5,785 | ₹5,785 | **1** | ~₹70,000 | ₹0.70L |
-| Jade Lizard (hedged) | 8.6.3 | ~₹4,500 | ~₹4,500 | **1** | ~₹60,000 | ₹0.60L |
-| Put Broken-Wing Butterfly | 8.6.6 | ₹3,445 | ₹8,000 ⚠️ | **0 — see note** | ~₹18,000 | — |
-| Positional monthly condor | 8.6.9 | ₹3,770 | ₹3,770 | **1** | ~₹25,000 | ₹0.25L |
-| 0-DTE Iron Fly | 8.6.10 | ₹5,525 | ₹2,730 | **2** | ~₹22,000 | ₹0.44L |
-| Event IV-crush fly (half size) | 8.6.11 | ₹11,050 | ₹5,525 | **1** | ~₹16,000 | ₹0.16L |
-| Bear call spread (100 wide) | — | ₹764 | ₹764 | **7** | ~₹6,000 | ₹0.42L |
+**Size from the two caps, take the smaller. Width is chosen AFTER the cap, never before.**
 
-> ⚠️ **The BWB note is the point of the whole table.** At a 50%-of-max-loss stop the Put BWB risks ₹8,000 per lot — **above the ₹6,000 cap at one lot**. The structure is excellent; it is simply **too large for a ₹6L book at that stop**. Your two honest options are (a) tighten the stop to ~35% of max loss, or (b) don't trade it. What you must *not* do is take it anyway because "it's only one lot". **One lot is not a safe size. One lot is a size like any other, and it must clear the cap.**
+```text
+  lots_A = floor( 10,500 ÷ ((width − credit) × lot_size) )    ← structural: if the stop never fires
+  lots_B = floor(  3,500 ÷ (0.6 × credit × lot_size) )        ← planned stop, k = 1.6
+  LOTS   = min(lots_A, lots_B)
+
+  ⛔ LOTS < 2  →  narrow the width and recompute.  Still < 2  →  NO TRADE.
+     Do NOT widen the strikes to "afford" more lots. Do NOT use margin as the input.
+```
+
+Pre-computed at a typical `c/W ≈ 20%` (from `TRADING_CONSTANTS.md` §4):
+
+| Index | Lot size | Width | **LOTS** | Note |
+|---|---|---|---|---|
+| NIFTY | 65 | 50 | **4** | ✅ |
+| NIFTY | 65 | 100 | **2** | ✅ |
+| NIFTY | 65 | 200 | **0** | ⛔ **Banned.** One single lot breaches the ₹10,500 structural cap. This is the exact width sold on 01-Sep-2026. |
+| SENSEX | 20 | 100 | **6** | ✅ |
+| SENSEX | 20 | 200 | **3** | ✅ |
+| BANKNIFTY | 30 | 200 | **2** | ⚠️ Monthly-only, and locked until 30 net-positive NIFTY/SENSEX trades. |
+
+> **Why the 200-wide NIFTY row reads 0 and not 1.** `(200 − 40) × 65 = ₹10,400` — it *just* clears the
+> cap arithmetically, and that is precisely the trap. At `c/W = 20%` it survives; at the 3.5% actually
+> sold on 01-Sep it is ₹12,546 and does not. A width whose feasibility flips on the credit you happen
+> to get filled at is not a width you can commit to before seeing the fill. **One lot is not a safe
+> size. One lot is a size like any other, and it must clear the cap with room.**
 
 ### 8.11.4 The margin buffer — the rule that prevents forced liquidation
 
@@ -3235,14 +3473,25 @@ WHY YOU NEVER DEPLOY MORE THAN 70%
 
 **SPAN margin is recomputed intraday and rises when volatility rises.** A position that needed ₹70,000 at 9:30 can need ₹1,05,000 at 1:00 PM on a VIX spike **without you trading at all**. The buffer exists for that, not for new trades.
 
-### 8.11.5 An honest word about the 1%-per-session target
+### 8.11.5 Why the 1%-per-session target was DELETED
 
-The `CLAUDE.md` profile targets **~1% net per session**. That is a good and correct *target*. It is not an *expectation*, and the difference matters:
+> ⛔ **The ~1%-net-per-session target no longer exists.** It has been removed from `CLAUDE.md` and
+> replaced by **2–4% per month (₹14,000–28,000)**, measured as a rolling 3-month mean —
+> [`TRADING_CONSTANTS.md` §2](../../TRADING_CONSTANTS.md). This section is kept because it is the
+> arithmetic that killed it.
 
 ```text
 1% per session × 21 sessions  =  21% per month  =  ~800% per year compounded.
 That number does not exist. If it did, this document would not.
 ```
+
+And the sizing arithmetic is worse than the compounding arithmetic. The per-trade **planned stop** is
+₹3,500 (0.5%). Netting 1% of capital — ₹7,023 — against a ₹3,500 stop means `(k−1) × credit ≤ 3,500`
+while `profit ≥ 7,023`, i.e. capturing **200% of the credit**. There is no such trade. The target was
+not merely optimistic; it was unreachable by construction, and chasing it is what produced the size
+creep on 01-Sep-2026.
+
+**For the first three months the target is a violation count of zero.** P&L is not the metric yet.
 
 **What a disciplined hedged seller on ₹6L actually looks like:**
 
@@ -3252,7 +3501,7 @@ That number does not exist. If it did, this document would not.
 | Win rate | 60–70% |
 | Average winning session | ₹3,000 – ₹5,000 (0.5 – 0.8%) |
 | Average losing session | ₹4,000 – ₹6,000 (0.7 – 1.0%) |
-| **Expectancy per traded session** | **≈ ₹1,200 (0.20%)** |
+| **Expectancy per traded session** | **≈ ₹1,274 (0.20%)** — the worked figure below |
 | **Net monthly return on deployed capital** | **2 – 5%** |
 | Worst month you should plan for | **−6 to −8%** |
 
@@ -3344,22 +3593,38 @@ Run in order. **Any ❌ ends the session — do not proceed to chain analysis.**
 ```text
 □ 1. FETCH the expiry list for all three indexes. Never assume; never guess a date.
 □ 2. SESSIONS to nearest expiry — per index, in trading sessions, not calendar days.
-□ 3. If min(sessions) ≥ 2 AND the mandate is intraday-only
-        →  ❌ the 1% target is unreachable. Say so now. Stop.
-□ 4. Pick k from §8.10.2 for the structure the §8.5.2 grid names.
-□ 5. MAX CREDIT = R / (k − 1).            R = ₹6,000  →  k=1.5: ₹12,000 · k=2.0: ₹6,000
-□ 6. REQUIRED CAPTURE = (k − 1) × 100%.  Compare against the DTE table above.
+        ★ CONVENTION: expiry day = 1 ("0-DTE").  Expiry eve = 2 ("1-DTE").
+□ 3. Per index:   sessions = 1  →  ✅ tradeable, full theta.
+                  sessions = 2  →  ⚠️ tradeable ONLY on a Gate-5-clean directional view.
+                                     Delta-driven, not theta-driven. State the required
+                                     move in POINTS.
+                  sessions ≥ 3  →  ❌ NO TRADE on this index. Hard stop.
+        All three indexes ≥ 3  →  ❌ no trade today. Common (~75% of sessions) and correct.
+□ 4. k = 1.6. It is a constant (§8.10.2), not a per-structure lookup.
+□ 5. MAX CREDIT = ₹3,500 / (k − 1) = ₹3,500 / 0.6 = ₹5,833  per structure.
+        ⚠️ The numerator is the PER-TRADE stop cap, never the ₹10,500 daily cap.
+           Using the daily figure here silently authorises a 3× structure.
+□ 6. REQUIRED CAPTURE = (k − 1) × 100% = 60% of the credit.
 □ 7. If required > realistic
         →  ❌ no size fixes this. Report the ceiling, do not hunt for another structure.
-□ 8. Only if all pass  →  price the structure the grid named (§8.12.6a sequencing rule).
+□ 8. Only if all pass  →  price a bear call or bull put spread, side chosen by Gate 5.
 ```
+
+> ⛔ **Two corrections to the version that stood here.** The old step 3 read `≥ 2 sessions → ❌`, which
+> is **off by one** against the counting convention and would have blocked every expiry-eve trade this
+> book actually takes. And step 5 read `R = ₹6,000` with `k = 1.5 / 2.0` — a retired cap and a retired
+> `k`, producing a MAX CREDIT more than double the live ₹5,833.
 
 #### The trap this closes
 
 When the target is unreachable, the temptation is to solve for lots instead of admitting it. **Always invert the calculation and quote the capital at risk:**
 
 ```text
-28-Aug-2026, NIFTY iron fly, 6-pt straddle decay by 2:30 → ₹234/lot net
+28-Aug-2026 — HISTORICAL. Reproduced at that day's retired ₹6,000 cap and 1% target,
+because the arithmetic is the lesson, not the constants. The live caps are §3 of the
+constants; the live target is 2–4% per month.
+
+   NIFTY iron fly, 6-pt straddle decay by 2:30 → ₹234/lot net
    lots needed for ₹6,000    =  33
    max loss at 33 lots       =  ₹1,48,005  =  24.7% of capital
    loss at the 1.5× stop     =  ₹1,40,498  =  23.4% of capital      (cap: 1.0%)
@@ -3514,7 +3779,7 @@ because the structure was on the correct side of it.
 
 | | |
 |---|---|
-| **Recognise** | India VIX up **> 15% in one or two sessions** on a news shock, then **flattening** — not still rising. Price has stopped making new lows. |
+| **Recognise** | India VIX up **> 15% in one or two sessions** on a news shock, then **flattening** — not still rising. Price has stopped making new lows. *(This 15% is a **pattern signature over 1–2 sessions**, deliberately different from the +8% single-day HOSTILE abort in §10 — it describes a shock that has already happened and is decaying, not one arriving. Both can be true; they are measuring different windows.)* |
 | **Trade** | The single best-paid seller setup in the book. Wide defined-risk condor or strangle at 5–8 DTE. IVP is high, so widen the strikes and still collect well. |
 | **Do not** | Catch it while VIX is still climbing. Wait for **two consecutive sessions of a lower VIX close.** "VIX is high so I'll sell" during the spike is how people meet the 2020 and 2024 gap days. |
 
@@ -3604,7 +3869,7 @@ because the structure was on the correct side of it.
 
 | Signal | Threshold | Meaning |
 |---|---|---|
-| **India VIX rising with price falling** | VIX +5% or more | Panic bid in options. Your short vega is bleeding while your short gamma is bleeding. |
+| **India VIX rising with price falling** | VIX **+8%** or more → HOSTILE, exit | Panic bid in options. Your short vega is bleeding while your short gamma is bleeding. *(Was +5%. Aligned to the single §10 threshold — a second, lower number here meant two different "VIX is spiking" rules fired at different moments.)* |
 | **Consecutive same-colour 15-min candles** | 5 or more | Textbook trend structure. |
 | **Non-overlapping 15-min candles** | 3 in a row with no overlap | Extremely strong trend. Rare and decisive. |
 | **ADX on the 15-min chart** | > 25 and rising | Confirms trend strength. Lagging — use as confirmation, not a trigger. |
@@ -3632,7 +3897,7 @@ because the structure was on the correct side of it.
 2. **The switch is one-directional.** Once 2 of 3 have fired, the day is a trend day **for the rest of the session**, even if price calms down. Trend days often consolidate mid-day before the second leg. Do not re-enter.
 3. **Log every trend day.** They cluster — around events, around global-risk episodes, at regime turns. Two trend days in a week means the volatility regime has changed and your entire sizing should drop until it settles.
 
-> **The cost asymmetry, plainly.** Standing down on a day that turns out to be a range day costs you roughly ₹1,300 of expectancy. Staying short premium on a genuine trend day costs ₹6,000–₹25,000. You need to be wrong about standing down **five to twenty times** before it costs as much as being wrong about staying in **once**. The switch does not need to be accurate. It needs to be *used*.
+> **The cost asymmetry, plainly.** Standing down on a day that turns out to be a range day costs you roughly ₹1,274 of expectancy (§8.11.5). Staying short premium on a genuine trend day costs ₹6,000–₹25,000. You need to be wrong about standing down **five to twenty times** before it costs as much as being wrong about staying in **once**. The switch does not need to be accurate. It needs to be *used*.
 
 ---
 
@@ -3678,7 +3943,7 @@ You are 90% deployed. The market moves; SPAN recomputes upward on the vol spike;
 
 Gamma at 0 DTE inside the final hour is effectively unbounded, decay has already been collected, and since 3-Aug-2026 the last 15 minutes are an auction you cannot trade into. Your wings stop being hedges at 3:15 PM.
 
-> **Rule:** hard time stops. **NIFTY 2:30 PM target / 3:00 PM absolute. SENSEX 2:15 PM / 2:45 PM.** Nothing expiring survives into CAS. [`rules_constrints.md`](../rules_n_regulations/rules_constrints.md).
+> **Rule:** one hard flat per index — **NIFTY/BANKNIFTY 2:30 PM · SENSEX 2:15 PM.** Close at any P&L. The old target/absolute pair is deleted: a later fallback deadline is what a losing position reaches for. [`rules_constrints.md`](../rules_n_regulations/rules_constrints.md).
 
 ### 8.14.6 Death 6 — Selling into a hostile regime
 
@@ -3714,7 +3979,7 @@ Most sellers track the wrong three numbers and are surprised by their year.
 | Metric | Definition | Target | Why it matters |
 |---|---|---|---|
 | **ROM** (Return on Margin) | Net P&L ÷ margin blocked ÷ days held | **> 0.30% per day** | The only denominator that reflects what the trade actually cost you. Return-on-premium flatters everything. |
-| **Expectancy per trade** | `(Win% × avg win) − (Loss% × avg loss)` | **> ₹1,000** on ₹6L | The one number that predicts your year. |
+| **Expectancy per traded session** | `(Win% × avg win) − (Loss% × avg loss)` | **≈ ₹1,274 (0.20%)** — see §8.11.5 | ⭐ The one number that predicts your year. **Stated once, here and in §8.11.5, and nowhere else.** The retired "> ₹1,000", "₹1,200" and "₹1,300" variants are all the same estimate rounded differently, and four roundings of one number read as four numbers. |
 | **Expectancy per ₹1L margin** | Expectancy ÷ (margin ÷ 100,000) | **> ₹1,500** | Makes structures with different margins comparable. A BWB and a strangle cannot be compared any other way. |
 | **MAE** (Max Adverse Excursion) | Worst unrealised loss on trades that finished **profitable** | Stop should sit **1.5× beyond typical MAE** | If your winners routinely dipped to 1.9× credit and your stop is at 2.0×, you are running a stop-hunting machine against yourself. |
 | **Slippage as % of credit** | Actual fills vs mid at entry + exit | **< 10%** | Above 15% your strikes are too illiquid or your orders too aggressive. |
@@ -3814,87 +4079,109 @@ noise dictated. **Pick the mark time from the rulebook before you look at the pr
 
 ## 8.16 Quick-reference cards
 
+> ⚠️ **These cards were rewritten on 02-Sep-2026.** The previous six quoted a ₹6,000 per-trade cap,
+> a ₹9,000 daily cap, a ₹4.2L deploy limit, an `IV − HV20` volatility test, eleven locked structures
+> and a two-tier exit clock — **all retired.** Cards are the section most likely to be read at 9:20
+> with a chain already open, so a stale card is worse than no card. Every number below is quoted from
+> [`TRADING_CONSTANTS.md`](../../TRADING_CONSTANTS.md); if they disagree, that file wins.
+
 ### Card 1 — Every morning, before 9:15
 
 ```text
-□  Five-view classification from Market_View.md  ....................  ______
-□  IVP (6-month percentile of ATM IV)  .............................  ______
-□  IV − HV20  ......  NEGATIVE?  →  ⛔ DO NOT SELL. Session over.
-□  India VIX level + direction vs 5-day average  ....................  ______
-□  Volatility state: RICH / NORMAL / CHEAP / HOSTILE  ...............  ______
-□  Grid cell (§8.5.2) → structure  ..................................  ______
-□  DTE → shape (§8.5.3)  ............................................  ______
-□  Scheduled events today, 9:15–3:30  ...............................  ______
-□  Per-trade cap ₹6,000 · Daily cap ₹9,000 · Max deploy ₹4.2L
-□  Basket margin call done — HEDGED number, not leg-by-leg
+□  Five-view classification + HH:MM timestamp  .....................  ______
+     ⛔ Older than 60 minutes = stale. Re-pull. Do not derive it inline.
+□  Sessions to expiry, all 3 indexes (fetched, never guessed)  .....  __ __ __
+     expiry day = 1 · expiry eve = 2 · ⛔ ≥ 3 = NO TRADE on that index
+□  India VIX level + change vs previous close  .....................  ______
+□  Volatility state (§10 of the constants — VIX only, no IVP, no IV−HV):
+     CHEAP < 12  ·  NORMAL 12–16  ·  RICH 16–20  ·  ⛔ HOSTILE ≥ 20 or +8%
+□  Forward basis F = K + C − P at 3–4 strikes; agree within 1 pt?  ..  ______
+□  GATE 5 INPUTS — all six, written out, FII read first:
+     FII  net short CE ____  net short PE ____  net futures ____
+     Pro  net short CE ____  net short PE ____  net futures ____
+□  Scheduled events today, 9:15–3:30  ..............................  ______
+□  Caps: see TRADING_CONSTANTS.md §3. Do not write them here from memory.
+□  Structure permitted today: bear call spread OR bull put spread. Nothing else.
 ```
 
 ### Card 2 — The regime cheat sheet
 
 ```text
-  RICH  (IVP>60, IV−HV>+2)  →  Sell aggressively, wide.  Full size.
-  NORMAL(IVP 30-60, IV−HV>0)→  Standard workhorse.       Full size.
-  CHEAP (IVP<30, IV−HV>0)   →  Defined risk, tight, HALF size — or nothing.
-  HOSTILE (IV−HV < 0)       →  ⛔ NOTHING. Not one lot.
-  VIX +10% intraday         →  ⛔ No new entries. Manage only.
+  VIX < 12    CHEAP    →  Credit will be thin. Expect the §8.11.7 noise floor to fail.
+  VIX 12–16   NORMAL   →  The working state. Full formula size.
+  VIX 16–20   RICH     →  Full formula size. Credit is better; width can stay tight.
+  VIX ≥ 20    HOSTILE  →  ⛔ NOTHING. Not one lot.
+  VIX +8% intraday     →  ⛔ HOSTILE regardless of level. No new entries. Manage only.
+
+  ⛔ IVP and IV − HV20 are NOT used. Both need an IV series, and no vendor here has
+     a trustworthy one (Dhan's CE IV ≠ PE IV at the same strike). VIX is the only
+     volatility input that is actually measured rather than derived.
 ```
 
 ### Card 3 — Structure by situation
 
-| Situation | Structure | § |
-|---|---|---|
-| Sideways, rich IV, 5–8 DTE | Hedged short straddle / Iron Fly | 8.6.1 |
-| Sideways, normal IV, 5–8 DTE | **Delta-banded hedged strangle** ← the default | 8.6.2 |
-| Sideways, 25–40 DTE, building a base | Positional iron condor | 8.6.9 |
-| Mildly bullish, rich put skew | Jade Lizard (hedged) | 8.6.3 |
-| Directional lean, want a credit + one riskless side | Broken-Wing Butterfly | 8.6.6 |
-| Directional lean, defined both sides | Unbalanced condor, **Method B** | 8.6.7 |
-| Expiry day, pinned, filter clean | 0-DTE Iron Fly | 8.6.10 |
-| Event tomorrow, IV elevated | IV-crush harvest, half size | 8.6.11 |
-| Cheap IV you expect to normalise | Double Calendar *(long vega)* | 8.6.12 |
-| Your spread is being run over on a real trend | Convert to a **Ladder** | 8.6.13 |
-| Any short position, always | Wing in the **same expiry** | 8.6.14 |
+```text
+  There are TWO permitted structures, and the view picks between them:
+
+    Slightly / Strongly BEARISH  →  BEAR CALL SPREAD   (sell CE above, buy CE above that)
+    Slightly / Strongly BULLISH  →  BULL PUT SPREAD    (sell PE below, buy PE below that)
+    SIDEWAYS                     →  either side, chosen by the Gate 5 participant numbers
+                                     — not both, and never as a condor.
+
+  ⛔ Bull Put under ANY bearish view and ⛔ Bear Call under ANY bullish view are
+     forbidden with no override — not vol state, not skew, not §8.5.4, not participants.
+```
+
+**Everything in §8.6 is LOCKED.** All thirteen worked structures there — iron fly, hedged strangle,
+Jade Lizard, BWB, unbalanced condor, 0-DTE fly, IV-crush harvest, double calendar, ladder, wing bank —
+are **not executable** under `TRADING_CONSTANTS.md` §5. Each is either 4-legged, undefined-risk, or
+exceeds the ₹10,500 structural cap at one lot. They stay in the book as reference. The 4-leg family
+unlocks after **30 clean two-leg verticals**; see §11 of the constants for the key.
 
 ### Card 4 — The intraday clock
 
 ```text
-  9:15–9:20   ⛔ Widest spreads. Do not trade.
-  9:20–9:45   ✅ PRIMARY ENTRY WINDOW.
-  9:45        🔍 TREND-DAY CHECK #1  →  2 of 3 fired? Stand down.
- 10:30        🔍 TREND-DAY CHECK #2
- 10:30–12:30  ➕ Dead zone. Best window to ADD or ROLL. Poor to enter fresh.
- 12:30–1:30   ⛔ Lunch lull. Worst fills of the day.
-  1:30        🔍 TREND-DAY CHECK #3. Second leg often starts here.
-  2:00        ⛔ No new premium after this.
-  2:30 / 2:15 🚪 EXPIRY TIME STOP — NIFTY / SENSEX. Flatten.
-  3:00 / 2:45 🚨 ABSOLUTE HARD CLOSE.
-  3:15–3:30   ☠️  CAS. Be flat.
+  9:15–9:30   ⛔ Widest spreads, and the opening bar is excluded from the noise floor.
+  9:30–11:15  ✅ THE ENTRY WINDOW. The only one. Outside it, there is no entry.
+  fill+90s    🔒 RESTING SL-LIMIT on the SHORT LEG must be live. Record the order ID.
+  fill+30min  🔍 FIRST CHECK — off the FILL time, not off a clock hour.
+  every 30min 🔍 …and every 30 minutes after that, without exception.
+ 12:30        🔍 MIDDAY GATE.
+  2:15        🚪 SENSEX HARD FLAT.        ← one time per index, no "target/hard" tier
+  2:30        🚪 NIFTY / BANKNIFTY HARD FLAT.
+  3:15–3:30   ☠️  CAS. Be flat well before this — it is not the deadline, it is the disaster.
 ```
 
 ### Card 5 — In-trade decision card
 
 ```text
-  Short strike tested
-    → At stop?                    →  CUT. Now. No adjustment.
-    → 2 of 3 trend markers?       →  CUT, or convert to ladder.
-    → Adjustments already used 2? →  CUT.
-    → Under 30 minutes breached?  →  DO NOTHING.
-    → Other side below 7Δ?        →  SHIFT THE UNTESTED SIDE (§8.9.2).
-    → Otherwise                   →  Roll tested side out+away. ONCE. No size increase.
+  EXIT — any one of these, immediately:
+    → Spread at k × credit (k = 1.6)      →  the resting SL should already have done this.
+                                             If it has not, exit at market and audit why.
+    → +50% of credit captured             →  CLOSE. Take it.
+    → Hard flat time reached              →  CLOSE, at any P&L.
+    → 3 of 3 kill-switch markers          →  CLOSE at market.
+    → Short strike touched by spot        →  CLOSE.
 
-  Position at +50% of credit  →  Stop to breakeven.
-  Position at +70% of credit  →  CLOSE. The rest is not worth the gamma.
+  ⛔ Do NOT move the stop to breakeven at +50%. Do NOT trail. Do NOT scale out.
+     Each is one more manual decision under P&L pressure in a mobile app, and the
+     documented failure mode here is freezing on exactly one such decision.
+     Trailing and scale-out unlock after 20 clean trades. Until then: stop, or target, or time.
+
+  ⛔ NO order may ever increase short exposure in a losing structure — any hour, any day.
+  ⛔ On expiry day §8.9 is CLOSED. The only two actions are HOLD and EXIT.
 ```
 
 ### Card 6 — Exit-in-a-hurry card
 
 ```text
-  1.  Exit as a BASKET / multi-leg order. Always.
-  2.  If leg-by-leg is forced:  BUY BACK THE SHORTS FIRST.
-      Wings second. Never the other way round.
-  3.  Limit orders a few points through the mid — not market.
-  4.  Naked for even 30 seconds in a fast market is the only
-      state that can produce an unbounded loss. Avoid it above all else.
+  1.  CANCEL THE RESTING SL-LIMIT FIRST.  Otherwise it fires against the flat
+      position later and re-opens a naked short you are no longer watching.
+  2.  BUY BACK THE SHORT LEG.  Always first.
+  3.  SELL THE LONG LEG.  Always second. Never the other way round.
+  4.  Limit orders a few points through the mid — never market, never SL-M.
+  5.  Budget 2.0 pts/leg of slippage on a stop exit (01-Sep-2026 observed 23.85 pts
+      total). If the fill is worse than that, say so in the log; do not round it away.
 ```
 
 ---

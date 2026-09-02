@@ -4,7 +4,7 @@ Run this **before any trading activity** each Claude Code session. All three MCP
 
 > **Where everything else lives:** [`CLAUDE.md`](../CLAUDE.md) is the repo index — it has a **⚡ Fast Load** table (which docs to read for which kind of ask), the **§8 map** of the live operating manual, and the current **Known Blockers**. There is no README.
 >
-> **Read [`mcp-usage-log.md`](./mcp-usage-log.md) §1 before trusting any capability.** As of 17-Aug-2026: Dhan's Data API is not entitled (**no IV/Greeks from any source** — §7 there lists the sanctioned substitutes), Kite is data-only, and all execution is manual in the Kotak Neo app.
+> **Read [`mcp-usage-log.md`](./mcp-usage-log.md) §1 before trusting any capability.** As of 02-Sep-2026: Dhan's Data API **is** entitled and its prices/OI/bid-ask are trustworthy, but its **MCP OAuth binding is unreliable — try it once, then go straight to REST**; its **IV and Greeks are broken** (computed off spot, not the forward — CE IV ≠ PE IV at the same strike), so there is **no trustworthy Greeks source from any broker** (§7 there lists the sanctioned substitutes). Kite is data-only. All execution is manual in the Kotak Neo app.
 
 ---
 
@@ -67,11 +67,15 @@ Run this **before any trading activity** each Claude Code session. All three MCP
 
 > **Architecture note:** Dhan is primarily used for **option chain + Greeks** (the only MCP with pre-calculated Delta/Theta/Gamma/Vega + OI per strike). It also supports order placement — but execution stays on Kite by default unless you explicitly use Dhan for orders.
 
-> ⛔ **KNOWN ISSUE (as of 17-Aug-2026) — Dhan Data API is not entitled.** Login succeeds and `positions`/`funds` work, but **every** market-data call (`ltp`, `expirylist`, `optionchain`) returns `API Error: Unauthorized`. Dhan sells Data APIs as a **separate paid subscription**; the OAuth consent only grants the trading scope. Re-running `login` will never fix it — the Data API plan must be activated in the Dhan account. See [`mcp-usage-log.md` §2.1](./mcp-usage-log.md#21-dhan-data-api-not-entitled--open).
+> ⚠️ **KNOWN ISSUE (reopened 02-Sep-2026) — Dhan MCP OAuth binding is unreliable.** The Data API subscription **is** active (since 20-Aug-2026), so this is no longer an entitlement problem. What fails is the *binding*: `login` issues a fresh consentId, the user completes consent, `complete_login` replies `token_id already consumed for this session`, and every agent tool still returns `API Error: Unauthorized`. It failed **twice in one morning** on 02-Sep. **`"token already consumed"` is NOT proof of binding — only a successful `expirylist` is.**
+>
+> **Try the MCP once. Then go straight to REST.** Do not spend market hours on consent URLs. Dhan REST (`access-token` + `client-id` headers) pulled all three full chains reliably all session. See [`mcp-usage-log.md` §2.4](./mcp-usage-log.md).
 >
 > **Verify Dhan with `expirylist`, never with `funds`** — `funds` returns a well-formed all-zeros response even when unauthenticated, which falsely reads as "connected".
 >
-> ⚠️ **Never call `mcp__dhan__login` twice.** Each call invalidates the previous pending consent, causing `{"status":"error","message":"Target session is not pending login."}` on the callback. Issue **one** consent URL and wait for the user.
+> ⚠️ **Do not call `mcp__dhan__login` while the user is mid-login on a valid URL.** Each call issues a new consentId and invalidates the previous pending consent, causing `{"status":"error","message":"Target session is not pending login."}` on the callback. Issue **one** consent URL and wait.
+>
+> **The one exception:** if the URL has **already failed** (`{"error":"invalid_client"}`), call `login` again — the server generates a new OAuth client_id per call and the first can be stale. A second call is safe *only* once the first has visibly failed. There is **no `mcp__dhan__authenticate` tool**; the MCP exposes `login` and `complete_login` only.
 
 **If setup is broken (one-time fix):**
 ```bash
@@ -86,11 +90,12 @@ claude mcp add --transport http --client-id <DHAN_CLIENT_ID> dhan https://mcp.dh
 ## Session Start Sequence (in order)
 
 ```
-Step 1 → Connect Kite      → verify with: "Show my Zerodha margin"
-Step 2 → Connect Kotak Neo → verify with: "Show my Kotak available margin"
-Step 3 → Connect Dhan      → verify with: "Get NIFTY option chain from Dhan"
-Step 4 → Record the outcome as a row in mcp-usage-log.md §4
-Step 5 → All green? → proceed with market view / trade analysis
+Step 1 → Connect Kite      → verify with: mcp__kite__get_ltp → NIFTY + VIX
+Step 2 → Connect Kotak Neo → verify with: mcp__kotak-neo__get_limits → ₹7L available
+Step 3 → Connect Dhan      → verify with: mcp__dhan__market_data_agent_tool expirylist NIFTY
+Step 4 → FII/DII data      → run: ! python3 tools/fii-dii/fii_dii.py  (T-1 NSE archive, no login)
+Step 5 → Record the outcome as a row in mcp-usage-log.md §4
+Step 6 → All green? → proceed with /Index-Derivatives-tread analyse-today
 ```
 
 **Verify each MCP with a call that exercises the capability you actually need** — a successful login or funds call does not prove the data endpoints work.

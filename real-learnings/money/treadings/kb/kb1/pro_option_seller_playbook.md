@@ -1,6 +1,22 @@
 # Pro Option Seller Playbook — NSE/BSE Index Options
 ## Capital Base: ₹20,00,000 (₹20 Lakhs) — 100% Dedicated Trading Capital
 
+> ⛔ **THIS IS NOT THE OPERATING MANUAL. DO NOT SIZE, TIME, OR STRUCTURE A LIVE TRADE FROM THIS FILE.**
+>
+> It is written for a **₹20,00,000** dedicated book. The actual book is **₹7,02,275** in Kotak Neo —
+> about a third — and every rupee figure here is wrong by roughly 3× for it. It also predates CAS and
+> the 2024 SEBI regime. Specifically, do not carry across:
+>
+> | This file says | The operating rule ([`TRADING_CONSTANTS.md`](../../TRADING_CONSTANTS.md)) |
+> |---|---|
+> | Hard close **2:45 PM** (throughout) | **NIFTY/BANKNIFTY 2:30 PM · SENSEX 2:15 PM.** One time, no second deadline. |
+> | 2% per **week** | **2–4% per MONTH**, rolling 3-month mean |
+> | 65% margin utilisation | 40% cap — and margin is **not** a sizing input |
+> | Iron condors, butterflies, strangles | ⛔ locked. Only the two-leg credit vertical, until 30 clean trades. |
+> | Charges ~₹2,520 for 12 lots | over-states by ~8× — see `strategy_ref_book.md` §8.3 |
+>
+> Read it for the *reasoning* about seller edge and market structure. Take no number from it.
+>
 > **Role:** This document is written from the perspective of a practicing pro option seller in Indian markets — not bookish theory. Every number is tied to ₹20L capital, realistic margins, and 2%/week target.
 >
 > **Capital assumption:** ₹20,00,000 is the full dedicated options trading account. Personal living expenses, emergency fund, and mutual fund SIPs come from a completely separate fund. This ₹20L is only for F&O — it never gets used for anything else.
@@ -92,11 +108,20 @@ Before the numbers: **2% weekly ≠ 2% every week.**
 
 > Lot sizes and margins change by SEBI/exchange circulars. Verify before every trade week at broker platform or NSE contract specs page.
 
-| Index | Exchange | Expiry Day | Lot Size (verify) | Settlement |
-|-------|----------|------------|-------------------|------------|
-| NIFTY 50 | NSE | Tuesday (weekly) | 25 units | Cash settled |
-| SENSEX | BSE | Thursday (weekly) | 10 units | Cash settled |
-| BANKNIFTY | NSE | Wednesday (verify) | 15 units | Cash settled |
+| Index | Exchange | Expiry Day | Lot Size | Settlement |
+|-------|----------|------------|----------|------------|
+| NIFTY 50 | NSE | Tuesday (weekly) | **65** | Cash settled |
+| SENSEX | BSE | Thursday (weekly) | **20** | Cash settled |
+| BANKNIFTY | NSE | ⚠️ **MONTHLY ONLY — last Tuesday. There is no weekly.** | **30** | Cash settled |
+
+> ⛔ **Corrected 02-Sep-2026.** This table previously read `25 / 10 / 15` with BANKNIFTY on
+> "Wednesday (verify)". All four figures were pre-2024-SEBI and **wrong by a factor of ~2.6 on
+> NIFTY** — sizing off them understates every rupee figure in this file's worked examples by the
+> same factor. BANKNIFTY's weekly expiry was abolished outright; it is monthly, last Tuesday.
+> Authority: [`TRADING_CONSTANTS.md` §13](../../TRADING_CONSTANTS.md).
+>
+> **Every worked example below still computes at `× 25`.** They have not been repriced — see the
+> banner at the top of this file. Do not read a rupee figure out of this document.
 
 **Margin reference (approximate — verify live with broker):**
 
@@ -542,8 +567,8 @@ CHECKLIST — RUN MONDAY 9:00–9:30 AM
 [ ] 3. PCR (Put-Call Ratio) Slope
     Fetch from: NSE option chain, Sensibull, or Dhan MCP optionchain
     GREEN: PCR 0.9 – 1.3 (balanced, sideways likely)
-    YELLOW: PCR < 0.7 (too bullish, PE side of IB more vulnerable)
-    YELLOW: PCR > 1.5 (too bearish, CE side more vulnerable)
+    YELLOW: PCR < 0.80 (bearish  — see TRADING_CONSTANTS.md §10a for the only bands)
+    YELLOW: PCR > 1.30 (bullish  — the 0.7/1.5 pair quoted here is retired)
 
 [ ] 4. FII Participant OI
     Check from: NSE/BSE FII data or x.com/FII_DII_Nifty

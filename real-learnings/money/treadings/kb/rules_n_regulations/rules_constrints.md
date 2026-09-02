@@ -1,6 +1,20 @@
 # Rules, Regulations & Market Structure Constraints
 ## NSE / BSE Indian Options Market
 
+> ⚠️ **EXIT TIMES IN THIS FILE ARE SUPERSEDED.** This document analyses CAS mechanics, and its
+> exit-time discussion is *reasoning*, not the operating rule. The operating rule is one time per
+> index, with no second "hard" deadline:
+>
+> | Index | Hard flat — position must be closed |
+> |---|---|
+> | **NIFTY / BANKNIFTY** | **2:30 PM** |
+> | **SENSEX** | **2:15 PM** |
+>
+> Source of truth: [`TRADING_CONSTANTS.md` §7](../../TRADING_CONSTANTS.md). If any time below
+> disagrees with those two, the constants file wins. **The old two-tier "target / hard" scheme is
+> deleted** — a second, later deadline is exactly what a losing position reaches for, and
+> 20-Jul-2026 exited at ~3:16 PM using it.
+
 ---
 
 ## Index
@@ -335,16 +349,19 @@ The expiry-day strangle (Strategy 7 in the playbook) works on calm sessions. On 
 
 ```
 PRE-CAS RULE (old):   Exit expiry-day positions by 2:45 PM
-POST-CAS RULE (new):  Exit expiry-day positions by 2:30 PM (target) / 3:00 PM (hard deadline)
+CURRENT RULE:         HARD FLAT — NIFTY/BANKNIFTY 2:30 PM · SENSEX 2:15 PM. One time, no second deadline.
 
 PRE-CAS RULE (old):   Hold position if IV drops but 50% target not yet hit
-POST-CAS RULE (new):  On expiry day, if clock reaches 2:45 PM and 50% not hit → exit anyway
+CURRENT RULE:         Midday gate at 12:30 — if capture < 25% of credit, close. Do not wait for the clock.
 
 PRE-CAS RULE (old):   Expiry-day strangle can be entered 9:45 AM and run until 2:45 PM
-POST-CAS RULE (new):  Expiry-day strangle → target exit by 12:00 PM noon. Hard close 2:30 PM.
+CURRENT RULE:         Strangles are ⛔ NOT PERMITTED. The only permitted structure is the two-leg
+                       defined-risk credit vertical (TRADING_CONSTANTS.md §5). Entry window 9:30-11:15.
 
 PRE-CAS RULE (old):   Stop-loss at 1.5× credit
-POST-CAS RULE (new):  On expiry day after 2:45 PM, treat ANY adverse move as stop-loss.
+CURRENT RULE:         k = 1.6, as a RESTING SL-LIMIT order on the SHORT LEG, placed within 90 seconds
+                       of the fill. Never SL-M. "Treat any adverse move as a stop" is not a stop —
+                       it is a decision deferred to the worst possible moment.
                        After 3:15 PM — DO NOT HAVE ANY EXPIRING OPTIONS POSITION.
 ```
 
@@ -355,10 +372,14 @@ POST-CAS RULE (new):  On expiry day after 2:45 PM, treat ANY adverse move as sto
 
 **Summary exit times by index under CAS:**
 
-| Index | Normal session exit target | Expiry day exit target | Hard deadline |
-|-------|--------------------------|----------------------|---------------|
-| NIFTY (Tue expiry) | Whenever 50% profit hit | 50% profit or 2:30 PM | 3:00 PM |
-| SENSEX (Thu expiry) | Whenever 50% profit hit | 50% profit or 2:15 PM | 2:45 PM |
+| Index | Profit target | HARD FLAT (the only deadline) |
+|-------|---------------|-------------------------------|
+| NIFTY / BANKNIFTY | 50% of credit | **2:30 PM** |
+| SENSEX | 50% of credit | **2:15 PM** |
+
+Plus a **12:30 PM midday gate**: if capture is under 25% of the credit, close. The day is not paying,
+and a spread that hasn't decayed by midday is pinned near the short strike — maximum gamma for
+expired theta.
 
 ---
 
@@ -411,10 +432,11 @@ THREE THINGS THAT CHANGED AGAINST YOU:
   2. Stop-losses can trigger on IEP spikes that revert in seconds
   3. Margin calls possible mid-auction even on winning positions
 
-THE UPDATED RULE (supersedes playbook):
-  SENSEX (Thu): Hard close all expiring positions by 2:45 PM. Target by 2:15 PM.
-  NIFTY (Tue):  Hard close all expiring positions by 3:00 PM. Target by 2:30 PM.
-  Expiry strangle: Target exit by noon. Hard close 2:30 PM.
+THE CURRENT RULE (supersedes both the playbook and the paragraphs above):
+  SENSEX:            HARD FLAT 2:15 PM.
+  NIFTY / BANKNIFTY: HARD FLAT 2:30 PM.
+  One time per index. There is no later "hard" deadline to fall back on.
+  Strangles: not permitted at all — see TRADING_CONSTANTS.md §5.
   After 3:15 PM on expiry day: ZERO expiring option positions. No exceptions.
 
 OPPORTUNITY ANGLE:

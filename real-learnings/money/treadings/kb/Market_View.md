@@ -265,10 +265,10 @@ Combine [Price vs OI Matrix](#2-price-vs-oi-matrix), FII scenarios, PCR, and rea
 
 | View | Price + OI | FII / Participants | PCR & Option Chain | Reality Check |
 |---|---|---|---|---|
-| **Strongly Bullish** | Long Buildup | [Scenario 1](#scenario-1-the-classic-bullish-rally-strong-bullish) — FII long, Client short | PCR > 1.3 · heavy Put writing at ATM | Heavyweights breaking resistance |
-| **Slightly Bullish** | Short Covering | FII closing shorts (↓ short OI) | PCR 0.9–1.2 | Rally likely stalls at [PDH](./trading_jargon_acronyms.md#pdh) |
-| **Strongly Bearish** | Short Buildup | [Scenario 2](#scenario-2-the-distribution--trap-phase-strong-bearish) — FII short, Client long | PCR < 0.7 · heavy Call writing ATM/OTM | VIX spiking |
-| **Slightly Bearish** | Long Unwinding | FII closing longs, not building new shorts | PCR 0.8–0.9 | Dip often holds at [PDL](./trading_jargon_acronyms.md#pdl) |
+| **Strongly Bullish** | Long Buildup | [Scenario 1](#scenario-1-the-classic-bullish-rally-strong-bullish) — FII long, Client short | PCR > 1.30 · heavy Put writing at ATM | Heavyweights breaking resistance |
+| **Slightly Bullish** | Short Covering | FII closing shorts (↓ short OI) | PCR 1.00–1.30 | Rally likely stalls at [PDH](./trading_jargon_acronyms.md#pdh) |
+| **Strongly Bearish** | Short Buildup | [Scenario 2](#scenario-2-the-distribution--trap-phase-strong-bearish) — FII short, Client long | PCR < 0.80 · heavy Call writing ATM/OTM | VIX spiking |
+| **Slightly Bearish** | Long Unwinding | FII closing longs, not building new shorts | PCR 0.80–1.00 | Dip often holds at [PDL](./trading_jargon_acronyms.md#pdl) |
 | **Sideways** | Flat price · OI ↑ both sides | [Scenario 5](#scenario-5-the-range-bound--sideways-market) — Pros writing straddles | Max Pain ≈ ATM · PCR ~ 1.0 | VIX falling/crushing |
 
 ---
@@ -289,7 +289,7 @@ Combine [Price vs OI Matrix](#2-price-vs-oi-matrix), FII scenarios, PCR, and rea
 
 **What to look:**
 
-- **PCR** (Put OI ÷ Call OI): above 1.3 bullish · 0.9–1.3 neutral · below 0.7 bearish
+- **PCR** (Put OI ÷ Call OI): ⭐ **bands are defined once, in [`TRADING_CONSTANTS.md` §10a](../TRADING_CONSTANTS.md)** — `>1.30 bullish · 1.00–1.30 mildly bullish · 0.80–1.00 mildly bearish · <0.80 bearish`, no gaps. The `0.9–1.3 neutral / <0.7 bearish` scheme formerly quoted here left 0.70–0.90 unclassified and is retired.
 - **Max Pain** strike — relevant mainly in expiry week
 - **Highest Call OI** strike = resistance · **Highest Put OI** strike = support
 - **Change in OI** — classify using [Price vs OI Matrix](#2-price-vs-oi-matrix) (not OI alone)
@@ -362,7 +362,7 @@ Combine [Price vs OI Matrix](#2-price-vs-oi-matrix), FII scenarios, PCR, and rea
 - **Max Pain gravity stronger** — spot tends to close near Max Pain if gap to spot is < 100 points.
 - **Theta decays faster** — avoid buying ATM options in the last 3 days; decay is ~20–30% higher per day.
 - **Gamma spikes** — ATM options can double or halve in the final 60 minutes; highest risk/reward window.
-- **PCR signal weakens** — only PCR < 0.7 or > 1.4 carries directional weight in expiry week; 1.0 = neutral.
+- **PCR signal weakens in expiry week** — OI concentrates into the expiring series and PCR compresses toward 1.0. Treat **0.90–1.10 as uninformative** rather than as "mildly" anything; outside that, the [`TRADING_CONSTANTS.md` §10a](../TRADING_CONSTANTS.md) bands still apply.
 - **Monthly vs weekly strikes** — do not use monthly strike OI to judge weekly expiry sentiment if they differ.
 
 **Mark session type before forming market view:**

@@ -2,3 +2,6 @@
 
 # macOS
 .DS_Store
+
+# python venvs inside tools/
+tools/**/.venv/

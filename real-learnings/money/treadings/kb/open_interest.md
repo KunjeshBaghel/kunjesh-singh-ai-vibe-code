@@ -315,8 +315,8 @@ Look at the rightmost data point (**July 17**):
 
 This view tells you who is dominant in the overall market cycle: **The Bulls or the Bears.**
 
-* **When Green Bars > Red Bars (PCR rising above 1.0):** Put writers are completely dominating. They are aggressively selling puts day after day, building a massive macro floor. The structural trend of the market is strongly **Bullish**.
-* **When Red Bars > Green Bars (PCR dropping below 0.8):** Call writers are dominating. They are aggressively selling calls, building a heavy macro ceiling. The structural trend is **Bearish**.
+* **When Green Bars > Red Bars (PCR rising above 1.30 — [`TRADING_CONSTANTS.md` §10a](../TRADING_CONSTANTS.md)):** Put writers are completely dominating. They are aggressively selling puts day after day, building a massive macro floor. The structural trend of the market is strongly **Bullish**.
+* **When Red Bars > Green Bars (PCR dropping below 0.80 — [`TRADING_CONSTANTS.md` §10a](../TRADING_CONSTANTS.md)):** Call writers are dominating. They are aggressively selling calls, building a heavy macro ceiling. The structural trend is **Bearish**.
 
 ### PCR Quick Reference
 
@@ -354,7 +354,7 @@ As an intraday or swing trader, this chart helps you align with the "Big Money" 
 | Trend alignment | PCR at 1.6, green bars > red bars | Avoid aggressive shorts — buy-on-dips with calls/bull spreads |
 | Overbought extreme | PCR 1.6–1.8, NIFTY at highs | Lock long profits — do not chase breakout blindly |
 | Structural reversal | NIFTY rising but green bars shrinking, PCR falling 2–3 days | Exit long swing trades — prepare for correction |
-| Bearish macro | Red bars > green, PCR < 0.8 | Favor puts / call selling — avoid aggressive longs |
+| Bearish macro | Red bars > green, PCR < 0.80 | Favor puts / call selling — avoid aggressive longs |
 
 ---
 
@@ -467,7 +467,7 @@ Since **Fut OI vs Time** uses a *daily* timeframe (dates on the bottom axis like
 | "When to enter a momentum long?" | **Multi Strike OI** — put line crosses above call line + NIFTY follows |
 | "Should I hold my long near resistance?" | **Multi Strike OI** — call line plunging = short-covering blast |
 | "Is the intraday trend strengthening?" | **Multi Strike OI** — put line rising while NIFTY rising = super bullish |
-| "What's the macro trend — bull or bear?" | **Option OI vs Time** — green > red + PCR > 1.0 = bullish structure |
+| "What's the macro trend — bull or bear?" | **Option OI vs Time** — green > red + PCR > 1.30 = bullish structure ([§10a](../TRADING_CONSTANTS.md)) |
 | "Should I short this market?" | **Option OI vs Time** — PCR at 1.6 = avoid aggressive shorts |
 | "Is the market overbought at macro level?" | **Option OI vs Time** — PCR 1.6–1.8 = lock profits, don't chase |
 | "Is a major trend reversal brewing?" | **Option OI vs Time** — NIFTY up but PCR falling 2–3 days = exit longs |

@@ -54,6 +54,42 @@ Note: The numbers are often denoted with an 'L', which stands for Lakhs (1 Lakh 
 - [Prompt] Convert the image data into the markdown file format, like we have in [fii_dii_data_2026.md] (for example) tab at ## Date 28-July-2026
 
 
+## 31/08/2026 — FII Activity Last 5 Days (computed from NSE CSV, replaces X.com)
+
+**Formula:** FII Activity = (Opt Idx Call Long − Opt Idx Call Short) − (Opt Idx Put Long − Opt Idx Put Short) + (Fut Idx Long − Fut Idx Short)
+*Verified exact match against @Fii_Dii_Data X.com image for 31-Aug-2026.*
+
+| Day | Date | FII Activity | Trend |
+| :--- | :--- | ---: | :--- |
+| T | 31-Aug-2026 | **+40,829** | Bullish |
+| T-1 | 28-Aug-2026 | **+62,995** | Bullish |
+| T-2 | 27-Aug-2026 | **−1,12,312** | Bearish |
+| T-3 | 26-Aug-2026 | **−45,603** | Bearish |
+| T-4 | 25-Aug-2026 | *68,928 (X.com)* | Bullish* |
+| **Overall By Count** | | 3 Bullish / 2 Bearish | **Bullish** |
+| **Overall By Sentiment** | | +14,837 net | **Bullish** |
+
+*25-Aug distortion: expiry day turnover inflates raw vol ~8×; X.com value used as-is.*
+
+---
+
+## 31/08/2026 — NSE Official Participant-wise OI (T-1 for 01-Sep session)
+
+*Source: https://archives.nseindia.com/content/nsccl/fao_participant_vol_31082026.csv (public, no auth)*
+
+| Participant | Idx Fut Long | Idx Fut Short | Idx Fut Net | Idx Call Long | Idx Call Short | Idx Call Net | Idx Put Long | Idx Put Short | Idx Put Net | Reading |
+| :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | :--- |
+| **FII** | 11,785 | 18,467 | **−6,682** | 44,26,946 | 44,22,388 | **+4,558** | 43,77,447 | 44,20,400 | **−42,953** | Short Futures, Put Writer (Mixed-Range) |
+| **Client** | 34,766 | 33,506 | **+1,260** | 2,71,89,568 | 2,70,85,083 | **+1,04,485** | 2,98,73,540 | 2,98,34,520 | **+39,020** | Bullish (contrarian = bearish signal) |
+| **Pro** | 21,752 | 16,405 | **+5,347** | 3,49,12,995 | 3,50,21,998 | **−1,09,003** | 3,53,21,489 | 3,53,14,851 | **+6,638** | Long Futures + Short Calls (Range/Covered) |
+| **DII** | 333 | 258 | **+75** | 440 | 480 | **−40** | 435 | 3,140 | **−2,705** | Negligible |
+
+**Regime reading (01-Sep pre-market):**
+FII: Not cleanly bearish — short futures BUT writing 42,953 net puts (bullish/range). Pro: Long futures + short calls = range/capped upside. Retail bullish (contrarian → slight bearish signal).
+→ **Pattern: Range-Bound / Institutional Consensus** (not Distribution/Trap). Aligns with 24,000 PE wall holding + 24,100-24,200 CE ceiling.
+
+---
+
 ## 28/08/2026 - FII DII Data at a Glance**
 
 | Participant | Segment | Net Change | Interpretation | Net OI | Interpretation | T-1 Net OI |
@@ -476,3 +512,63 @@ Get FREE Algo Tools at BluechipAlgos.com
 | | Call | -1.22L | Bearish | 44,766 | Bullish | 1.67L |
 | | Put | 66,456 | Bearish | -7.03L | Bullish | -7.69L |
 | | Stock Futures | 34,754 | Bullish | 29.14L | Bullish | 28.79L |
+## 31/08/2026 - FII DII FNO ACTIVITY
+
+| Participant | Instrument | Change | Activity | Trend |
+| :--- | :--- | :--- | :--- | :--- |
+| **FII** | Future | -6,682 | Sold Futures | Bearish |
+| | CE | +4,558 | Bought Calls | Bullish |
+| | PE | -42,953 | Sold Puts | Bullish |
+| **Client** | Future | +1,260 | Bought Futures | Bullish |
+| | CE | +104,485 | Bought Calls | Bullish |
+| | PE | +39,020 | Bought Puts | Bearish |
+| **Pro** | Future | +5,347 | Bought Futures | Bullish |
+| | CE | -109,003 | Sold Calls | Bearish |
+| | PE | +6,638 | Bought Puts | Bearish |
+| **DII** | Future | +75 | Bought Futures | Bullish |
+| | CE | -40 | Sold Calls | Bearish |
+| | PE | -2,705 | Sold Puts | Bullish |
+
+## 31/08/2026 - FII Activity for last 5 days
+
+| Period | Value | Trend |
+| :--- | :--- | :--- |
+| Today (T) | +40,829 | Bullish |
+| T-1 Day | +62,995 | Bullish |
+| T-2 Day | -112,312 | Bearish |
+| T-3 Day | -45,603 | Bearish |
+| T-4 Day | +291,103 | Bullish |
+| **Overall Trend** | By Count | Bullish (3B/2Be) |
+| **Overall Trend** | By Sentiment | Bullish (net +237,012) |
+
+---
+
+## 01/09/2026 - FII DII FNO ACTIVITY
+
+| Participant | Instrument | Change | Activity | Trend |
+| :--- | :--- | :--- | :--- | :--- |
+| **FII** | Future | -12,717 | Sold Futures | Bearish |
+| | CE | -93,282 | Sold Calls | Bearish |
+| | PE | -69,518 | Sold Puts | Bullish |
+| **Client** | Future | +8,911 | Bought Futures | Bullish |
+| | CE | -75,332 | Sold Calls | Bearish |
+| | PE | -62,619 | Sold Puts | Bullish |
+| **Pro** | Future | +3,617 | Bought Futures | Bullish |
+| | CE | +168,089 | Bought Calls | Bullish |
+| | PE | +131,998 | Bought Puts | Bearish |
+| **DII** | Future | +189 | Bought Futures | Bullish |
+| | CE | +525 | Bought Calls | Bullish |
+| | PE | +139 | Bought Puts | Bearish |
+
+## 01/09/2026 - FII Activity for last 5 days
+
+| Period | Value | Trend |
+| :--- | :--- | :--- |
+| Today (T) | -36,481 | Bearish |
+| T-1 Day | +40,829 | Bullish |
+| T-2 Day | +62,995 | Bullish |
+| T-3 Day | -112,312 | Bearish |
+| T-4 Day | -45,603 | Bearish |
+| **Overall Trend** | By Count | Bearish (2B/3Be) |
+| **Overall Trend** | By Sentiment | Bearish (net -90,572) |
+

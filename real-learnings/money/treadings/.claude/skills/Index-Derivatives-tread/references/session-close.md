@@ -19,7 +19,30 @@ Parse all orders for today:
 
 ---
 
-## Step 2: Calculate final P&L
+## Step 2: COMPLIANCE AUDIT — run before P&L is discussed
+
+⚠️ **Violations are reported ABOVE P&L, always.** Violations lead; P&L lags. A profitable trade that broke a rule is a worse outcome than a losing trade that followed every one, because the profit teaches the wrong lesson.
+
+```
+| # | Check | Y/N |
+|---|---|---|
+| 1 | Was a resting SL-LIMIT order on the SHORT LEG placed within 90 seconds of the fill? Order ID? |  |
+| 2 | Did the stop ever move? (moving it DOWN is fine; AWAY from price is a violation) |  |
+| 3 | Was a triggered stop executed within 5 minutes? |  |
+| 4 | Was any order placed that INCREASED short exposure while at a loss? |  |
+| 5 | Was the position flat by the hard flat time (2:30 NIFTY/BANKNIFTY · 2:15 SENSEX)? |  |
+| 6 | Was this the only structure of the day? |  |
+| 7 | Was the size within lots = min(cap A, cap B)? |  |
+| 8 | Were all five gates written in tread.md BEFORE any strike was quoted? |  |
+```
+
+**Any of rows 1–6 failing = a behavioural violation → 5-session trading halt**, per [`TRADING_CONSTANTS.md` §12](../../../../TRADING_CONSTANTS.md), **even if the trade was profitable.** State the halt plainly and name its end date. Do not soften it because the day made money.
+
+**Running count:** report `Violations this month: <n>` in every session summary.
+
+---
+
+## Step 3: Calculate final P&L
 
 For a credit spread:
 ```
@@ -48,7 +71,7 @@ Net P&L = Gross P&L − estimated charges
 
 ---
 
-## Step 3: Update tread.md (exit section)
+## Step 4: Update tread.md (exit section)
 
 Append to today's tread.md:
 
@@ -75,11 +98,13 @@ NIFTY at exit: ~<price>
 
 MAE (worst mark): ₹<X> at <time> (spread <Y> pts)
 MFE (best mark): ₹<X> at <time> (spread <Y> pts)
+
+Exit reason: TARGET | STOP | TIME | VIOLATION      ← closed vocabulary, pick exactly one
 ```
 
 ---
 
-## Step 4: Write learning.md
+## Step 5: Write learning.md
 
 This is non-negotiable. Even if the session was routine, write at least 3 bullet points. If it was a no-trade, still write what you observed.
 
@@ -103,14 +128,17 @@ What condition would have changed the decision.
 
 **Mandatory reflection prompts** (answer at least one):
 - Did the market behave as the pre-session view predicted? Where did it diverge?
-- Did any OI wall behave unexpectedly (built or unwound)?
-- Was the sizing right? Would more or fewer lots have been better?
-- Did the exit timing work? Should target or hard exit times be adjusted?
+- Did any OI wall behave unexpectedly (built or unwound vs its `oi_day_high`)?
+- Was every gate honestly scored, or was a borderline reading nudged?
 - What would you do differently entering this exact setup again?
+
+⛔ **Do not ask "would more lots have been better?"** Hindsight always says yes on a winner, and that question is how the 31-Aug "size by conviction" rewrite happened off a single observation in the winning direction. The sizing rule is the formula; it is reviewed on 20+ trades at month end, never on today's outcome.
+
+⛔ **Never loosen a filter mid-month**, and never as a reaction to one session. Fewer than 4 trades in a month is the only signal that filters are too tight — review it at month end.
 
 ---
 
-## Step 5: Update mcp-usage-log.md §4
+## Step 6: Update mcp-usage-log.md §4
 
 Open `docs/mcp-usage-log.md` and append a new row to the session log table (§4):
 
@@ -120,9 +148,11 @@ Open `docs/mcp-usage-log.md` and append a new row to the session log table (§4)
 
 Outcome categories: `TRADE EXECUTED ✅ · NO TRADE (Too dangerous) · NO TRADE (Too small) · NO TRADE (Too thin)`
 
+**No-trade days get the same row and the same discipline as traded days.** They are ~75% of sessions and are the bulk of the record.
+
 ---
 
-## Step 6: Append FII/DII data (if available)
+## Step 7: Append FII/DII data (if available)
 
 If today's FII/DII F&O participant data was not already added in `analyse-today`:
 - If user has it: append to `my-treads/fii_dii_data_2026.md` using the existing format
@@ -130,16 +160,20 @@ If today's FII/DII F&O participant data was not already added in `analyse-today`
 
 ---
 
-## Step 7: Session summary to chat
+## Step 8: Session summary to chat
 
 Present a clean session summary:
 
 ```
 ## <DD-MM-YYYY> — Session Summary
 
+### Compliance
+Violations today: <n>   ·   Violations this month: <n>   ·   Halt in force until: <date | none>
+
 ### Result
 <Trade | No Trade>
-<Structure if traded> · <Lots> · Net <+/-₹X> (<Y>%)
+<Structure if traded> · <Lots> · Exit reason <TARGET|STOP|TIME|VIOLATION> · Net <+/-₹X> (<Y>%)
+Month to date: ₹<X> against the 2–4% (₹14,000–28,000) monthly target.
 
 ### Key decisions
 1. <Gate or threshold that was decisive>
@@ -157,7 +191,7 @@ Present a clean session summary:
 
 ---
 
-## Step 8: Prompt for tomorrow's prep (if after 3:30 PM)
+## Step 9: Prompt for tomorrow's prep (if after 3:30 PM)
 
 ```
 > Tomorrow's market view should be written after 3:30 PM today using post-close data.
