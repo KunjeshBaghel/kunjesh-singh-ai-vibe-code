@@ -1,6 +1,6 @@
 Based on the [Sensibull Option Chain](https://web.sensibull.com/option-chain?tradingsymbol=NIFTY&expiry=2026-07-21&view=all) you are viewing, here is a detailed breakdown of all the columns, what they mean, and how you can use them in real-world trading.
 
-For acronyms and term definitions, see [trading_jargon_acronyms.md](./trading_jargon_acronyms.md).
+For acronyms and term definitions, see [trading_jargon_acronyms.md](./kb1/trading_jargon_acronyms.md).
 
 To make it easier to digest, I have grouped the columns into four main categories: **Price & Value**, **Liquidity & Market Sentiment**, **Probability & Risk**, and **Option Greeks**.
 
@@ -19,7 +19,7 @@ To make it easier to digest, I have grouped the columns into four main categorie
 | 6 | [Live Market Monitoring — Derivatives Context](#6-live-market-monitoring--derivatives-context) | Intraday OI change, OI concentrations, and conditional squeeze/unwind signals |
 | 7 | [Pre-Trade Go/No-Go Checklist — Session Learnings](#7-pre-trade-gono-go-checklist--session-learnings) | Theta trap pattern, GIFT Nifty caveats, VIX direction, when to sit out |
 
-> **Terms & acronyms:** See [trading_jargon_acronyms.md](./trading_jargon_acronyms.md) for full definitions.
+> **Terms & acronyms:** See [trading_jargon_acronyms.md](./kb1/trading_jargon_acronyms.md) for full definitions.
 
 ### Quick Index — Column by Column
 
@@ -523,7 +523,7 @@ Delta gives you the model sensitivity; **Open Interest** shows where open contra
 After Delta and OI help identify a risk-screened strike candidate, **IV** helps assess whether the premium compensates for the expected move and volatility risks.
 
 * **Why it's crucial for good premium:** IV measures fear and uncertainty. When IV is high, option premiums swell; when IV is low, premiums shrink.
-* **How to use it:** Compare IV with its historical context and check **IVP** at the top of the Sensibull screen (e.g. IVP at 62 means current IV is higher than 62% of readings over the lookback period). Elevated IV can provide richer premium, but it often reflects a larger expected move, event uncertainty, gap risk, or skew; it is not the same structural risk and is not free edge. An [IV Crush](./trading_jargon_acronyms.md#volatility--sentiment) helps a negative-Vega seller only if adverse spot and Gamma effects do not dominate.
+* **How to use it:** Compare IV with its historical context and check **IVP** at the top of the Sensibull screen (e.g. IVP at 62 means current IV is higher than 62% of readings over the lookback period). Elevated IV can provide richer premium, but it often reflects a larger expected move, event uncertainty, gap risk, or skew; it is not the same structural risk and is not free edge. An [IV Crush](./kb1/trading_jargon_acronyms.md#volatility--sentiment) helps a negative-Vega seller only if adverse spot and Gamma effects do not dominate.
 
 #### Summary Checklist for a Risk-Screened Candidate
 

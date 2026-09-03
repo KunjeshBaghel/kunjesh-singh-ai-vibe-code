@@ -1,6 +1,6 @@
 # Open Interest (OI) — Sensibull Charts
 
-Reference guide for reading Open Interest on [Sensibull](https://web.sensibull.com/open-interest?tradingsymbol=NIFTY). For option chain column definitions, see [option_chain.md](./option_chain.md). For acronyms and jargon, see [trading_jargon_acronyms.md](./trading_jargon_acronyms.md).
+Reference guide for reading Open Interest on [Sensibull](https://web.sensibull.com/open-interest?tradingsymbol=NIFTY). For option chain column definitions, see [option_chain_n_greeks.md](./option_chain_n_greeks.md). For acronyms and jargon, see [trading_jargon_acronyms.md](./kb1/trading_jargon_acronyms.md).
 
 **Five screens, five jobs:**
 

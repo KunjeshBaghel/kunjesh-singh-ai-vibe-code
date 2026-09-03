@@ -37,34 +37,34 @@
     - [Trusted sources used for this strategy list](#trusted-sources-used-for-this-strategy-list)
     - [Common example assumptions](#common-example-assumptions)
     - [1. Directional strategies basic](#1-directional-strategies-basic)
-      - [1.1 Long Call CE](#11-long-call-ce)
-      - [1.2 Long Put PE](#12-long-put-pe)
-      - [1.3 Bull Call Spread](#13-bull-call-spread)
+      - [1.1 Long Call CE](#11-long-call-ce-buy-ce)
+      - [1.2 Long Put PE](#12-long-put-pe-buy-pe)
+      - [1.3 Bull Call Spread](#13-bull-call-spread--buy-in-the-money-call---bullish-sell-out-of-the-money-call-bearish--net-debit--option-buyer)
         - [Practical Learnings: Selection, Execution & Defence](#practical-learnings-selection-execution--defence)
-      - [1.4 Bear Put Spread](#14-bear-put-spread)
-      - [1.5 Bull Put Spread](#15-bull-put-spread)
-      - [1.6 Bear Call Spread](#16-bear-call-spread)
-      - [1.7 Covered Call on stock holding](#17-covered-call-on-stock-holding)
-      - [1.8 Protective Put / Married Put on stock holding](#18-protective-put--married-put-on-stock-holding)
-    - [2. Hedging strategies](#2-hedging-strategies)
-      - [2.1 Protective Put](#21-protective-put)
-      - [2.2 Collar](#22-collar)
-      - [2.3 Covered Call](#23-covered-call)
-      - [2.4 Synthetic Long Futures / Synthetic Long Stock](#24-synthetic-long-futures--synthetic-long-stock)
-      - [2.5 Synthetic Short Futures / Synthetic Short Stock](#25-synthetic-short-futures--synthetic-short-stock)
-      - [2.6 Delta Hedging](#26-delta-hedging)
+      - [1.4 Bear Put Spread](#14-bear-put-spread--buy-in-the-money-itm-put-and-sell-out-of-the-money-otm-put--net-debit--option-buyer)
+      - [1.5 Bull Put Spread](#15-bull-put-spread--sell-a-higher-strike-put-otm-buy-a-lower-strike-deep-otm-put--option-seller-credit-strategy)
+      - [1.6 Bear Call Spread](#16-bear-call-spread--sell-otm-call--buy-further-otm-call--option-seller-credit-strategy)
+      - [1.7 Covered Call on stock holding](#17-covered-call-on-stock-holding--on-shares-holdings--not-now)
+      - [1.8 Protective Put / Married Put on stock holding](#18-protective-put--married-put-on-stock-holding--on-shares-holdings--not-now)
+    - [2. Hedging strategies](#2-hedging-strategies--all-not-now)
+      - [2.1 Protective Put](#21-protective-put--on-shares-holdings--institutional-portfolio-managers--not-now)
+      - [2.2 Collar](#22-collar--on-shares-holdings--institutional-portfolio-managers-not-now)
+      - [2.3 Covered Call](#23-covered-call--on-shares-holdings--institutional-portfolio-managers-not-now)
+      - [2.4 Synthetic Long Futures / Synthetic Long Stock](#24-synthetic-long-futures--synthetic-long-stock--institutional-portfolio-managers-not-now)
+      - [2.5 Synthetic Short Futures / Synthetic Short Stock](#25-synthetic-short-futures--synthetic-short-stock--institutional-portfolio-managers-not-now)
+      - [2.6 Delta Hedging](#26-delta-hedging---institutional-portfolio-managers--not-now)
     - [3. Volatility strategies](#3-volatility-strategies)
-      - [3.1 Long Straddle](#31-long-straddle)
-      - [3.2 Long Strangle](#32-long-strangle)
-      - [3.3 Short Straddle](#33-short-straddle)
-      - [3.4 Short Strangle](#34-short-strangle)
-      - [3.5 Long Call Butterfly](#35-long-call-butterfly)
-      - [3.6 Long Put Butterfly](#36-long-put-butterfly)
-      - [3.7 Long Iron Butterfly](#37-long-iron-butterfly)
+      - [3.1 Long Straddle](#31-long-straddle-पैर-फैलाकर-बैठना--net-debit---option-buyer)
+      - [3.2 Long Strangle](#32-long-strangle-गला-घोंटना--buy-otm-ce--buy-otm-pe--net-debit---option-buyer)
+      - [3.3 Short Straddle](#33-short-straddle-पैर-फैलाकर-बैठना--net-credit--option-seller)
+      - [3.4 Short Strangle](#34-short-strangle-गला-घोंटना--net-credit--option-seller)
+      - [3.5 Long Call Butterfly](#35-long-call-butterfly--option-buyer)
+      - [3.6 Long Put Butterfly](#36-long-put-butterfly--option-buyer)
+      - [3.7 Long Iron Butterfly](#37-long-iron-butterfly--option-seller)
     - [4. Range-bound / neutral strategies](#4-range-bound--neutral-strategies)
-      - [4.1 Iron Condor](#41-iron-condor)
-      - [4.2 Iron Butterfly](#42-iron-butterfly)
-      - [4.3 Call Condor](#43-call-condor)
+      - [4.1 Iron Condor](#41-iron-condor-बड़ा-गिद्ध--option-seller--sideways)
+      - [4.2 Iron Butterfly](#42-iron-butterfly--option-seller--sideways)
+      - [4.3 Call Condor](#43-call-condor--option-buyer--skipped)
       - [4.4 Put Condor](#44-put-condor)
       - [4.5 Short Straddle](#45-short-straddle)
       - [4.6 Short Strangle](#46-short-strangle)
@@ -74,27 +74,27 @@
       - [5.1.2 Bear Put Spread](#512-bear-put-spread)
       - [5.1.3 Bull Put Spread](#513-bull-put-spread)
       - [5.1.4 Bear Call Spread](#514-bear-call-spread)
-      - [5.2 Calendar Spread](#52-calendar-spread)
-      - [5.3 Diagonal Spread](#53-diagonal-spread)
-      - [5.4 Ratio Spread](#54-ratio-spread)
-      - [5.5 Backspread Call / Put](#55-backspread-call--put)
-      - [5.6 Butterfly Spread](#56-butterfly-spread)
-      - [5.7 Box Spread / Conversion-Reversal Arbitrage](#57-box-spread--conversion-reversal-arbitrage)
+      - [5.2 Calendar Spread](#52-calendar-spread--not-same-expiry)
+      - [5.3 Diagonal Spread](#53-diagonal-spread--not-same-expiry)
+      - [5.4 Ratio Spread](#54-ratio-spread--option-seller--sideways-or-slightly-bullishbearish)
+      - [5.5 Backspread Call / Put](#55-backspread-call--put--option-buyer--skipped)
+      - [5.6 Butterfly Spread](#56-butterfly-spread--option-buyers--skipped)
+      - [5.7 Box Spread / Conversion-Reversal Arbitrage](#57-box-spread--conversion-reversal-arbitrage--institutional-portfolio-managers)
     - [6. Income / theta strategies](#6-income--theta-strategies)
-      - [6.1 Covered Call](#61-covered-call)
-      - [6.2 Cash-Secured Put on physically settled stock options](#62-cash-secured-put-on-physically-settled-stock-options)
-      - [6.3 Credit Spreads](#63-credit-spreads)
+      - [6.1 Covered Call](#61-covered-call--on-shares-holdings--17-covered-call)
+      - [6.2 Cash-Secured Put on physically settled stock options](#62-cash-secured-put-on-physically-settled-stock-options--cash-settled-vs-stock-settled)
+      - [6.3 Credit Spreads](#63-credit-spreads--option-seller--15-bull-put-spread)
       - [6.4 Short Straddle](#64-short-straddle)
       - [6.5 Short Strangle](#65-short-strangle)
       - [6.6 Iron Condor](#66-iron-condor)
       - [6.7 Iron Butterfly](#67-iron-butterfly)
     - [7. High-risk strategies: learn, but avoid as beginner](#7-high-risk-strategies-learn-but-avoid-as-beginner)
-      - [7.1 Naked Short Call](#71-naked-short-call)
-      - [7.2 Naked Short Put](#72-naked-short-put)
+      - [7.1 Naked Short Call](#71-naked-short-call--avoid)
+      - [7.2 Naked Short Put](#72-naked-short-put--avoid)
       - [7.3 Short Straddle](#73-short-straddle)
       - [7.4 Short Strangle](#74-short-strangle)
-      - [7.5 Ratio Spread with extra short option](#75-ratio-spread-with-extra-short-option)
-      - [7.6 Stock option positions held to expiry without delivery planning](#76-stock-option-positions-held-to-expiry-without-delivery-planning)
+      - [7.5 Ratio Spread with extra short option](#75-ratio-spread-with-extra-short-option--54-ratio-spread)
+      - [7.6 Stock option positions held to expiry without delivery planning](#76-stock-option-positions-held-to-expiry-without-delivery-planning--stocks-only-not-index-nifty50-banknifty)
 - [6. Best references to learn (Books/Blogs/Videos/Websites/Courses)](#6-best-references-to-learn-booksblogsvideoswebsitescourses)
   - [Beginner Level](#beginner-level)
   - [Intermediate Level](#intermediate-level)
@@ -119,6 +119,7 @@
   - [8.4 Instrument selection — NIFTY vs BANKNIFTY vs SENSEX](#84-instrument-selection--nifty-vs-banknifty-vs-sensex)
   - [**8.5 The seller's regime grid — Direction × Volatility × DTE**](#85-the-sellers-regime-grid--direction--volatility--dte)
   - [**8.6 The structure library — what real sellers actually put on**](#86-the-structure-library--what-real-sellers-actually-put-on)
+    - [**8.6.0 The plain credit vertical — the only structure you may actually trade**](#860-the-plain-credit-vertical--the-only-structure-you-may-actually-trade)
     - [8.6.1 Intraday Delta-Neutral Hedged Short Straddle — "the 9:20 structure"](#861-intraday-delta-neutral-hedged-short-straddle--the-920-structure)
     - [8.6.2 The Delta-Banded Hedged Strangle — the weekly workhorse](#862-the-delta-banded-hedged-strangle--the-weekly-workhorse)
     - [8.6.3 Jade Lizard (hedged) — the put-skew harvester](#863-jade-lizard-hedged--the-put-skew-harvester)
@@ -607,7 +608,7 @@ This construction matches a gradual, target-defined rise: the ATM long CE partic
 
 - For NSE **index** options, contracts are European style and cash-settled; stock-option physical-settlement rules are separate. Still, close intentionally before expiry unless final-settlement-price exposure is part of the plan. Confirm live contract specifications, expiry, lot size, and basket margin with the exchange and broker.
 - Professionals do use vertical call spreads, but not because they are “beginner-only” or inherently profitable. They model target, timing, IV, liquidity, net Greeks, costs, and portfolio loss first. Market makers generally manage aggregate Delta and volatility risk rather than selecting a retail-style strategy in isolation.
-- A defined-loss payoff does not create an edge. Follow the hard risk limits in [Risk Management Rules](#72-risk-management-rules), and remember that the SEBI study cited in this book found widespread losses among individual equity F&O traders.
+- A defined-loss payoff does not create an edge. Follow the hard risk limits in [the hard risk limits in `TRADING_CONSTANTS.md`](../../TRADING_CONSTANTS.md), and remember that the SEBI study cited in this book found widespread losses among individual equity F&O traders.
 
 **Research sources:** [Zerodha Varsity — Bull Call Spread](https://zerodha.com/varsity/chapter/bull-call-spread/), [NSE — Greeks Mastery](https://www.nseindia.com/static/learn/greeks-mastery-program), [NSE — settlement mechanism](https://www.nseindia.com/products-services/equity-derivatives-settlement-mechanism), [NSE — contract specifications](https://www.nseindia.com/static/products-services/equity-derivatives-contract-specifications), [Options Industry Council — Bull Call Spread](https://www.optionseducation.org/strategies/all-strategies/bull-call-spread-debit-call-spread), and [SEBI equity F&O study](https://www.sebi.gov.in/media-and-notifications/press-releases/sep-2024/updated-sebi-study-reveals-93-of-individual-traders-incurred-losses-in-equity-fando-between-fy22-and-fy24-aggregate-losses-exceed-1-8-lakh-crores-over-three-years%5F86906.html).
 
@@ -664,6 +665,8 @@ This construction matches a gradual, target-defined rise: the ATM long CE partic
 - `https://web.sensibull.com/learn-options-strategies/bear-put-spread`
 
 ##### 1.5 Bull Put Spread || (sell a higher-strike put (OTM), buy a lower-strike (Deep-OTM) put) || option seller (credit) strategy
+> ▶ **Live practice:** this is one of the two permitted structures. Trade it from [§8.6.0](#860-the-plain-credit-vertical--the-only-structure-you-may-actually-trade), not from here — and note the hard rule that overrides the "or sideways" outlook below: ⛔ **a Bull Put Spread is forbidden under any bearish view, with no override.**
+
 > **Core Action:** You sell a higher-strike put (collecting a larger premium) and simultaneously buy a lower-strike put (paying a smaller premium) for the same expiry.
 > **Market Outlook:** Moderately bullish or sideways; you win if the underlying stays flat, rises, or doesn't drop past your short strike.
 
@@ -703,6 +706,8 @@ This construction matches a gradual, target-defined rise: the ATM long CE partic
 - `https://web.sensibull.com/learn-options-strategies/bull-put-spread`
 
 ##### 1.6 Bear Call Spread || (Sell OTM Call + Buy further OTM Call) || option seller (credit) strategy 
+> ▶ **Live practice:** this is the other permitted structure. Trade it from [§8.6.0](#860-the-plain-credit-vertical--the-only-structure-you-may-actually-trade), not from here. ⛔ **Forbidden under any bullish view, no override** — and the ITM-short variant discussed below is not permitted at all: the short leg is always OTM.
+
 > **Sell a Call (Short Leg):** Choose a lower strike price closer to the current market price to collect a higher premium.
 > **Buy a Call (Long Leg):** Simultaneously buy a higher strike price call to cap potential financial exposure, creating a risk-defined structure.
 
@@ -1111,7 +1116,9 @@ If you are looking at a specific market setup, tell me your target Nifty index l
 - **From where to learn:** NSE Academy options strategies, NISM, broker payoff tools.
 - **Best source:** NSE Academy for payoff structure.
 
-##### 4.5 Short Straddle || [3.3 Short Straddle](#33-short-straddle) ||
+##### 4.5 Short Straddle
+
+*Same structure as [3.3 Short Straddle](#33-short-straddle-पैर-फैलाकर-बैठना--net-credit--option-seller)*
 
 - **Basic definition:** Sell ATM `CE` and ATM `PE` of same strike and expiry.
 - **Market view:** Neutral and low-volatility view.
@@ -1121,7 +1128,9 @@ If you are looking at a specific market setup, tell me your target Nifty index l
 - **From where to learn:** Zerodha Varsity Module 6 Short Straddle, SEBI/NISM risk material.
 - **Best source:** Zerodha Varsity for payoff and SEBI/NISM for risk warning.
 
-##### 4.6 Short Strangle || [4.6 Short Strangle](#46-short-strangle) || 
+##### 4.6 Short Strangle
+
+*Same structure as [3.4 Short Strangle](#34-short-strangle-गला-घोंटना--net-credit--option-seller)*
 
 - **Basic definition:** Sell OTM `CE` and OTM `PE` of same expiry.
 - **Market view:** Neutral/range-bound view with wider range than short straddle.
@@ -1143,28 +1152,36 @@ If you are looking at a specific market setup, tell me your target Nifty index l
 - **From where to learn:** Zerodha Varsity Module 6 spread chapters, NSE Academy options strategies.
 - **Best source:** Zerodha Varsity Module 6.
 
-##### 5.1.1 Bull Call Spread || [1.3 Bull Call Spread](#13-bull-call-spread)
+##### 5.1.1 Bull Call Spread
+
+*Same structure as [1.3 Bull Call Spread](#13-bull-call-spread--buy-in-the-money-call---bullish-sell-out-of-the-money-call-bearish--net-debit--option-buyer)*
 
 - **Basic definition:** Buy lower strike `CE`, sell higher strike `CE`, same expiry.
 - **Basic example:** Buy `22,000 CE` at `150`, sell `22,300 CE` at `60`; net debit `90`; max profit `210`; max loss `90`.
 - **From where to learn:** Zerodha Varsity Module 6 Bull Call Spread.
 - **Best source:** Zerodha Varsity Module 6.
 
-##### 5.1.2 Bear Put Spread || [1.4 Bear Put Spread](#14-bear-put-spread)
+##### 5.1.2 Bear Put Spread
+
+*Same structure as [1.4 Bear Put Spread](#14-bear-put-spread--buy-in-the-money-itm-put-and-sell-out-of-the-money-otm-put--net-debit--option-buyer)*
 
 - **Basic definition:** Buy higher strike `PE`, sell lower strike `PE`, same expiry.
 - **Basic example:** Buy `22,000 PE` at `140`, sell `21,700 PE` at `55`; net debit `85`; max profit `215`; max loss `85`.
 - **From where to learn:** Zerodha Varsity Module 6 Bear Put Spread.
 - **Best source:** Zerodha Varsity Module 6.
 
-##### 5.1.3 Bull Put Spread || [1.5 Bull Put Spread](#15-bull-put-spread)
+##### 5.1.3 Bull Put Spread
+
+*Same structure as [1.5 Bull Put Spread](#15-bull-put-spread--sell-a-higher-strike-put-otm-buy-a-lower-strike-deep-otm-put--option-seller-credit-strategy)*
 
 - **Basic definition:** Sell higher strike `PE`, buy lower strike `PE`, same expiry.
 - **Basic example:** Sell `21,900 PE` at `90`, buy `21,700 PE` at `40`; net credit `50`; max profit `50`; max loss `150`.
 - **From where to learn:** Zerodha Varsity Module 6 Bull Put Spread.
 - **Best source:** Zerodha Varsity Module 6 plus broker margin calculator.
 
-##### 5.1.4 Bear Call Spread || [1.6 Bear Call Spread](#16-bear-call-spread)
+##### 5.1.4 Bear Call Spread
+
+*Same structure as [1.6 Bear Call Spread](#16-bear-call-spread--sell-otm-call--buy-further-otm-call--option-seller-credit-strategy)*
 
 - **Basic definition:** Sell lower strike `CE`, buy higher strike `CE`, same expiry.
 - **Basic example:** Sell `22,100 CE` at `100`, buy `22,300 CE` at `45`; net credit `55`; max profit `55`; max loss `145`.
@@ -1269,7 +1286,7 @@ Buy 1 `22,000 CE`, sell 2 `22,300 CE`. If NIFTY rises moderately toward `22,300`
 
 ##### 6.3 Credit Spreads || option seller || 1.5 Bull Put Spread
 
-> ▶ **Live practice:** the credit spread is the workhorse of a moderate-risk book — it is what [§8.5.2](#852-step-2--the-grid) returns for most directional cells. Size it from the **stop**, not the margin ([§8.11](#811-position-sizing--two-caps-take-the-smaller)); stop at **2× the entry credit** on the *structure*, never leg-by-leg ([§8.10](#810-stop-loss-architecture--four-types-and-which-to-use)); and when a genuine trend runs through it, **convert to a ladder** rather than roll ([§8.6.13](#8613-the-ladder--a-repair-never-an-entry)).
+> ▶ **Live practice:** ★ **the credit spread is the only structure this book is permitted to trade** — see [§8.6.0](#860-the-plain-credit-vertical--the-only-structure-you-may-actually-trade) for the live write-up, and [`TRADING_CONSTANTS.md` §5](../../TRADING_CONSTANTS.md) for the permitted list. Which side is decided by [§8.5.2](#852-step-2--the-grid) and Gate 5, never by preference. Size from **both caps, smaller wins** ([§8.11](#811-position-sizing--two-caps-take-the-smaller)), not from margin; the stop multiple `k` and the exit mechanics live in constants §8, not here. ⛔ The old "stop at 2× the entry credit" wording and "convert to a ladder" advice are **retired** — `k` is a constant now, and ladders are banned outright.
 
 > **Target Trader:** The net seller of options who wants the high statistical win rate of selling but needs protection against unlimited risk.
 > **Core Action:** You sell one option (collecting a higher premium) and simultaneously buy another option (paying a lower premium). This results in a net cash inflow (credit) into your account.
@@ -1288,7 +1305,9 @@ Sell `21,900 PE` at `90`, buy `21,700 PE` at `40`. Net credit `50`; max loss `15
 - **From where to learn:** Zerodha Varsity Module 6 bull put/bear call spread chapters, NSE Academy options strategies.
 - **Best source:** Zerodha Varsity Module 6 plus broker margin calculator.
 
-##### 6.4 Short Straddle || [3.3 Short Straddle](#33-short-straddle)
+##### 6.4 Short Straddle
+
+*Same structure as [3.3 Short Straddle](#33-short-straddle-पैर-फैलाकर-बैठना--net-credit--option-seller)*
 
 - **Basic definition:** Sell ATM `CE` and ATM `PE`.
 - **Basic example:** Sell `22,000 CE` at `150` and `22,000 PE` at `140`; total credit `290`.
@@ -1296,7 +1315,9 @@ Sell `21,900 PE` at `90`, buy `21,700 PE` at `40`. Net credit `50`; max loss `15
 - **From where to learn:** Zerodha Varsity Module 6 Short Straddle, SEBI/NISM risk material.
 - **Best source:** Zerodha Varsity for payoff; SEBI/NISM for risk.
 
-##### 6.5 Short Strangle || [3.4 Short Strangle](#34-short-strangle)
+##### 6.5 Short Strangle
+
+*Same structure as [3.4 Short Strangle](#34-short-strangle-गला-घोंटना--net-credit--option-seller)*
 
 - **Basic definition:** Sell OTM `CE` and OTM `PE`.
 - **Basic example:** Sell `22,300 CE` at `60` and `21,700 PE` at `55`; total credit `115`.
@@ -1304,7 +1325,9 @@ Sell `21,900 PE` at `90`, buy `21,700 PE` at `40`. Net credit `50`; max loss `15
 - **From where to learn:** Zerodha Varsity Module 6 Long and Short Strangle, NSE Academy.
 - **Best source:** Zerodha Varsity Module 6.
 
-##### 6.6 Iron Condor || [4.1 Iron Condor](#41-iron-condor)
+##### 6.6 Iron Condor
+
+*Same structure as [4.1 Iron Condor](#41-iron-condor-बड़ा-गिद्ध--option-seller--sideways)*
 
 - **Basic definition:** Sell OTM call spread and OTM put spread together to collect credit with defined risk.
 - **Basic example:** Buy `21,600 PE`, sell `21,800 PE`, sell `22,200 CE`, buy `22,400 CE`; if credit `80`, max loss `120` for `200`-point wings.
@@ -1312,7 +1335,9 @@ Sell `21,900 PE` at `90`, buy `21,700 PE` at `40`. Net credit `50`; max loss `15
 - **From where to learn:** Zerodha Varsity Module 6 Iron Condor, NSE Academy.
 - **Best source:** Zerodha Varsity Module 6.
 
-##### 6.7 Iron Butterfly || [4.2 Iron Butterfly](#42-iron-butterfly)
+##### 6.7 Iron Butterfly
+
+*Same structure as [4.2 Iron Butterfly](#42-iron-butterfly--option-seller--sideways)*
 
 - **Basic definition:** Sell ATM straddle and buy OTM wings to cap risk.
 - **Basic example:** Sell `22,000 CE`, sell `22,000 PE`, buy `22,200 CE`, buy `21,800 PE`; if credit `130`, max loss `70` for `200`-point wings.
@@ -1342,7 +1367,9 @@ Sell `21,900 PE` at `90`, buy `21,700 PE` at `40`. Net credit `50`; max loss `15
 - **From where to learn:** SEBI investor derivatives risk material, NISM Equity Derivatives, NSE settlement mechanism.
 - **Best source:** SEBI/NISM plus NSE settlement rules.
 
-##### 7.3 Short Straddle || [3.3 Short Straddle](#33-short-straddle)
+##### 7.3 Short Straddle
+
+*Same structure as [3.3 Short Straddle](#33-short-straddle-पैर-फैलाकर-बैठना--net-credit--option-seller)*
 
 - **Basic definition:** Sell ATM `CE` and ATM `PE` at same strike and expiry.
 - **Market view:** Very strong view that market will stay near the strike and volatility will fall.
@@ -1352,7 +1379,9 @@ Sell `21,900 PE` at `90`, buy `21,700 PE` at `40`. Net credit `50`; max loss `15
 - **From where to learn:** Zerodha Varsity Module 6, SEBI/NISM risk material.
 - **Best source:** Zerodha Varsity for payoff; SEBI for risk awareness.
 
-##### 7.4 Short Strangle || [3.4 Short Strangle](#34-short-strangle)
+##### 7.4 Short Strangle
+
+*Same structure as [3.4 Short Strangle](#34-short-strangle-गला-घोंटना--net-credit--option-seller)*
 
 - **Basic definition:** Sell OTM `CE` and OTM `PE` of same expiry.
 - **Market view:** Market stays inside a wide range.
@@ -1731,7 +1760,7 @@ Return:
 | [8.3](#83-the-real-cost-sheet--charges-slippage-and-the-friction-floor) | The real cost sheet | Charges vs slippage; the friction floor; ROM |
 | [8.4](#84-instrument-selection--nifty-vs-banknifty-vs-sensex) | Instrument selection | Which index, which expiry, for which job |
 | [8.5](#85-the-sellers-regime-grid--direction--volatility--dte) | **The seller's regime grid** | Direction × Volatility × DTE → which structure |
-| [8.6](#86-the-structure-library--what-real-sellers-actually-put-on) | **The structure library** | 14 live structures, full mechanics + examples |
+| [8.6](#86-the-structure-library--what-real-sellers-actually-put-on) | **The structure library** | **§8.6.0 = the permitted credit vertical.** §8.6.1–8.6.14 = 14 locked structures, reference only |
 | [8.7](#87-strike-selection--the-four-methods-and-when-each-wins) | Strike selection | Delta band, expected move, straddle rule, OI zones |
 | [8.8](#88-entry-timing--the-intraday-premium-and-iv-curve) | Entry timing | The intraday IV curve; the windows that pay |
 | [8.9](#89-the-adjustment-playbook--decision-tree) | **The adjustment playbook** | Shift, roll, convert, hedge-up, cut — and when not to |
@@ -2186,11 +2215,15 @@ The expert's "PE sell is better" principle would have applied perfectly on a **f
 
 ## 8.6 The structure library — what real sellers actually put on
 
-> ## ⛔ NOT EXECUTABLE. Reference only.
+> ## ⛔ NOT EXECUTABLE from §8.6.1 onward. Reference only.
 >
-> **Every structure in §8.6 is LOCKED as of 02-Sep-2026.** Not one of the thirteen below may be
-> traded. See [`TRADING_CONSTANTS.md` §5](../../TRADING_CONSTANTS.md) — the permitted list is
+> **Every structure from §8.6.1 to §8.6.14 is LOCKED as of 02-Sep-2026.** Not one of the fourteen
+> may be traded. See [`TRADING_CONSTANTS.md` §5](../../TRADING_CONSTANTS.md) — the permitted list is
 > **two items**: the bear call spread and the bull put spread, both two-legged and defined-risk.
+>
+> **The one exception is [§8.6.0](#860-the-plain-credit-vertical--the-only-structure-you-may-actually-trade),
+> immediately below** — the plain credit vertical. That *is* the permitted list, written up here
+> with the same mechanics-and-numbers treatment as everything that follows it.
 >
 > Each structure here fails at least one live constraint:
 >
@@ -2217,9 +2250,163 @@ The expert's "PE sell is better" principle would have applied perfectly on a **f
 
 ---
 
+### 8.6.0 The plain credit vertical — the only structure you may actually trade
+
+> ✅ **PERMITTED.** The whole of `TRADING_CONSTANTS.md` §5 is this one structure. Everything from
+> §8.6.1 down is locked. If a session ends with a position on, it was one of the two forms below.
+>
+> Textbook construction and payoff diagrams live in [§1.5](#15-bull-put-spread--sell-a-higher-strike-put-otm-buy-a-lower-strike-deep-otm-put--option-seller-credit-strategy),
+> [§1.6](#16-bear-call-spread--sell-otm-call--buy-further-otm-call--option-seller-credit-strategy)
+> and [§6.3](#63-credit-spreads--option-seller--15-bull-put-spread). **This section is the live
+> version** — the same two legs, governed by the constants file, with the arithmetic that decides
+> whether today's version of it is tradable at all.
+
+#### What it is
+
+Two legs. Same underlying, same expiry, same right (both CE or both PE), same quantity. You **sell the
+strike nearer the money** and **buy one further out of the money**. The near strike is worth more, so
+cash comes in: that inflow is the **net credit**, and it is the most you can ever make.
+
+| Field | Detail |
+|-------|--------|
+| **Two forms, and only two** | **Bull Put Spread** — sell PE below spot, buy PE further below. Wins if the index stays *above* the short put.<br>**Bear Call Spread** — sell CE above spot, buy CE further above. Wins if the index stays *below* the short call. |
+| **When** | Sessions-to-expiry ≤ 2 (constants §6 filter 1), entry window per constants §7, all five gates in `CLAUDE.md` passed first. |
+| **Which side** | ⛔ Never your own opinion. The five-view classification picks it, and **Gate 5** can override to a mandated side. Bull Put under *any* bearish view and Bear Call under *any* bullish view are forbidden with no override — see [Card 3](#card-3--structure-by-situation) and [§8.5.2](#852-step-2--the-grid). |
+| **Why it works** | You are short the [volatility risk premium](#81-where-the-money-actually-comes-from--the-volatility-risk-premium) on **one side only**, with the tail sold back to you at a discount by the long wing. |
+| **Dominant Greek** | Theta positive, delta directional, vega negative but small — the width caps all three. On 0–1 DTE, **gamma at the short strike is the real risk**, and it is why the hard-flat time exists. |
+
+#### How it helps — the four things the long wing buys you
+
+1. **The loss becomes a number you can compute before you enter.** `(width − credit) × lot_size × lots`.
+   A naked short has no such number; a gap open decides it for you. This is the only cap in the book
+   that holds **without a human pressing a button** — which is exactly why the structural cap
+   (constants §3) is written against it.
+2. **Margin collapses.** The exchange charges span on the *spread*, not on the naked short — an order
+   of magnitude less blocked. At this book's size that means margin stops being a constraint at all,
+   and it is **never a sizing input** (constants §3, margin-cap row).
+3. **Two legs = two fills, and exactly one stop order.** Execution here is manual, in a phone app. A
+   4-leg structure is four fills to get on, four to get off, and two stop orders placed by thumb while
+   the position moves. The vertical needs one **SL-LIMIT on the short leg only** (constants §8).
+4. **`credit ÷ width` gives you a delta without a vendor.** As the width narrows, a vertical's price
+   → `Δ × width` exactly. So `c/W` *is* the short strike's approximate delta — model-free, and
+   unbreakable by the [spot-vs-forward defect](#871a-the-forward-basis-check--run-this-before-you-trust-any-delta-added-28-aug-2026)
+   that has made every vendor Greek in this repo untrustworthy. **With no Greeks available, this is
+   the single most useful number in the structure.**
+
+And one more that is easy to miss: a vertical is **one-sided**. A neutral structure loses on both
+edges of the range, so a breakout kills it whichever way it goes. A vertical leaning the way the
+market is already leaning is *paid* by the break — see [§8.12.6a](#8126a-the-neutralone-sided-distinction--amendment-27-aug-2026).
+
+#### The five numbers, and the order you must present them in
+
+```text
+net credit  c   = short premium − long premium          (points)
+width       W   = |short strike − long strike|          (points)
+MAX PROFIT      = c × lot_size × lots                   ← at expiry, both legs worthless
+BREAKEVEN       = short strike − c   (bull put)   |   short strike + c   (bear call)
+MAX LOSS        = (W − c) × lot_size × lots             ← structural; needs no human
+PLANNED STOP    = (k − 1) × c × lot_size × lots         ← k from constants §8
+LOTS            = min(lots_A, lots_B)                   ← both caps, constants §4
+```
+
+**Always in that order: max profit → breakeven → structural max loss → planned stop → lots.** Never
+quote a lot count before the max loss (constants §4). The sizing itself is symbolic on purpose —
+look the cap values up, do not memorise them from this page:
+
+```text
+lots_A = floor( STRUCTURAL_CAP ÷ ((W − c) × lot_size) )      STRUCTURAL_CAP → constants §3
+lots_B = floor( STOP_CAP       ÷ ((k − 1) × c × lot_size) )  STOP_CAP, k    → constants §3, §8
+LOTS   = min(lots_A, lots_B)     ⛔ LOTS < 2 → narrow W and recompute. Still < 2 → NO TRADE.
+```
+
+#### Worked example A — NIFTY Bull Put Spread, 50 wide, 1 DTE
+
+```text
+Spot ~24,500.  View: Slightly Bullish (timestamped).  Gate 5: no hard ceiling; floor supports PE.
+Forward F from parity = K + CE − PE, checked at 3 strikes (§8.7.1a) before any strike is picked.
+
+SELL  24,300 PE  @  22.00
+BUY   24,250 PE  @  12.50
+──────────────────────────────────────────────
+net credit  c = 9.50 pts     width W = 50 pts     c/W = 19.0%   ✅ above the constants §6 floor
+MAX PROFIT   = 9.50  × 65 = ₹617 per lot
+BREAKEVEN    = 24,300 − 9.50 = 24,290.50
+MAX LOSS     = (50 − 9.50) × 65 = ₹2,632 per lot      ← structural, cannot be exceeded
+PLANNED STOP = (k − 1) × 9.50 × 65 ≈ ₹371 per lot     ← at k = 1.6 (constants §8)
+Stop reachable?  k × c = 15.2 < W = 50   ✅ (constants §6 filter 4)
+LOTS: cap A binds on the ₹2,632; cap B on the ₹371. Take the smaller. Cross-check against the
+      NIFTY 50-wide row in constants §4 before sizing.
+```
+
+#### Worked example B — SENSEX Bear Call Spread, 100 wide, 1 DTE
+
+```text
+Spot ~81,000.  View: Slightly Bearish.  Gate 5: FII net short calls above threshold → ceiling → CE side mandated.
+
+SELL  81,300 CE  @  46.00
+BUY   81,400 CE  @  24.00
+──────────────────────────────────────────────
+net credit  c = 22.00 pts    width W = 100 pts    c/W = 22.0%   ✅
+MAX PROFIT   = 22.00 × 20 = ₹440 per lot
+BREAKEVEN    = 81,300 + 22.00 = 81,322
+MAX LOSS     = (100 − 22) × 20 = ₹1,560 per lot
+PLANNED STOP = 0.6 × 22.00 × 20 = ₹264 per lot
+```
+SENSEX lot 20 gives the finest sizing granularity in the book — it is usually the index where a
+compliant lot count actually exists. Note it hard-flats 15 minutes earlier than NIFTY (constants §7).
+
+#### The number that decides everything: `credit ÷ width`
+
+Breakeven win rate for a vertical held to expiry is `1 − c/W`. That single identity is the whole
+risk story:
+
+| `c/W` | Max loss as a multiple of credit | Breakeven win rate | Verdict |
+|---|---|---|---|
+| **3.5%** | **28×** | **96.5%** | ⛔ The 01-Sep-2026 trade. One loss erases 28 wins. |
+| 10% | 9× | 90% | ⛔ Below the constants §6 floor |
+| **15%** | 5.7× | 85% | ✅ Minimum permitted |
+| **20%** | 4× | 80% | ✅ Preferred |
+| 33% | 2× | 67% | ✅ Rare; usually means the short strike is near ATM — check gamma and the view |
+
+> **The 01-Sep-2026 autopsy in one line.** NIFTY, 200 wide, sold for 6.99 points. `c/W = 3.5%` →
+> max loss **₹12,546 per lot**, which is above the structural cap *at a single lot*, so cap A returns
+> **zero lots — the structure was banned outright, not downsized.** Eight lots went on. The loss was
+> **₹15,564**. Nothing in §8.3.3, §8.6, §8.7, §8.10 or §8.11 forbade it at the time; the `c/W` floor
+> and the two-cap rule both exist because of that day ([§8.11.2](#8112-the-caps-for-a-702275-book-moderate-to-low-risk-profile)).
+
+#### Managing it — the whole life of the trade
+
+| Moment | Action |
+|---|---|
+| **Before strikes** | All five gates written to `tread.md` first. Gate 5's six participant numbers are an automatic blocker if missing. |
+| **Entry** | Inside the constants §7 window, as a **two-leg basket/spread order** if the app allows it — legging in naked, even for seconds, is the one execution error that has no upside. |
+| **Within 90 seconds of fill** | SL-LIMIT buy-to-close on the **short leg only**, trigger and limit per constants §8. **No live SL order → close at market immediately**, regardless of P&L. |
+| **Never** | A standing order on the long leg. It is your defined-risk wing; if it fills, you are naked. |
+| **Target** | 50% of net credit, one exit, no scaling and no trailing (constants §8). The last 30% of a credit takes the most time and carries the most gamma. |
+| **Midday** | Capture < 25% at the constants §7 time stop → close at market. A spread that has not decayed by midday is pinned at your short strike. |
+| **Under pressure** | On 0-DTE the only two permitted actions are **HOLD or EXIT**. [§8.9](#89-the-adjustment-playbook--decision-tree) is closed — no rolling, no converting, and adding is never an option. |
+| **Exit** | Buy back the **short first**, then sell the long. Reverse that order and you are momentarily naked. |
+| **Hard flat** | Constants §7. One time, one phone alarm. Nothing survives into CAS. |
+
+#### What it is not
+
+- **Not free income.** The credit is a liability marked to market until you close it. Max loss is
+  always a multiple of max profit — the payoff is deliberately lopsided against you, and the edge has
+  to come from the frequency, not the size, of the wins.
+- **Not a high-win-rate strategy in the way it is sold.** An 85% win rate at `c/W = 15%` is *exactly
+  breakeven* before costs. Everything you actually earn sits in the gap between your real hit rate and
+  `1 − c/W`, minus [§8.3](#83-the-real-cost-sheet--charges-slippage-and-the-friction-floor) friction.
+- **Not safe because the loss is defined.** Defined ≠ small. Check `(W − c) × lot_size` against the
+  structural cap **at one lot** before anything else — that check alone would have blocked 01-Sep.
+- **Not a repair candidate.** A tested vertical is closed, not laddered, rolled, or averaged into.
+
+**See also:** [§8.5.2 grid](#852-step-2--the-grid) (which side) · [§8.7](#87-strike-selection--the-four-methods-and-when-each-wins) (which strikes) · [§8.10](#810-stop-loss-architecture--four-types-and-which-to-use) (the stop) · [§8.11.6](#8116-the-feasibility-gate--can-todays-target-be-reached-at-all-added-28-aug-2026) / [§8.11.7](#8117-the-noise-floor-test--is-your-stop-inside-one-candle-added-28-aug-2026) (is it worth doing at all) · [Card 3](#card-3--structure-by-situation).
+
+---
+
 ### 8.6.1 Intraday Delta-Neutral Hedged Short Straddle — "the 9:20 structure"
 
-> The most widely-run systematic seller trade in India. The textbook calls it a short straddle. What is actually traded is a **hedged, delta-neutral, time-boxed, intraday** structure with a mechanical stop — a completely different animal from the naked overnight straddle in [§3.3](#33-short-straddle).
+> The most widely-run systematic seller trade in India. The textbook calls it a short straddle. What is actually traded is a **hedged, delta-neutral, time-boxed, intraday** structure with a mechanical stop — a completely different animal from the naked overnight straddle in [§3.3](#33-short-straddle-पैर-फैलाकर-बैठना--net-credit--option-seller).
 
 | Field | Detail |
 |-------|--------|
@@ -2759,13 +2946,13 @@ MORNING OF NEAR EXPIRY   :  offset REMOVED — the near shorts
 
 > **The rule, and it is absolute:** **close or roll the near leg on the session *before* its expiry day.** Never carry a calendar, diagonal or double calendar into the near leg's expiry session. Set the reminder when you enter the trade, not when you remember.
 
-**Related correction:** [§5.2 Calendar Spread](#52-calendar-spread-not-same-expiry) above describes the textbook structure without this rule, because the rule post-dates it. §8.6.12 supersedes it for anything traded after 1-Feb-2025.
+**Related correction:** [§5.2 Calendar Spread](#52-calendar-spread--not-same-expiry) above describes the textbook structure without this rule, because the rule post-dates it. §8.6.12 supersedes it for anything traded after 1-Feb-2025.
 
 ---
 
 ### 8.6.13 The Ladder — a repair, never an entry
 
-> Bear Call Ladder and Bull Put Ladder appear in [§5.4 / 7.5](#75-ratio-spread-with-extra-short-option-54-ratio-spread) as high-risk strategies, and as *entries* that is correct — a ladder entered for credit has an undefined-loss zone and is an automatic blocker. But as a **repair on an already-tested vertical**, the ladder is one of the most useful tools a seller has, and almost no retail trader uses it that way.
+> Bear Call Ladder and Bull Put Ladder appear in [§5.4 / 7.5](#75-ratio-spread-with-extra-short-option--54-ratio-spread) as high-risk strategies, and as *entries* that is correct — a ladder entered for credit has an undefined-loss zone and is an automatic blocker. But as a **repair on an already-tested vertical**, the ladder is one of the most useful tools a seller has, and almost no retail trader uses it that way.
 
 **The situation.** You are short a bear call spread. The market is running through it. Your options are: take the loss, roll (and risk turning it into a martingale — [§8.9.6](#896-adjustment-6--cut-and-when-rolling-for-credit-becomes-a-martingale)), or **convert**.
 
@@ -4132,7 +4319,9 @@ noise dictated. **Pick the mark time from the rulebook before you look at the pr
      forbidden with no override — not vol state, not skew, not §8.5.4, not participants.
 ```
 
-**Everything in §8.6 is LOCKED.** All thirteen worked structures there — iron fly, hedged strangle,
+**The live write-up of both permitted forms is [§8.6.0](#860-the-plain-credit-vertical--the-only-structure-you-may-actually-trade)** — mechanics, the five numbers in presentation order, worked NIFTY and SENSEX examples, and the `c/W` table.
+
+**Everything from §8.6.1 down is LOCKED.** All fourteen worked structures there — iron fly, hedged strangle,
 Jade Lizard, BWB, unbalanced condor, 0-DTE fly, IV-crush harvest, double calendar, ladder, wing bank —
 are **not executable** under `TRADING_CONSTANTS.md` §5. Each is either 4-legged, undefined-risk, or
 exceeds the ₹10,500 structural cap at one lot. They stay in the book as reference. The 4-leg family

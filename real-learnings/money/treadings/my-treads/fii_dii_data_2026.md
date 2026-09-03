@@ -572,3 +572,76 @@ Get FREE Algo Tools at BluechipAlgos.com
 | **Overall Trend** | By Count | Bearish (2B/3Be) |
 | **Overall Trend** | By Sentiment | Bearish (net -90,572) |
 
+
+---
+
+## 02/09/2026 - FII DII FNO ACTIVITY
+
+| Participant | Instrument | Change | Activity | Trend |
+| :--- | :--- | :--- | :--- | :--- |
+| **FII** | Future | -7,131 | Sold Futures | Bearish |
+| | CE | -51,192 | Sold Calls | Bearish |
+| | PE | -39,242 | Sold Puts | Bullish |
+| **Client** | Future | +12,940 | Bought Futures | Bullish |
+| | CE | +11,084 | Bought Calls | Bullish |
+| | PE | +44,808 | Bought Puts | Bearish |
+| **Pro** | Future | +1,401 | Bought Futures | Bullish |
+| | CE | +40,683 | Bought Calls | Bullish |
+| | PE | -3,651 | Sold Puts | Bullish |
+| **DII** | Future | -7,210 | Sold Futures | Bearish |
+| | CE | -575 | Sold Calls | Bearish |
+| | PE | -1,915 | Sold Puts | Bullish |
+
+**OVERALL TREND: BEARISH** (FII activity score: -19,081)
+
+## 02/09/2026 - FII Activity for last 5 days
+
+| Period | Value | Trend |
+| :--- | :--- | :--- |
+| Today (T) | -19,081 | Bearish |
+| T-1 Day | -36,481 | Bearish |
+| T-2 Day | +40,829 | Bullish |
+| T-3 Day | +62,995 | Bullish |
+| T-4 Day | -112,312 | Bearish |
+| **Overall Trend** | By Count | Bearish (2B/3Be) |
+| **Overall Trend** | By Sentiment | Bearish (net -64,050) |
+
+## 02/09/2026 - CUMULATIVE NET OI (new — `fao_participant_oi_DDMMYYYY.csv`)
+
+> ⚠️ **New block, added 03-Sep-2026.** Every prior entry in this file records only the *daily change*
+> from `fao_participant_vol_*.csv`. CLAUDE.md requires change to be **validated against cumulative
+> Net OI**, and that validation was impossible because the cumulative numbers were never recorded.
+> Source: `https://archives.nseindia.com/content/nsccl/fao_participant_oi_DDMMYYYY.csv` (index F&O only).
+> Sign convention: **positive = net SHORT**, negative = net LONG.
+
+| Participant | Net Index Fut | Net CE (short+) | Net PE (short+) | Reading |
+| :--- | ---: | ---: | ---: | :--- |
+| **FII** | **net SHORT 229,163** | **+299,253** | -593,223 | Short futures + short calls + long puts = **Distribution/Trap** |
+| **Pro** | +15,826 net long fut | -21,925 | -88,909 | Mildly long both wings; defines neither ceiling nor floor |
+| **Client** | +200,070 net long fut | -273,067 | **+712,140** | Long fut + long calls + heavy put writing = very bullish → contrarian bearish |
+| **DII** | +13,267 net long fut | -4,260 | -30,008 | Negligible |
+
+*Raw: FII fut L 28,537 / S 257,700 · CE L 461,823 / S 761,076 · PE L 971,327 / S 378,104.
+Pro fut L 46,234 / S 30,408 · CE L 853,160 / S 831,235 · PE L 784,778 / S 695,869.*
+
+**✅ RESOLVED 03-Sep-2026 — and the answer was neither of the two candidates.**
+The ambiguity above ("daily change vs cumulative net OI") assumed the source file was right. It
+wasn't. Gate 5 had been reading `fao_participant_`**`vol`**`_*.csv` — *Participant wise **Trading
+Volume***, i.e. contracts **traded**, not positions held. That file is **retired as a Gate 5 input.**
+
+**The ruling, in force from 03-Sep-2026** — full evidence in
+[`TRADING_CONSTANTS.md` §9](../TRADING_CONSTANTS.md):
+
+- **Source:** `fao_participant_`**`oi`**`_DDMMYYYY.csv` (positions).
+- **Basis:** the **T-1 vs T-2 change** in net OI. `ΔCE = net_CE_short(T-1) − net_CE_short(T-2)`.
+- **The LEVEL never triggers.** Across 86 sessions the FII level cleared 80,000 on 97.7% of days
+  (calls) and 100% (puts) — a gate that fires every day carries no information. Keep it as context.
+- **Limits:** FII **65,000** (primary, read first) · Pro **100,000** (veto only) · DII/Client context.
+- **Forbid-only:** over the limit on CE ⛔ forbids Bull Put; on PE ⛔ forbids Bear Call; both ⛔ no
+  trade; under the limit is **silence, not permission for the other side.** Gate 5 never mandates.
+- **Run it, don't hand-compute it:** `python3 tools/fii-dii/fii_dii.py <T-1 YYYY-MM-DD>`.
+
+**Re-read of 03-Sep on the correct basis:** FII ΔCE +51,192 · ΔPE +39,242 · Pro ΔCE −40,683 ·
+ΔPE +3,650 → **all under limit → Gate 5 SILENT.** The "hard ceiling / sell calls" reading recorded
+above came from the retired volume file and from the level, and it did not survive. The 31-Aug
+precedent does survive: Pro ΔCE **+109,002**, over 100,000 → Bull Put forbidden on 01-Sep.

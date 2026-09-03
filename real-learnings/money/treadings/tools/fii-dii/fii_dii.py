@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
 """
-FII/DII F&O Participant-wise OI — NSE Archive Fetcher
-Reproduces the two tables from @Fii_Dii_Data / BluechipAlgos X.com posts.
+FII/DII F&O Participant-wise data — NSE Archive Fetcher
 
-Source: https://archives.nseindia.com/content/nsccl/fao_participant_vol_DDMMYYYY.csv
-No login required. Data available after ~4 PM IST each trading day.
+Two feeds, two purposes. No login required; data lands after ~4 PM IST each trading day.
+
+  fao_participant_vol_DDMMYYYY.csv  — Participant wise TRADING VOLUME (contracts traded).
+      Drives the activity tables below. Reproduces @Fii_Dii_Data / BluechipAlgos X.com posts.
+      *** RETIRED as a Gate 5 input *** — it is flow, not position. See TRADING_CONSTANTS.md s9.
+
+  fao_participant_oi_DDMMYYYY.csv   — Participant wise OPEN INTEREST (positions held).
+      Drives the GATE 5 block: the T-1 vs T-2 CHANGE in net CE/PE OI, and the forbid verdict.
+      This is the only Gate 5 input.
 
 Usage:
   python3 fii_dii.py                  # uses yesterday (T-1)
@@ -89,6 +95,88 @@ def last_n_trading_days(anchor: date, n: int) -> list[date]:
         if (anchor - d).days > 30:
             break
     return days
+
+
+# ---------------------------------------------------------------------------
+# Gate 5 — the ONLY block that may drive a structure decision.
+#
+# Reads fao_participant_OI_*.csv (positions), NOT the _vol_ file above, and
+# reports the day-over-day CHANGE. See TRADING_CONSTANTS.md section 9 for why
+# the volume file was retired and how these thresholds were calibrated.
+# ---------------------------------------------------------------------------
+
+OI_URL = "https://archives.nseindia.com/content/nsccl/fao_participant_oi_{}.csv"
+GATE5_THRESHOLD = {"FII": 65_000, "Pro": 100_000}   # TRADING_CONSTANTS.md section 9
+
+
+def fetch_oi(trading_date: date) -> dict | None:
+    """Net SHORT (positive = net short) index CE/PE per participant, from the OI file."""
+    url = OI_URL.format(trading_date.strftime("%d%m%Y"))
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(req, timeout=15) as r:
+            raw = r.read().decode("utf-8", errors="ignore")
+    except Exception:
+        return None
+    out = {}
+    for i, row in enumerate(csv.reader(io.StringIO(raw))):
+        if i < 2 or not row:
+            continue
+        name = row[0].strip().upper()
+        if name not in ("FII", "PRO"):
+            continue
+        try:
+            out["FII" if name == "FII" else "Pro"] = {
+                "CE": int(row[COL["call_s"]]) - int(row[COL["call_l"]]),
+                "PE": int(row[COL["put_s"]]) - int(row[COL["put_l"]]),
+            }
+        except (ValueError, IndexError):
+            continue
+    return out or None
+
+
+def print_gate5(t1: date):
+    """T-1 vs T-2 change in cumulative net OI, with the forbid verdict."""
+    cur = fetch_oi(t1)
+    t2, prev = t1, None
+    for _ in range(10):
+        t2 -= timedelta(days=1)
+        prev = fetch_oi(t2)
+        if prev:
+            break
+    print(f"\n{'=' * 72}")
+    print(f"  GATE 5 — participant OI CHANGE   T-1 {t1:%d-%b} vs T-2 {t2:%d-%b}")
+    print(f"  Source: fao_participant_oi_*.csv (POSITIONS). TRADING_CONSTANTS.md section 9.")
+    print(f"{'=' * 72}")
+    if not cur or not prev:
+        print("  Could not fetch both days — Gate 5 CANNOT be scored. Do not guess it.")
+        return
+
+    forbidden = []
+    print(f"  {'':5} {'leg':4} {'level(T-1)':>12} {'level(T-2)':>12} {'CHANGE':>11} {'limit':>9}  verdict")
+    print("  " + "-" * 68)
+    for p in ("FII", "Pro"):
+        if p not in cur or p not in prev:
+            continue
+        lim = GATE5_THRESHOLD[p]
+        for leg in ("CE", "PE"):
+            d = cur[p][leg] - prev[p][leg]
+            hit = d >= lim
+            if hit:
+                forbidden.append("Bull Put" if leg == "CE" else "Bear Call")
+            v = ("FORBIDS " + ("Bull Put" if leg == "CE" else "Bear Call")) if hit else "silent"
+            print(f"  {p:5} {leg:4} {cur[p][leg]:>12,} {prev[p][leg]:>12,} "
+                  f"{fmt(d):>11} {lim:>9,}  {v}")
+
+    print("  " + "-" * 68)
+    if not forbidden:
+        print("  Gate 5: SILENT — no structure forbidden. NOT permission for either side.")
+    elif len(set(forbidden)) >= 2:
+        print("  Gate 5: BOTH sides forbidden  ->  NO TRADE.")
+    else:
+        print(f"  Gate 5: FORBIDDEN -> {sorted(set(forbidden))[0]}. "
+              f"The other side is NOT thereby authorised.")
+    print("  Reminder: the LEVEL never triggers Gate 5 — only the CHANGE column does.")
 
 
 def print_detailed_table(data: dict, trading_date: date):
@@ -200,6 +288,7 @@ def main():
 
     print_detailed_table(data, target)
     print_5day_table(target, n_days)
+    print_gate5(target)
 
 
 if __name__ == "__main__":

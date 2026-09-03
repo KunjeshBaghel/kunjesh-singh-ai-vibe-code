@@ -26,7 +26,10 @@ This skill takes two arguments when invoked:
 | # | Argument | Example |
 |---|----------|---------|
 | 1 | Today's date | `22-07-2026` (DD-MM-YYYY) |
-| 2 | File path to market_view.md | `my-treads/22-July-2026/22-07-2026-market_view.md` |
+| 2 | File path to market_view.md | `my-treads/September-2026/03-09-2026/03-09-2026-market_view.md` |
+
+Folder layout is `my-treads/<Month>-<Year>/<DD-MM-YYYY>/`. The old flat `my-treads/<DD-Month-YYYY>/`
+layout is retired — do not create it.
 
 If arguments are missing, ask the user for them before proceeding.
 
@@ -83,7 +86,7 @@ Immediately after collecting all data in Step 2, write a timestamped snapshot fi
 - If the folder does not exist, create it before writing
 - If `snapshot-HH-MM.json` already exists for this exact minute, write `snapshot-HH-MM-2.json` — never overwrite
 
-**Tell the user:** `"Snapshot saved → my-treads/22-July-2026/snapshot-09-15.json"`
+**Tell the user:** `"Snapshot saved → my-treads/September-2026/03-09-2026/snapshot-09-15.json"`
 
 **File format — write raw collected values exactly as received. `null` for any unavailable field. Zero processing, zero derivation:**
 

@@ -22,7 +22,7 @@
    - [9. News & Macros](#9-news--macros)
    - [10. Expiry Week — Special Rules](#10-expiry-week--special-rules)
 
-> **Terms & acronyms:** See [trading_jargon_acronyms.md](./trading_jargon_acronyms.md) for PDH, PDL, PDC, FII, DII, PCR, and other definitions.
+> **Terms & acronyms:** See [trading_jargon_acronyms.md](./kb1/trading_jargon_acronyms.md) for PDH, PDL, PDC, FII, DII, PCR, and other definitions.
 
 ---
 
@@ -54,7 +54,7 @@
 
 #### 1. Price Action / Market Structure
 
-**What to look:** NIFTY / BANKNIFTY close vs previous close; position vs key levels ([PDH](./trading_jargon_acronyms.md#pdh), [PDL](./trading_jargon_acronyms.md#pdl), [PDC](./trading_jargon_acronyms.md#pdc), weekly/monthly high-low, round numbers); candle type (bullish / bearish / doji). **Breadth:** if NIFTY looks bullish but BANKNIFTY or top heavyweights (Reliance, HDFC Bank, ICICI, Infosys, TCS) are weak, treat the move as low conviction. **Opening Range (ORH / ORL):** high and low of the first 15-min candle after 9:15 AM — intraday directional confirmation level; trade only after price sustains above ORH or below ORL. **VWAP:** price above VWAP = intraday institutional buying bias; below = selling bias.
+**What to look:** NIFTY / BANKNIFTY close vs previous close; position vs key levels ([PDH](./kb1/trading_jargon_acronyms.md#pdh), [PDL](./kb1/trading_jargon_acronyms.md#pdl), [PDC](./kb1/trading_jargon_acronyms.md#pdc), weekly/monthly high-low, round numbers); candle type (bullish / bearish / doji). **Breadth:** if NIFTY looks bullish but BANKNIFTY or top heavyweights (Reliance, HDFC Bank, ICICI, Infosys, TCS) are weak, treat the move as low conviction. **Opening Range (ORH / ORL):** high and low of the first 15-min candle after 9:15 AM — intraday directional confirmation level; trade only after price sustains above ORH or below ORL. **VWAP:** price above VWAP = intraday institutional buying bias; below = selling bias.
 
 **Where (open internet):**
 
@@ -73,9 +73,9 @@ Absolute OI marks support/resistance walls; **price change + OI change** marks t
 | Quadrant | Price | OI | Meaning |
 |---|---|---|---|
 | **Long Buildup** | ↑ | ↑ | New longs entering — strong uptrend |
-| **Short Covering** | ↑ | ↓ | Shorts exiting — bounce, often fades at [PDH](./trading_jargon_acronyms.md#pdh) |
+| **Short Covering** | ↑ | ↓ | Shorts exiting — bounce, often fades at [PDH](./kb1/trading_jargon_acronyms.md#pdh) |
 | **Short Buildup** | ↓ | ↑ | New shorts entering — strong downtrend |
-| **Long Unwinding** | ↓ | ↓ | Longs booking profits — dip, often bounces at [PDL](./trading_jargon_acronyms.md#pdl) |
+| **Long Unwinding** | ↓ | ↓ | Longs booking profits — dip, often bounces at [PDL](./kb1/trading_jargon_acronyms.md#pdl) |
 
 Apply to **Index Futures OI** (NSE participant data or Sensibull Fut OI vs Time). See [open_interest.md](./open_interest.md) for chart reading.
 
@@ -115,9 +115,9 @@ Apply to **Index Futures OI** (NSE participant data or Sensibull Fut OI vs Time)
 - **Handler:** FIIDII Data — [@Fii_Dii_Data](https://x.com/Fii_Dii_Data) || [@FII_DII_Nifty](https://x.com/FII_DII_Nifty)
 - **Note:** Open the info on tab manually so that the AI is able to read the data for better interpretation.
 
-**Reference image (sample — 14 Jul 2026)**
-
-![FII DII Participant-wise Open Interest Data — 14 Jul 2026](./fii-dii-oi-data-sample-14-jul-2026.png)
+**Don't read it off a screenshot — fetch it.** `python3 tools/fii-dii/fii_dii.py <YYYY-MM-DD>` pulls
+the same table straight from the NSE archive and prints the Gate 5 verdict with it.
+*(A sample screenshot used to be linked here; the file was never committed.)*
 
 ##### How to Read Participant-wise OI Data
 
@@ -266,9 +266,9 @@ Combine [Price vs OI Matrix](#2-price-vs-oi-matrix), FII scenarios, PCR, and rea
 | View | Price + OI | FII / Participants | PCR & Option Chain | Reality Check |
 |---|---|---|---|---|
 | **Strongly Bullish** | Long Buildup | [Scenario 1](#scenario-1-the-classic-bullish-rally-strong-bullish) — FII long, Client short | PCR > 1.30 · heavy Put writing at ATM | Heavyweights breaking resistance |
-| **Slightly Bullish** | Short Covering | FII closing shorts (↓ short OI) | PCR 1.00–1.30 | Rally likely stalls at [PDH](./trading_jargon_acronyms.md#pdh) |
+| **Slightly Bullish** | Short Covering | FII closing shorts (↓ short OI) | PCR 1.00–1.30 | Rally likely stalls at [PDH](./kb1/trading_jargon_acronyms.md#pdh) |
 | **Strongly Bearish** | Short Buildup | [Scenario 2](#scenario-2-the-distribution--trap-phase-strong-bearish) — FII short, Client long | PCR < 0.80 · heavy Call writing ATM/OTM | VIX spiking |
-| **Slightly Bearish** | Long Unwinding | FII closing longs, not building new shorts | PCR 0.80–1.00 | Dip often holds at [PDL](./trading_jargon_acronyms.md#pdl) |
+| **Slightly Bearish** | Long Unwinding | FII closing longs, not building new shorts | PCR 0.80–1.00 | Dip often holds at [PDL](./kb1/trading_jargon_acronyms.md#pdl) |
 | **Sideways** | Flat price · OI ↑ both sides | [Scenario 5](#scenario-5-the-range-bound--sideways-market) — Pros writing straddles | Max Pain ≈ ATM · PCR ~ 1.0 | VIX falling/crushing |
 
 ---
