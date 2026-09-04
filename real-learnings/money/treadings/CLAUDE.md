@@ -54,8 +54,21 @@ figure as a vendor figure, is not.
 stop, = no recommendation. Presentation order is always
 **max profit → breakeven → structural max loss → planned stop → lots.**
 
-**SI-7 · Scope: Indian NSE/BSE index options, intraday only.** No crypto, forex, CFDs, foreign
-exchanges, no single-stock physical settlement, and no overnight position ever.
+**SI-7 · Scope: Indian NSE/BSE index options.** No crypto, forex, CFDs, foreign exchanges, no
+single-stock physical settlement. **Holding period is intraday OR multi-session — declared at entry,
+capped at 10 sessions (§11), and only for the §5 defined-risk vertical** (revised 04-Sep-2026; see
+[`TRADING_CONSTANTS.md`](TRADING_CONSTANTS.md) §1a for the rule and the measurement behind it).
+There is **no DTE limit** — the old `sessions_to_expiry ≤ 2` veto is retired. What replaced it is the
+**implied-vol floor** (§6 rows 1a and 8): below it there is no variance risk premium to harvest at any
+DTE, which is what Gate 1 was really reaching for.
+
+**SI-7a · Three indexes, screened every session, none banned. NIFTY 50 · SENSEX · BANKNIFTY.**
+The universe is three instruments; a categorical ban on one is a third of the opportunity set removed
+without measurement, which is the error §6 row 1 was retired for. **Screen all three, then rank —
+never price one and stop, and never call an index "the fallback."** Each faces the same gates; the
+per-index differences that are real are measured, not assumed, in
+[`TRADING_CONSTANTS.md`](TRADING_CONSTANTS.md) §11a (BANKNIFTY unlocked 04-Sep-2026).
+⛔ **India VIX is NIFTY's measure — it does not price BANKNIFTY** (§6 row 8).
 
 **SI-8 · Never guess or infer an expiry date — always fetch the expiry list.** A plausible wrong date
 silently prices the wrong contract.

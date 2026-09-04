@@ -114,9 +114,24 @@ Report the day high alongside the current value so the erosion is visible.
 FIRST CHECK  = fill time + 30 min          ← not a fixed clock hour
 THEN         = every 30 min, on the half hour
 MIDDAY GATE  = 12:30 — if capture < 25% of credit, close. The day is not paying.
+                 ↳ INTRADAY-declared trades only (TC §7). A multi-session hold was
+                   never priced to decay in one session — do not apply it there.
 FINAL CHECK  = at the hard flat: 2:30 PM NIFTY/BANKNIFTY · 2:15 PM SENSEX
+                 ↳ on the DECLARED FINAL SESSION of the hold (TC §1a).
 ```
 Times: [`TRADING_CONSTANTS.md` §7](../../../../TRADING_CONSTANTS.md).
+
+**Every subsequent session of a multi-session hold, starting at 9:15:**
+
+```
+□ Mark the gap. Compare the open against yesterday's close and re-price the spread.
+□ ⛔ RE-PLACE THE SL-LIMIT ORDER. It did not survive the night. No live stop = 🔴,
+      and a session carried without one is a §12 violation (e).
+□ Full kill-switch cycle for the new session (TC §7). Deferring the exit is permitted;
+      deferring the monitoring is §12 violation (h).
+□ Re-verify the declared exit date. Do NOT extend it — §12 violation (g).
+□ Confirm the structural cap still bounds the loss at <= Rs10,500.
+```
 
 ⚠️ **The old fixed list (12:30 / 1:30 / 2:00 / 2:30) left a 165-minute unwatched window after a 9:45 entry.** Anchor to the fill, not the clock.
 

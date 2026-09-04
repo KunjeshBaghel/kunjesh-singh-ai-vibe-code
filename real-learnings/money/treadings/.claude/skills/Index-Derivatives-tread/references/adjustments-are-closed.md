@@ -96,7 +96,7 @@ For a **one-sided credit spread** (Bull Put or Bear Call), both terminal branche
 
 Rolling or converting an ITM short on expiry day costs more than the original stop. On 01-Sep-2026 the 9th lot was added **six minutes after the exit trigger fired**, on expiry day, at a price above the trigger — all three failures in one order.
 
-**§8.9's adjustment playbook applies only to 2+ DTE positions**, which the feasibility gate (sessions ≥ 3 → no trade) rarely permits. In practice §8.9 is almost never the answer.
+**§8.9's adjustment playbook is CLOSED.** It used to be described as "applies only to 2+ DTE positions, which the feasibility gate rarely permits" — an argument that leaned on Gate 1 doing the work. **Gate 1 was retired on 04-Sep-2026 (TC §6 row 1) and multi-session holds are now permitted (TC §1a), so that scaffolding is gone and the rule must stand on its own merit. It does:** adjusting a losing spread is the mechanism of the −₹15,564. A longer permitted hold means more hours staring at a red position, which makes this temptation **larger**, not smaller. **HOLD or EXIT. Nothing else, at any DTE.**
 
 Adding lots to an expiry-day position is not "adjusting," it is martingaling.
 

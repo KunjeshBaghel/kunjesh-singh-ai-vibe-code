@@ -301,4 +301,8 @@ Conviction: High / Medium / Low
 - Never make up option chain data — only use what broker APIs or NSE official site returned
 - If broker MCPs are not logged in, fall back to NSE official + Moneycontrol — do not fabricate
 - If 3 or more Pre-Trade filters are Red, explicitly say "CAUTION: Not an ideal trading session"
-- Scope is NIFTY 50 / NSE only — do not classify BANKNIFTY separately unless user asks
+- The primary classification is NIFTY 50 / NSE. **BANKNIFTY now gets its own five-view classification
+  too** — it is tradeable as of 04-Sep-2026 (`TRADING_CONSTANTS.md` §11a, CLAUDE.md SI-7a), and
+  **Gate 5's structure↔view hard forbid needs a view for the index actually being traded.** A NIFTY
+  view cannot authorise a BANKNIFTY structure. Where they diverge, say so and mark conviction LOW for
+  both — that divergence is itself the signal (see `references/data_points.md`).

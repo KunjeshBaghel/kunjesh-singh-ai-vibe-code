@@ -43,6 +43,10 @@ mcp__kite__get_ltp(instrument_tokens=["NSE:NIFTY 50", "NSE:INDIA VIX"])
 - Index spot: NIFTY 50, BANKNIFTY, SENSEX, INDIA VIX, sectoral indices
 - Option quotes (LTP, OHLC, OI, `oi_day_high`, `oi_day_low`, 5-level depth): `get_quotes` on NFO symbols
 - Historical candles: `get_historical_data` — daily, 15-min, 30-min, 1-min (index + option legs)
+  - ⚠️ **`from_date` / `to_date` require `YYYY-MM-DD HH:MM:SS`.** A bare `2025-09-01` is rejected with
+    *"Failed to parse from_date"*. Use `"2025-09-01 09:15:00"`.
+  - **Instrument tokens:** NIFTY 50 = `256265` · SENSEX = `265` · NIFTY BANK = `260105` · INDIA VIX = `264969`
+  - This is the source for §10b Form B `σ_real` — 252 daily candles, three windows (252/120/60).
 - Futures: `get_quotes` on `NIFTY26SEPFUT` etc.
 
 **What it cannot do:**

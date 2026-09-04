@@ -26,7 +26,47 @@ background and **never** governs a live decision.
 | Trading capital | **₹7,02,275** (Kotak Neo) |
 | Execution | **Manual, Kotak Neo mobile app.** All APIs are read-only or unfunded. |
 | Data | Kite = spot/VIX/OI/depth/candles · Dhan REST = full chain · Kotak = margin |
-| Mandate | **Intraday only.** No overnight position, ever, for any reason. |
+| Mandate | **Hold to the declared exit — intraday or multi-session.** See §1a. |
+
+### 1a. Holding period — the mandate, restated 04-Sep-2026
+
+| Constant | Value |
+|---|---|
+| **Permitted holding period** | **Entry to expiry. No session limit.** Declare the intended exit at entry and log it (§15). |
+| **Overnight positions** | **Permitted — for the §5 defined-risk vertical ONLY.** |
+| ⛔ **Never held overnight** | Anything whose loss is not structurally bounded: naked, ratio, mismatched leg counts. (Already impossible under §5 — this row exists so the reason is on the record.) |
+| **Concurrent open structures** | **One. At any time, across all days.** A multi-session hold occupies the slot until it is closed. See §11. |
+| **Overnight stop reality** | An SL-Limit order **does not rest overnight and cannot fire on a gap.** On any hold that crosses a session boundary the §3 planned stop (₹3,500) is enforceable **only during market hours**. The **structural cap (₹10,500) is the overnight backstop** — and it holds, because a vertical's loss is bounded at `(width − credit) × lot × lots` even through the worst gap in the sample. |
+
+> **Why this changed.** The old mandate read *"Intraday only. No overnight position, ever, for any
+> reason."* It was retired on evidence, not on preference.
+>
+> Gate 1 (`sessions_to_expiry ≤ 2`) was never a statement about edge — it was a proxy for *"theta must
+> pay inside one session, because you must be flat by 2:30."* Remove the flat-by-2:30 requirement and
+> the proxy has nothing left to stand on.
+>
+> **Measured 04-Sep-2026** (1 yr NIFTY daily, 250 sessions, Kite; BS-priced chains across VIX;
+> EV integrated over the de-drifted empirical N-session move distribution; all §3/§6 caps applied).
+> Best filter-passing vertical, EV as % of max loss:
+>
+> | VIX | 1-sess | 2-sess | 3-sess | 5-sess |
+> |---|---|---|---|---|
+> | 11 | −4.9% | −5.3% | −4.8% | −2.1% |
+> | 13 | +1.0% | −1.4% | −0.3% | **+3.7%** |
+> | 15 | +5.0% | +5.4% | +4.7% | **+8.6%** |
+> | 18 | +11.1% | +11.9% | +10.5% | **+14.1%** |
+>
+> Read **across**: holding period barely moves EV, and where it moves, **longer is better — the
+> 5-session column is the best one at every VIX level, in all three sample windows tested**
+> (full year, last 120, last 60). Read **down**: VIX moves EV by 20 points. *Gate 1 gated on the
+> axis that does not matter, and in doing so excluded the best-performing column.*
+>
+> **The replacement is §6 row 1 + the VIX floor in §6 row 8.** The gate did not disappear — it was
+> re-aimed at the variable that actually decides whether the trade pays.
+>
+> **This change made no trade available on the day it was written.** VIX was 10.80; the new floor is
+> 13. Recorded because a rule loosened on a day it would have authorised a trade is a rule loosened
+> for the wrong reason (§15).
 
 > ⚠️ **PENDING USER RULING — capital verification 03-Sep-2026**
 >
@@ -53,9 +93,9 @@ background and **never** governs a live decision.
 
 | Constant | Value | Note |
 |---|---|---|
-| **Structural max loss, per structure** | **₹10,500 (1.5%)** | `(width − credit) × lot_size × lots`. Set EQUAL to the daily breaker so that *total failure of the stop* still lands inside the day's limit. **The only cap that does not depend on you pressing a button.** |
+| **Structural max loss, per structure** | **₹10,500 (1.5%)** | `(width − credit) × lot_size × lots`. Set EQUAL to the daily breaker so that *total failure of the stop* still lands inside the day's limit. **The only cap that does not depend on you pressing a button.** ★ **This is what makes an overnight hold survivable (§1a).** A gap through the short strike IS total failure of the stop — the exact scenario this cap was sized for. Worst overnight gap in the 1-yr sample: **731.5 pts (+3.16%, 08-Apr-2026)**; median 56 pts. A gap cannot exceed this cap, only reach it. |
 | **Planned stop loss, per structure** | **₹3,500 (0.5%)** | Three consecutive stops = the daily cap |
-| **Daily realised loss** | **₹3,500 → day over.** **₹10,500 → day over + next session is a mandatory no-trade day** | 01-Sep-2026: breached by **₹5,030** (total −₹15,564); the next session began at **07:17** hunting a trade — no cool-off occurred. |
+| **Daily realised loss** | **₹3,500 → day over.** **₹10,500 → day over + next session is a mandatory no-trade day** | 01-Sep-2026: breached by **₹5,030** (total −₹15,564); the next session began at **07:17** hunting a trade — no cool-off occurred. **Multi-session holds (§1a): loss counts as REALISED on the session it is closed, not accrued daily.** An open hold sitting at −₹6,000 unrealised does not end the day — but it does occupy the only structure slot (§11), so no new trade is available regardless. |
 | **Weekly realised loss** | **₹21,000 (3.0%)** | Week over, following week paper-only |
 | **Monthly realised loss** | **₹28,000 (4.0%)** | Calendar month over |
 | **Structures per calendar day** | **ONE.** Not one at a time — one per day. | Closing at 10:30 does not buy a second slot |
@@ -85,7 +125,8 @@ count before the max loss.
 | NIFTY (65) | 200 | ~₹12,546 | **0** | ⛔ **banned — cannot carry size at this capital** — 01-Sep-2026: Bull Put 24,000/23,800, credit 6.99 → `(200−6.99)×65 = ₹12,546` → `lots_A = floor(10,500÷12,546) = 0`. The structure was **banned outright, not downsized**. 8 lots were placed. |
 | SENSEX (20) | **100** | ~₹1,620 | 6 | ✅ best granularity in the book |
 | SENSEX (20) | 200 | ~₹3,157 | 3 | ✅ |
-| BANKNIFTY (30) | 200 | ~₹4,320 | 2 | ⚠️ locked — see §11 |
+| BANKNIFTY (30) | **100** | ~₹1,210 | 4+ | ✅ **the BANKNIFTY default** — and the only width available during the §11a break-in (half cap) |
+| BANKNIFTY (30) | 200 | ~₹4,000 | 2 | ✅ full cap only. ⛔ At the §11a break-in half-cap this sizes to **1 lot** → §4 blocks it. |
 
 > **31-Aug-2026 sizing bands — RETIRED:** "Standard ₹15–20K" / "Aggressive ₹25–35K" against a ₹10,500 cap = up to **3× the daily maximum** in a single trade. Written the evening after ONE winning trade. **n=1 in the winning direction is not evidence.**
 
@@ -102,14 +143,15 @@ count before the max loss.
 
 | # | Filter | Threshold |
 |---|---|---|
-| 1 | Sessions to expiry | **≤ 2**. Count trading sessions remaining **INCLUDING TODAY**, up to and including expiry. Expiry day itself = 1 ("0-DTE"), expiry eve = 2 ("1-DTE"). **Gate 1 blocks when `sessions_to_expiry ≥ 3`.** Holiday tie-break: derive from gaps in the fetched expiry list + the NSE calendar; **if a day's status is uncertain, COUNT it as a trading day** (the conservative direction). Always fetch the expiry list — never guess or infer a date. |
+| 1 | Sessions to expiry | ⛔ **RETIRED as a veto, 04-Sep-2026.** There is **no DTE limit**. `sessions_to_expiry` is now an **input**, not a gate: it sets the holding period `N` used to size and to test edge, and it must be declared at entry and logged. Still **always fetch the expiry list — never guess or infer a date** (SI-8); still count sessions **INCLUDING TODAY**, and on a holiday tie-break **COUNT the uncertain day as a trading day**. *Retired because it gated on the axis that does not determine EV, and excluded the best-performing holding period — see §1a for the measurement.* |
+| 1a | **Edge must be present — the gate that replaced row 1** | Both must hold: **(i)** the traded index's own implied vol is **at or above its floor** (§6 row 8 — the floor is per-index, and India VIX is **only** NIFTY's), and **(ii)** §10b VRP ratio **not** `≥ 1.0` on the tenor actually being held. *A credit seller's entire edge is the variance risk premium. Below the floor it is not there to harvest at any DTE — measured crossover, §1a table. This is the same veto Gate 1 was reaching for, aimed at the right variable.* |
 | 2 | **Credit ÷ width** | **≥ 15%**, 20%+ preferred. *Tail control: at 3.5% max loss is 28× the credit; at 20% it is 4×.* **01-Sep-2026:** c/W was **3.5%** → breakeven win rate **96.5%**. Every trade in this book at ≥17% made money; 13-Jul at 2.5% was never even scored. |
 | 3 | Net credit, total | **≥ ₹2,500** (round-trip friction ~₹150) |
 | 4 | **Stop reachability** | **`k × credit < width`**. Above `c/W = 1/k` the premium stop sits beyond max loss and can never trigger. **02-Sep-2026:** 4-DTE condor with credit > width/2 — the premium stop sat beyond max loss and could never have triggered. |
 | 5 | Noise floor | `(k−1) × credit ≥ 1.5 × the SPREAD's own 30-min intra-bar swing`, opening gap bar excluded. **Method:** pull 30-min bars for BOTH legs and price the spread at each bar's index extremes. **Run it, do not cite it.** Evidence (03-Sep-2026): measured on real legs, spread swing was **16.30 pts** vs index-proxy eyeball ~11 pts, flipping test from 1.35× (pass) to **0.92× (fail)** against 1.5× floor. |
 | 6 | Combined bid-ask, both legs | **≤ 15% of net credit** |
 | 7 | Top-of-book depth | **≥ 5× your lot count**, both legs, both sides |
-| 8 | India VIX level | **< 20**. ≥ 20 → HOSTILE → no trade. |
+| 8 | **Implied-vol band — PER INDEX** | ⛔ **India VIX is a NIFTY-derived measure. It does not price BANKNIFTY and it does not price SENSEX.** Use the row for the index being traded. Outside the band → no trade (below floor = `UNPAID`, at/above ceiling = `HOSTILE`).<br>**NIFTY 50 — `13 ≤ India VIX < 20`.** Read India VIX directly (Kite token 264969).<br>**SENSEX — `13 ≤ India VIX < 20`.** India VIX is used as a proxy; SENSEX and NIFTY realised vol track within ~1 vol pt. **Log it as a proxy, not a measurement.**<br>**BANKNIFTY — `16 ≤ σ_ATM < 25`**, where `σ_ATM` is BANKNIFTY's **own** straddle-implied vol (§10b). *Floor and ceiling are NIFTY's scaled by BANKNIFTY/NIFTY realised vol, 16.61% ÷ 13.17% = 1.26 (measured 04-Sep-2026, 251 sessions each): 13 × 1.26 ≈ 16, 20 × 1.26 ≈ 25.*<br>**The ceilings were NOT loosened.** The §1a model shows EV still rising above VIX 20, but that model prices with Black-Scholes against a 13.2%-realised-vol sample — it does not represent a VIX-20 regime, where realised routinely exceeds implied. Treat every figure above VIX 18 in that table as model artefact, not evidence. |
 | 9 | India VIX change on the day | **≤ +8%** at entry. Above → event day, not a decay day. |
 | 10 | Basis | `F = K + CE − PE` at 3–4 near-ATM strikes must agree within ~1 pt. `basis = F − spot`; **> 0.1% of spot** → discard any vendor delta, use the §8.7.3 straddle rule on `F`. |
 | 11 | Go/No-Go (`option_chain_n_greeks.md` §7) | **SCORE = (2 × RED) + (1 × YELLOW). SCORE ≥ 4 → SIT OUT.** (So 2 reds, or 1 red + 2 yellows, or 4 yellows all block.) **A row with no data is YELLOW, never green. Blank ≠ clear.** **Rows must score from DISJOINT inputs** — if one observation would colour two rows, score it once in the **lower-numbered row** and mark the other `n/a — same input as row N`. **Automatic blockers (separate, NOT counted toward the score):** no five-view classification · undefined max loss · **no live SL order** (a live SL order ≠ a stop-loss defined) · Gate 5's table not written to `tread.md`. Note: `kb/option_chain_n_greeks.md` §7 still carries retired "3+ distinct warnings" wording at L472/L667/L701 — **this row overrides it.** |
@@ -121,10 +163,13 @@ count before the max loss.
 | Constant | Value |
 |---|---|
 | **Entry window** | **9:30 – 11:15.** ⛔ No new position after 11:15, ever. |
-| **Midday time stop** | **12:30** — if capture < 25%, close at market. *A spread that hasn't decayed by midday is pinned at your short strike: maximum gamma for expired theta. It does not improve after lunch.* |
-| **NIFTY / BANKNIFTY hard flat** | **2:30 PM** |
-| **SENSEX hard flat** | **2:15 PM** |
+| **Midday time stop** | **12:30 — INTRADAY-declared trades only.** If capture < 25%, close at market. *A spread that hasn't decayed by midday is pinned at your short strike: maximum gamma for expired theta. It does not improve after lunch.* **Does not apply to a multi-session hold** — that structure was never priced to decay in one session. |
+| **NIFTY / BANKNIFTY hard flat** | **2:30 PM — INTRADAY-declared trades only** |
+| **SENSEX hard flat** | **2:15 PM — INTRADAY-declared trades only** |
+| **Hard flat, MULTI-SESSION holds** | **The hard-flat time applies on the FINAL session of the declared hold** (2:30 NIFTY / 2:15 SENSEX). On every session before it, the position stays on. *Expiry day is always a final session.* |
+| **Declared exit is binding** | The holding period is declared **at entry** and logged (§15). **Extending a multi-session hold while it is open is a §12 behavioural violation** — it is the "repair" reflex wearing a calendar. Shortening it (closing early) is a discretionary exit, still locked under §11. |
 | **CAS** | 3:15 PM. Nothing ever survives into it. *20-Jul-2026 exited at ~3:16 PM — a breach never flagged.* |
+| **Every session of an open hold** | Run the §7 kill-switch checks and re-verify the structural cap. **A multi-session hold is not an unattended position** — it is re-examined each session; only the *exit* is deferred, never the monitoring. |
 | **Kill-switch check times** (`strategy_ref_book.md` §8.13) | **9:45 / 10:30 / 11:30 / 1:30** — re-pull spot/VWAP · VIX · ATM straddle · OI *and* `oi_day_high` at each check |
 | **Market-view staleness limit** | **A five-view classification older than 60 minutes is STALE — re-pull.** Restate the classification WITH A TIMESTAMP before Gate 5. |
 
@@ -291,16 +336,33 @@ is a place to put whatever you already wanted to believe.
 > **Expiry week caveat:** PCR compresses toward 1.0 as OI concentrates into the expiring series.
 > Inside the last two sessions, treat 0.90–1.10 as uninformative rather than as "mildly" anything.
 
-## 10b. VRP — the "am I being paid at all" test  *(ruled 03-Sep-2026)*
+## 10b. VRP — the "am I being paid at all" test  *(ruled 03-Sep-2026; multi-session form added 04-Sep-2026)*
 
-Same-session, same-tenor, so it avoids the tenor mismatch that killed the `IV − HV20` rule above.
+Same-tenor on both sides, so it avoids the tenor mismatch that killed the `IV − HV20` rule above.
 **Procedure** (how to measure it) is `references/basis-check.md`; the numbers are here.
 
+⛔ **Measure VRP on the tenor you are actually declaring.** An intraday pts/min ratio says nothing
+about a 10-session hold, and an annualised ratio says nothing about this afternoon. Pick the form
+that matches the declared holding period, and log which one was used.
+
+**Form A — INTRADAY-declared trade:**
 ```
 realised (pts/min) = (day high − day low) ÷ minutes elapsed since 9:15
 implied  (pts/min) = ATM straddle × 1.25 ÷ minutes remaining to expiry close
 RATIO              = realised ÷ implied
 ```
+
+**Form B — MULTI-SESSION declared hold** (both sides annualised, both in vol points):
+```
+F        = K + CE − PE at the ATM strike                    (parity; permitted, SI-5)
+σ_ATM    = ATM straddle ÷ (0.7979 × F × sqrt(N / 252))      ← the index's own implied vol
+σ_real   = stdev( daily log returns ) × sqrt(252)           ← over the last 252 sessions
+RATIO    = σ_real ÷ σ_ATM
+```
+`N` = declared holding period in sessions. **`σ_ATM` is the number §6 row 8 checks against the
+per-index band** — for BANKNIFTY it is the only implied vol available, since India VIX is NIFTY's.
+Report `σ_real` on **three windows (252 / 120 / 60 sessions)** and take the **worst** ratio. One
+window is a choice of regime, and choosing the flattering one is how a negative VRP gets traded.
 
 | RATIO | State | Effect |
 |---|---|---|
@@ -327,17 +389,80 @@ Current status: **one recorded instance of a stop being reached. It was not hono
 | Caps above §3 | 20 consecutive trades, zero behavioural violations, positive rolling-20 net → structural cap to 2%. At 40 trades → 2.5%. **Ceiling 3% forever.** |
 | 4-leg structures | 30 completed verticals, ≤1 violation, median entry-to-SL-live ≤ 90s over the last 10 |
 | Scaling out / trailing stops | 20 trades with every exit coded TARGET / STOP / TIME |
-| BANKNIFTY | 30 net-positive NIFTY/SENSEX trades, then final 5 sessions of the monthly cycle only, 1 lot for the first 10 |
-| Two structures in one day | Not at this capital. Revisit at ₹20L+. |
+| ~~BANKNIFTY~~ | ⛔ **UNLOCKED 04-Sep-2026 — see §11a. All three indexes are screened every session and any of them may be traded.** |
+| **A declared holding period longer than 10 sessions** | Not at one open structure. Revisit if §11's one-structure limit lifts. *This is a **slot-occupancy** limit, not a DTE gate — it does not care how far expiry is, and it blocks nothing for being "too far out." You may trade any expiry; you may not **declare a hold** longer than 10 sessions. See §11a.* |
+| **More than one OPEN structure at any time** | Not at this capital. Revisit at ₹20L+. *Reworded 04-Sep-2026 from "two structures in one day": once a hold can cross sessions, "one per day" stops binding — Friday's open position plus Monday's entry is two live structures and two structural caps. The slot is occupied until the position is **closed**, not until the day ends.* |
 | Discretionary early exit | 20 trades with zero discretionary closes, then one/month logged as `DISC` and scored |
 | `k` wider than 2.0 | ⛔ **Never.** Widening the stop is the mechanism of the −₹15,564. |
 | The 1%-per-session target | ⛔ **Never.** See §2. |
 
+## 11a. The three indexes  *(ruled 04-Sep-2026)*
+
+**NIFTY 50, SENSEX and BANKNIFTY are the entire tradeable universe (SI-7). All three are screened
+every session. None of them carries a categorical ban.** Blocking one of three instruments outright
+is not a risk control — it is a 33% cut to the opportunity set applied without measurement, which is
+the same error §6 row 1 was retired for. What replaced the BANKNIFTY lock is the *same* edge gate the
+other two face, with the two parameters that are genuinely different measured rather than assumed.
+
+**Screen all three, then rank.** Never price one index and stop. Never treat an index as "the
+fallback" — a fallback is a structure you took because you wanted a trade, and it is the reason the
+ranking exists.
+
+### What is actually different about BANKNIFTY — measured 04-Sep-2026, 251 sessions
+
+| | NIFTY 50 | BANKNIFTY | Consequence |
+|---|---|---|---|
+| Realised vol (252 sess) | 13.17% | **16.61%** | ×1.26 → its own vol band, §6 row 8 |
+| Realised vol (120 / 60) | — | 20.75% / 13.45% | Regime-unstable. Take the **worst** window (§10b Form B). |
+| Overnight gap, median | 0.23% | 0.24% | Same |
+| Overnight gap, **p95 / max** | ~1.1% / ~3.0% | **1.43% / 4.76%** | **Fatter tail.** The overnight stop gap (§1a) is worse here. |
+| Own implied vol | India VIX | **must be derived** — India VIX is NIFTY's | §10b Form B `σ_ATM` |
+| Expiries | weekly (Tue) | **monthly only (last Tue)** | Nearest hold is long → §11 10-session slot limit binds |
+| Strike interval | 50 | **100** | *(Corrected — this file said 200 until 04-Sep-2026; the live Dhan chain is 100. The 200 figure had banned width-100 BANKNIFTY spreads that in fact exist.)* |
+
+### The three BANKNIFTY-specific rules
+
+1. **Vol band is `16 ≤ σ_ATM < 25` on its own straddle-implied vol** (§6 row 8, §10b Form B).
+   ⛔ Never gate BANKNIFTY on India VIX.
+2. **Break-in: the first 3 BANKNIFTY trades run at half the structural cap (₹5,250, §3).** Not a lot
+   restriction — a 1-lot rule would collide with §4's `LOTS < 2 → no trade` and silently re-create the
+   ban. At half cap a width-200 BANKNIFTY spread sizes to 1 lot and is therefore unavailable, so the
+   break-in period is effectively **width 100 only**. That is the intended shape: narrow, cheap, real.
+3. **Declared holding period ≤ 10 sessions** (§11) — and **the EV must be modelled to the declared
+   exit, not to expiry.** A spread closed before expiry captures partial decay and pays to close;
+   modelling it as held-to-expiry overstates EV on exactly the structures this rule permits.
+
+### ⚠️ The trap this analysis walked into — read before trusting any far-OTM EV number
+
+Priced against the live 29-Sep chain, the model's best BANKNIFTY structures were **5–6% OTM, 91–98%
+win rate, EV +33% of max loss** — and they were still wrong to take. Their entire EV sat in the 2–9%
+of outcomes the sample can barely resolve: **251 sessions contain only 14 independent 17-session
+windows.** A 95%-win structure estimated off 14 points is not measured, it is asserted.
+
+The model-free number said the opposite: implied **11.41%** against realised **16.61 / 20.75 /
+13.45%** → VRP ratio **1.18 to 1.82**, negative on every window. BANKNIFTY vol was **underpriced**.
+
+> **Ruling: when a strike-level EV estimate and a model-free VRP measurement disagree, VRP wins.**
+> VRP does not require estimating a tail from 14 observations; the EV figure does. This is the same
+> failure named on 04-Sep — *high win rate is not edge* — and it survived being named once already.
+
+**This unlock authorised no trade on the day it was made** (§15 carve-out condition): BANKNIFTY
+`σ_ATM` 11.41% is below the 16 floor, and the VRP ratio is `UNPAID` on all three windows.
+
+**Open data gap (SI-5):** Dhan returned `bid_price`/`ask_price` = **0.00 across the entire BANKNIFTY
+monthly chain** on 04-Sep-2026. LTP and OI were present, depth was not. **§6 rows 6 and 7 (bid-ask
+and depth) cannot be scored from Dhan for BANKNIFTY** — get depth from Kite `get_quotes`, or the two
+rows are YELLOW under §6 row 11 and score against you. Never infer a spread from LTP.
+
 ## 12. Behavioural circuit-breaker — 5-session halt, even if the trade was PROFITABLE
 
 Any one of: **(a)** stop triggered, not executed within 5 min · **(b)** stop moved away from the
-market · **(c)** any order increasing short exposure · **(d)** position held past the hard flat
-time · **(e)** trade opened with no live SL order · **(f)** more than one structure in a day.
+market · **(c)** any order increasing short exposure · **(d)** position held past the hard flat time
+**of its declared final session** (§7) · **(e)** trade opened with no live SL order · **(f)** more
+than one **open** structure at any time (§11) · **(g)** **the declared holding period extended while
+the position is open** (§7) · **(h)** **a multi-session hold carried through a session without
+running that session's kill-switch checks** — deferring the exit is permitted, deferring the
+monitoring is not.
 
 > **01-Sep-2026, violation (c):** 9th lot sold at ₹11.45 at **13:11** — one minute before the exit
 > call. That lot alone **−₹1,589**. Gates A1–A3 (now §6 rows 1–4) would have blocked it mechanically.
@@ -348,11 +473,11 @@ time · **(e)** trade opened with no live SL order · **(f)** more than one stru
 
 ## 13. Contract specs and friction
 
-| Index | Exchange | Lot | Expiry |
-|---|---|---|---|
-| NIFTY 50 | NSE | **65** | Every Tuesday |
-| SENSEX | BSE | **20** | Every Thursday |
-| BANKNIFTY | NSE | **30** | ⚠️ **Monthly only** — last Tuesday |
+| Index | Exchange | Lot | Strike interval | Expiry |
+|---|---|---|---|---|
+| NIFTY 50 | NSE | **65** | 50 | Every Tuesday |
+| SENSEX | BSE | **20** | 100 | Every Thursday |
+| BANKNIFTY | NSE | **30** | **100** *(corrected 04-Sep-2026 — this row said 200)* | ⚠️ **Monthly only** — last Tuesday. Tradeable: §11a. |
 
 ⚠️ **Always fetch the expiry list. Never guess or infer a date.**
 
@@ -383,9 +508,12 @@ time · **(e)** trade opened with no live SL order · **(f)** more than one stru
 
 ## 15. Per-trade log — mandatory fields
 
-`date · index · expiry · sessions-to-expiry · entry HH:MM · exit HH:MM · short strike · long
-strike · width · lots · credit/lot · net credit ₹ ·` **`credit÷width`** `· spot · F · VIX · ATM
-straddle ·` **`planned stop (spread price, short-leg trigger, ₹, % capital) recorded BEFORE
+`date · index · expiry · sessions-to-expiry ·` **`DECLARED HOLDING PERIOD (intraday | N sessions) +
+declared exit date, recorded BEFORE entry`** `· entry HH:MM · exit HH:MM · short strike · long
+strike · width · lots · credit/lot · net credit ₹ ·` **`credit÷width`** `· spot · F · ATM straddle ·`
+**`σ_ATM (the index's own implied vol) + which band it was checked against (§6 row 8)`** `· India VIX
+(mark "proxy" for SENSEX, "n/a" for BANKNIFTY) ·` **`VRP form used (A intraday | B multi-session) +
+the worst-window ratio`** `·` **`planned stop (spread price, short-leg trigger, ₹, % capital) recorded BEFORE
 entry`** `· structural max loss ₹ and % ·` **`SL ORDER ID + "Trigger Pending" timestamp`** `·
 exit code ·` **`MAE · MFE`** `· gross/costs/net/% · R-multiple · which filter failed`
 
@@ -395,7 +523,10 @@ relabelled "discretionary exit based on price action."*
 
 **No-trade code — exactly one, no free text:** `Too dangerous` / `Too small` / `Too thin` /
 **`UNPAID`** *(adopted 03-Sep-2026, §10b)*. Each names a **different thing that must change** —
-regime · calendar · structure · vol pricing. Pick by what would fix it, not by how the day felt.
+regime · **size** · structure · vol pricing. Pick by what would fix it, not by how the day felt.
+*Remapped 04-Sep-2026: `Too small` used to carry the calendar block (Gate 1). With row 1 retired it
+means only what it says — **`LOTS < 2` after §4 sizing**. A day blocked for lack of premium is
+**`UNPAID`**, never `Too small`; they call for opposite responses (wait for vol vs. wait for capital).*
 Detail in `references/no-trade.md`.
 
 **Log the no-trade days too**, with the failing filter code. ~75% of sessions are no-trades and
@@ -403,3 +534,15 @@ that decision record is currently invisible.
 **Report violation count ABOVE P&L in every weekly review.** Violations lead; P&L lags.
 **Frequency governor:** < 4 trades in a month → filters too tight, review at month end.
 **Never loosen a filter mid-month.**
+
+> **The one carve-out, and its price.** A filter may be **re-aimed** mid-month — never merely
+> widened — and only when **all four** hold:
+> 1. the change is driven by a **measurement written into the journal**, not by a day's frustration;
+> 2. the replacement gate is **at least as binding** as the one it retires (§6 row 1 → row 1a: a
+>    calendar veto out, a VIX/VRP veto in — no net reduction in what can block a trade);
+> 3. **it authorises no trade on the day it is made** — the test that a rule was not bent to fit a
+>    position someone already wanted; and
+> 4. the retired rule, the evidence, and *this checklist* are recorded together.
+>
+> **04-Sep-2026** is the only invocation to date: Gate 1 retired, VIX floor 13 adopted. VIX that day
+> was **10.80** — the new rule said no-trade, exactly as the old one had. Condition 3 satisfied.

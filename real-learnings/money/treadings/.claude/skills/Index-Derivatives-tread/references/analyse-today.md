@@ -38,7 +38,7 @@ See [`brokers.md`](brokers.md) for the three-broker table. Run in parallel, reco
 
 ## Step 3: Fetch expiry list — all 3 indexes
 
-See [`check-expiry.md`](check-expiry.md) for the method. Never guess. Record sessions_to_expiry for each (TC §6 row 1).
+See [`check-expiry.md`](check-expiry.md) for the method. Never guess (SI-8). Record sessions_to_expiry for each — since 04-Sep-2026 it is the **available holding period**, not a gate (TC §6 row 1 retired). **What gates the day is VIX: < 13 → UNPAID, ≥ 20 → HOSTILE** (TC §6 rows 1a/8). Report the VIX verdict in the same breath as the expiry table, or the reader will reach for the calendar out of habit.
 
 ---
 
@@ -263,7 +263,9 @@ State: what invalidates intraday.
 * Conviction: <H/M/L> + <which dimensions agree>
 * NIFTY: Support <level> (<why>) · Resistance <level> (<why>) · Pin zone <range>
 * SENSEX: F=<X> · Support <X> · Resistance <X>
-* BANKNIFTY: <only if monthly expiry week>
+* BANKNIFTY: F=<X> · Support <X> · Resistance <X> · **σ_ATM <X>%** (own implied vol, TC §10b Form B)
+    ⛔ Every session, not just monthly-expiry week — BANKNIFTY is unlocked (TC §11a) and all three
+    indexes are screened every session (CLAUDE.md SI-7a). India VIX does NOT price this one.
 
 **What to Watch Before Taking a Trade**
 1. Opening 15-min: above/below PDC, gap direction

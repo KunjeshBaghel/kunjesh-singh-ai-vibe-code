@@ -98,6 +98,12 @@ curl -s -X POST "https://api.dhan.co/v2/optionchain/expirylist" \
 
 **Index security IDs:** NIFTY=13 · BANKNIFTY=25 · FINNIFTY=27 · SENSEX=51
 
+⚠️ **Dhan returns `bid_price` / `ask_price` = `0.00` across the ENTIRE BANKNIFTY monthly chain**
+(observed 04-Sep-2026, 29-Sep expiry, 357 strikes). `last_price` and `oi` are populated; depth is not.
+**A populated `last_price` next to a zero bid/ask is a missing field, not a zero spread** (SI-5).
+→ **TC §6 rows 6 and 7 cannot be scored from Dhan for BANKNIFTY.** Pull depth from Kite
+`get_quotes`, or score both rows YELLOW under §6 row 11. ⛔ Never infer a spread from LTP.
+
 ### Option chain
 
 ```bash

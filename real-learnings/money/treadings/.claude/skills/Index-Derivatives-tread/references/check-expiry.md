@@ -42,7 +42,8 @@ sessions_to_expiry = trading sessions remaining INCLUDING TODAY, up to and inclu
     Expiry day itself  →  1     (= "0-DTE")
     Expiry eve         →  2     (= "1-DTE")
 
-Gate 1 blocks when sessions_to_expiry ≥ 3.
+sessions_to_expiry is an INPUT, not a gate. It sets the holding period N.
+⛔ The old "Gate 1 blocks when sessions_to_expiry ≥ 3" is RETIRED (04-Sep-2026, TC §6 row 1).
 ```
 
 **Holidays:** derive from gaps in the fetched expiry list + the NSE calendar. **If a day's status is uncertain, COUNT it as a trading day** — the conservative direction.
@@ -52,28 +53,46 @@ This convention was previously implicit and differed by one between files, which
 ## Output format
 
 ```
-| Index | Nearest expiry | Calendar days | Sessions | Gate 1 verdict |
+| Index | Nearest expiry | Calendar days | Sessions | Max holding period |
 |---|---|---|---|---|
-| NIFTY 50 | <date> | <N> | <M> | <verdict> |
-| SENSEX | <date> | <N> | <M> | <verdict> |
-| BANKNIFTY | <date> (monthly) | <N> | <M> | <verdict> |
+| NIFTY 50 | <date> | <N> | <M> | <M sessions, to <date>> |
+| SENSEX | <date> | <N> | <M> | <M sessions, to <date>> |
+| BANKNIFTY | <date> (monthly) | <N> | <M> | <min(M,10) sessions, to <date>> |
 
-Gate 1 (§8.11.6) verdicts — a BINARY gate:
-  sessions = 1  (expiry day)  → ✅ TRADEABLE. Full theta today.
-  sessions = 2  (expiry eve)  → ⚠️ TRADEABLE ONLY with a Gate-5-clean directional view.
-                                 Delta-driven, not theta-driven. State the required move in POINTS.
-  sessions >= 3               → ⛔ NO TRADE on this index. Hard stop.
+Sessions is an INPUT. It bounds the declarable holding period; it does not pass or fail an index.
+  sessions = 1  (expiry day)  → intraday by necessity. Full theta today.
+  sessions = 2  (expiry eve)  → declare intraday OR hold to expiry.
+  sessions >= 3               → declare intraday OR hold N sessions. NOT a block.
+
+  ⛔ MAX DECLARED HOLD = 10 sessions (TC §11 slot limit — one open structure at a time).
+     If sessions > 10, the hold is capped at 10 and you exit BEFORE expiry.
+     → model EV to the DECLARED EXIT, not to expiry: partial decay, and you pay to close.
+     This bites BANKNIFTY most (monthly only, typically 15-22 sessions out).
+
+⛔ Whether ANY of these is tradeable is decided by the vol-band / VRP gate, not by this table.
+   NIFTY, SENSEX: India VIX outside 13-20 → no trade.        [TC §6 rows 1a / 8]
+   BANKNIFTY:     its OWN sigma_ATM outside 16-25 → no trade. India VIX does NOT apply.
 ```
 
-⛔ **Do not attach a quoted return to any verdict.** The old table said "2–3 DTE: 0.5–0.75% realistic" — which turned a hard STOP into a tradeable ⚠️ with a number attached to reach for. At 3+ sessions intraday theta is a rounding error; there is no smaller percentage that makes it a trade.
+⛔ **Do not attach a quoted return to any verdict.** The old table said "2–3 DTE: 0.5–0.75% realistic" — a number attached to reach for. State the required move in POINTS and the declared holding period; never a promised percentage.
 
-## BANKNIFTY is never the fallback
+> **What changed, 04-Sep-2026.** This file used to say *"At 3+ sessions intraday theta is a rounding
+> error."* That was true **and irrelevant** — it was an argument against holding a 3-DTE structure
+> *intraday*, which nobody now proposes. With multi-session holds permitted (TC §1a), the structure
+> is held until its theta actually arrives. Measured: holding period moves EV by ~2 points; VIX moves
+> it by ~20. The block was on the wrong axis.
 
-**BANKNIFTY fails Gate 1 by construction on all but the final ~2 sessions of the expiry month.** Screen it, state `BANKNIFTY: N sessions → Gate 1 ⛔, excluded` in one line, and do not price it.
+## No index is "the fallback"
 
-⛔ **It is never the fallback when NIFTY and SENSEX are both blocked.** Two blocked indexes plus a structurally blocked third is a **no-trade day**, not a BANKNIFTY day.
+**All three indexes are tradeable and all three are screened every session** — BANKNIFTY was unlocked
+04-Sep-2026 ([`TRADING_CONSTANTS.md` §11a](../../../../TRADING_CONSTANTS.md), CLAUDE.md SI-7a).
+Screen them together, from the start, each on its own gates.
 
-Both majors blocked = **no trade today**, which is the correct and common answer (~75% of sessions).
+⛔ **Never reach for an index *because* the others failed.** "Fallback" reasoning is how a structure
+gets taken for wanting a trade rather than for having an edge. Run BANKNIFTY's gate and let it answer
+the same way it would have if NIFTY had passed.
+
+**All three blocked = no trade today**, which is the correct and common answer (~75% of sessions).
 
 ---
 
@@ -82,5 +101,6 @@ Both majors blocked = **no trade today**, which is the correct and common answer
 After completing, append to today's tread.md:
 
 ```
-09:20 — check-expiry: NIFTY 1 session ✅, SENSEX 3 sessions ⛔, BANKNIFTY 22 sessions ⛔ → NIFTY only
+09:20 — check-expiry: NIFTY 02-Sep (1 sess, hold<=1) · SENSEX 04-Sep (3, hold<=3) ·
+        BANKNIFTY 29-Sep (22, hold capped at 10) → all three carried to the vol-band gate
 ```

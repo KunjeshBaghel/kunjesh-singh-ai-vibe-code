@@ -28,7 +28,7 @@ Read `my-treads/<Month>/<DD-MM-YYYY>/<DD-MM-YYYY>-market_view.md` and verify **a
 
 See [`gates.md`](gates.md) for full definitions. Run all five, in order. Each takes ~2 min.
 
-**Gate 1 · Feasibility** — fetch expiries (see [`check-expiry.md`](check-expiry.md)), count sessions (TC §6 row 1). Sessions ≥3 → NO TRADE on that index. Quote capital at risk when out of reach, not the shortfall.
+**Gate 1 · Edge** *(rewritten 04-Sep-2026 — no longer a calendar test)* — fetch expiries (see [`check-expiry.md`](check-expiry.md)) and record `sessions_to_expiry` as the **holding period input**, not a veto (TC §6 row 1 is retired). The vetoes are now, **per index** (TC §6 rows 1a/8): **implied vol below its floor → `UNPAID`** · **at/above its ceiling → HOSTILE** · **§10b VRP ratio ≥ 1.0 → `UNPAID`**. Bands: NIFTY and SENSEX `13 ≤ India VIX < 20`; **BANKNIFTY `16 ≤ σ_ATM < 25` on its own straddle-implied vol — India VIX does not price it.** **Declare the holding period — intraday or N ≤ 10 sessions — before pricing anything**, and run the VRP form that matches it. Quote capital at risk when out of reach, not the shortfall.
 
 **Gate 2 · Basis** — see [`basis-check.md`](basis-check.md). `F = K+C−P` at 3–4 strikes, basis > 0.1% → delta band unreliable. **★ Then run realised-vs-implied BEFORE pricing any strike** (added 03-Sep-2026): realised > implied → VRP negative, no credit structure is paid, STOP.
 
@@ -42,9 +42,28 @@ See [`gates.md`](gates.md) for full definitions. Run all five, in order. Each ta
 
 ## ★ Always screen all 3 indexes
 
-**NIFTY 50 (NSE, Tue) + BANKNIFTY (NSE, monthly only) + SENSEX (BSE, Thu).** Never analyse only one when looking for trade positions. Compare all three before picking best opportunity.
+**NIFTY 50 (NSE, Tue) + SENSEX (BSE, Thu) + BANKNIFTY (NSE, monthly only).** Never analyse only one.
+**Price every index that passes its gates, then rank.** All three are live — **BANKNIFTY was unlocked
+04-Sep-2026 ([`TRADING_CONSTANTS.md` §11a](../../../../TRADING_CONSTANTS.md))**; there is no
+categorical ban on any index (CLAUDE.md SI-7a).
 
-BANKNIFTY fails Gate 1 by construction on all but final ~2 sessions. State `BANKNIFTY: N sessions → Gate 1 ⛔, excluded` in one line; do not price. ⛔ Never the fallback when NIFTY+SENSEX blocked — that is a **no-trade day**.
+⛔ **No index is "the fallback."** Do not go looking at a third index *because* the first two failed —
+screen all three from the start, on their own gates. Three failures is a **no-trade day**.
+
+**BANKNIFTY differs in exactly three ways** (TC §11a); treat it identically otherwise:
+
+| | |
+|---|---|
+| **Vol band** | `16 ≤ σ_ATM < 25` on its **own** straddle-implied vol (§10b Form B). ⛔ **India VIX is NIFTY's — never gate BANKNIFTY on it.** |
+| **Break-in** | First **3** BANKNIFTY trades at **half structural cap (₹5,250)** → in practice **width 100 only**; width 200 sizes to 1 lot and §4 blocks it. |
+| **Expiry** | **Monthly only.** Nearest hold is usually >10 sessions, so the §11 **10-session declared-hold limit** binds — declare an exit inside 10 and **model EV to that exit, not to expiry.** |
+
+⚠️ **Far-OTM trap.** BANKNIFTY's monthly tenor leaves only ~14 *independent* windows per year of data,
+so a 5–6% OTM structure showing 95% win rate and +33% EV is a **tail asserted from 14 points**.
+**When strike-level EV and model-free VRP disagree, VRP wins.**
+
+⚠️ **Dhan returns `bid_price`/`ask_price` = 0.00 on the BANKNIFTY monthly chain** (04-Sep-2026).
+§6 rows 6–7 cannot be scored from it — pull depth from Kite `get_quotes`, or score both rows YELLOW.
 
 ---
 
@@ -64,14 +83,18 @@ Extract:
 See TC §6 for the full list and thresholds. Summary:
 
 ```
-□ sessions_to_expiry ≤ 2
+□ holding period DECLARED (intraday | N <= 10 sessions + exit date) — TC §1a, §7, §11
+□ VOL FLOOR, per index  ⛔ below → UNPAID, stop here    — TC §6 row 1a / row 8
+      NIFTY / SENSEX : India VIX >= 13      BANKNIFTY : own sigma_ATM >= 16
+□ VRP ratio < 1.0 on the DECLARED tenor (Form A intraday | Form B multi-session) — TC §10b
 □ c/W ≥ 15% (20%+ preferred) — TC §6 row 2
 □ net credit at chosen size ≥ the floor — TC §6 row 3
 □ k × credit < width   (k from TC §4)
 □ noise floor (see below)
-□ bid-ask ≤ 15% of credit
-□ depth ≥ 5× lots
-□ VIX < 20 and change ≤ +8%
+□ bid-ask ≤ 15% of credit      ⚠️ BANKNIFTY: Dhan sends 0.00 — use Kite depth or score YELLOW
+□ depth ≥ 5× lots              ⚠️ same
+□ VOL CEILING, per index: NIFTY/SENSEX VIX < 20 · BANKNIFTY sigma_ATM < 25 · change ≤ +8%
+□ BANKNIFTY only: is this one of the first 3 BN trades? → half cap ₹5,250 (TC §11a)
 □ basis within 0.1% or §8.7.3 used
 □ ★ stop's spot level OUTSIDE today's traded range
 ```
@@ -128,7 +151,7 @@ Gamma puts true level slightly further, so quote as band and use **near** edge f
 
 ## ⚠️ On expiry day (0-DTE) adjustments are CLOSED
 
-See [`adjustments-are-closed.md`](adjustments-are-closed.md). **Only two permitted actions once in trade: HOLD or EXIT.** §8.9 adjustment playbook applies **only** to 2+ DTE (which Gate 1 rarely permits). In practice §8.9 is almost never the answer.
+See [`adjustments-are-closed.md`](adjustments-are-closed.md). **Only two permitted actions once in trade: HOLD or EXIT.** This is **unchanged by the 04-Sep-2026 holding-period change** — a multi-session hold gets more *time*, never more *actions*. §8.9's adjustment playbook is still **closed**: adjusting a losing spread is the mechanism of the −₹15,564, and a longer permitted hold makes that temptation larger, not smaller.
 
 ---
 

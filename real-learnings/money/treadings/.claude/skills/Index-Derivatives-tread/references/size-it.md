@@ -20,6 +20,7 @@ Lot sizing calculator for credit spreads. Returns the smaller of two caps: struc
 **k is fixed at 1.6.** It is not an input and not a choice. `k = 2.0` is ⛔ permanently (see [`TRADING_CONSTANTS.md` §11](../../../../TRADING_CONSTANTS.md)).
 
 **Lot sizes:** NIFTY = 65 · BANKNIFTY = 30 (monthly only) · SENSEX = 20 ([`TRADING_CONSTANTS.md` §13](../../../../TRADING_CONSTANTS.md))
+**Strike intervals:** NIFTY = 50 · SENSEX = 100 · **BANKNIFTY = 100** *(not 200 — corrected 04-Sep-2026 against the live chain)*
 
 ```
 Structure: <type> <short>/<long>  |  Credit: <X> pts  |  Width: <Y> pts  |  c/W = <X/Y>%  |  k = 1.6
@@ -73,7 +74,14 @@ From [`TRADING_CONSTANTS.md` §4](../../../../TRADING_CONSTANTS.md), at typical 
 | NIFTY | 200 | **0** | ⛔ banned — one lot alone breaches the structural cap |
 | SENSEX | 100 | 6 | ✅ best granularity in the book |
 | SENSEX | 200 | 3 | ✅ |
-| BANKNIFTY | 200 | 2 | ⚠️ locked until 30 net-positive NIFTY/SENSEX trades ([`TRADING_CONSTANTS.md` §11](../../../../TRADING_CONSTANTS.md)) |
+| BANKNIFTY | **100** | 4+ | ✅ **the BANKNIFTY default**, and the only width available during break-in |
+| BANKNIFTY | 200 | 2 | ✅ full cap only — at the break-in half-cap this sizes to **1 lot** → §4 blocks it |
+
+⚠️ **BANKNIFTY break-in ([`TRADING_CONSTANTS.md` §11a](../../../../TRADING_CONSTANTS.md)):** the
+**first 3** BANKNIFTY trades size against **half the structural cap — ₹5,250, not ₹10,500.** Substitute
+that into Cap A only; Cap B is unchanged. In practice this restricts BANKNIFTY to **width 100** until
+the fourth trade. *A 1-lot restriction was considered and rejected: it collides with §4's
+`LOTS < 2 → no trade` and would have silently re-created the ban the unlock removed.*
 
 ## What is NOT a sizing input
 

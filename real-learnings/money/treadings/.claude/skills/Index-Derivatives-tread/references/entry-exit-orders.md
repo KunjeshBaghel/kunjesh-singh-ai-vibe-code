@@ -91,6 +91,46 @@ and it was never flagged. 01-Sep exited 14:51 against a 2:30 plan.*
 **Why the midday time stop:** a spread that has not decayed by midday is pinned near your short strike —
 maximum gamma for expired theta, the worst risk-per-rupee on the board. It does not improve after lunch.
 
+**Scope after 04-Sep-2026 (TC §1a, §7):** the midday time stop and the hard-flat times bind on
+**intraday-declared** trades, and on the **final session** of a multi-session hold. They do not bind on
+the intermediate sessions of a hold that was declared multi-session *at entry*. Nothing here licenses
+converting an intraday trade into a hold because it is red at 2:30 — **that is a §12 violation (g)**,
+and it is precisely the latitude the deleted two-tier scheme used to grant.
+
+---
+
+## ⚠️ The stop does not survive the night
+
+**An SL-Limit order does not rest overnight and cannot fire on a gap.** On any hold that crosses a
+session boundary this is the single most important fact about your risk:
+
+| | Intraday hold | Multi-session hold |
+|---|---|---|
+| Planned stop ₹3,500 (TC §3) | enforceable all day | **enforceable only during market hours** |
+| Structural cap ₹10,500 (TC §3) | backstop | **the real overnight backstop — and it holds** |
+
+It holds because a defined-risk vertical's loss is bounded at `(width − credit) × lot × lots` no matter
+how far the index gaps. TC §3 set the structural cap **equal to** the daily breaker specifically so that
+*total failure of the stop* still lands inside the day's limit — and an overnight gap **is** total
+failure of the stop. That scenario was sized for before it was permitted.
+
+**What this means in practice, every session of an open hold:**
+
+```
+□ At 9:15, before anything else: check the open hold's mark against the gap.
+□ RE-PLACE the SL-Limit order at the open. It is NOT still there from yesterday.
+      A hold sitting through a session with no live SL order = §12 violation (e).
+□ Run that session's kill-switch checks (TC §7). Deferring the EXIT is permitted;
+      deferring the MONITORING is not — §12 violation (h).
+□ Do NOT widen the stop because the gap moved it closer. Widening is the mechanism
+      of the -Rs15,564 (TC §11: k > 2.0 is never unlocked).
+```
+
+**Sizing already assumes the gap.** Do not size a multi-session hold against the ₹3,500 stop and
+reassure yourself with the ₹10,500 cap. Size so that **the structural cap itself is acceptable**, because
+on a gap night that is the number you get. Empirically (1 yr NIFTY, TC §1a): median overnight gap 56 pts,
+p90 192 pts, worst **731.5 pts**.
+
 ---
 
 ## Taking profit — ONE exit, no scaling, no trailing

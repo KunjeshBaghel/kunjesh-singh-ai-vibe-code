@@ -70,11 +70,32 @@ From [`TRADING_CONSTANTS.md` §14](../../../../TRADING_CONSTANTS.md):
 
 **Run this BEFORE pricing any strike.** A low VIX is a low-IMPLIED signal, not a cheap-vol signal.
 
+⛔ **Use the form that matches the DECLARED holding period** (TC §10b). An intraday pts/min ratio says
+nothing about a 10-session hold, and an annualised ratio says nothing about this afternoon. **Log which
+form was used.**
+
+**Form A — intraday-declared trade:**
 ```
 REALISED = (day_high − day_low) ÷ minutes_elapsed_since_open
 IMPLIED  = (ATM-forward straddle × ~1.25) ÷ minutes_remaining_to_close
 RATIO    = REALISED ÷ IMPLIED
 ```
+
+**Form B — multi-session declared hold** (this is also where BANKNIFTY's `σ_ATM` comes from):
+```
+1. F      = K + CE − PE at the ATM strike                      (parity; permitted under SI-5)
+2. σ_ATM  = ATM_straddle ÷ (0.7979 × F × sqrt(N / 252))        N = DECLARED sessions, not to expiry
+3. σ_real = stdev(daily log returns) × sqrt(252), on THREE windows: 252 / 120 / 60 sessions
+             → Kite get_historical_data, interval "day".  ⚠️ dates need "YYYY-MM-DD HH:MM:SS".
+4. RATIO  = σ_real ÷ σ_ATM   — compute all three, TAKE THE WORST
+```
+**Check `σ_ATM` against the per-index vol band in TC §6 row 8 before anything else.** For BANKNIFTY
+this is the *only* implied vol available — ⛔ **India VIX is NIFTY's measure and does not price it.**
+
+**Report all three windows.** One window is a choice of regime, and choosing the flattering one is how
+a negative VRP gets traded. *04-Sep-2026 BANKNIFTY: σ_ATM 11.41% against realised 16.61 / 20.75 /
+13.45% → ratios 1.46 / 1.82 / 1.18. Negative on every window; the 60-session number alone would have
+looked like the mildest possible fail rather than the flat block it was.*
 
 **The three bands live in [`TRADING_CONSTANTS.md` §10b](../../../../TRADING_CONSTANTS.md).** Read them there; do not quote them from memory.
 

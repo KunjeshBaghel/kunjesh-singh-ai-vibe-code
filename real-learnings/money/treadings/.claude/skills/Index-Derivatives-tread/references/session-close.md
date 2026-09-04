@@ -35,13 +35,15 @@ Parse all orders for today:
 | 2 | Did the stop ever move? (DOWN is fine; AWAY from price is a violation) |  |
 | 3 | Was a triggered stop executed within 5 minutes? |  |
 | 4 | Was any order placed that INCREASED short exposure while at a loss? |  |
-| 5 | Was the position flat by the hard flat time? |  |
+| 5 | Was the position flat by the hard flat time **of its declared final session**? (TC §7 — intraday trades: same day. Multi-session holds: the last session of the declared period.) |  |
 | 6 | Was this the only structure of the day? |  |
 | 7 | Was the size within lots = min(cap A, cap B)? |  |
 | 8 | Were all five gates written in tread.md BEFORE any strike was quoted? |  |
 ```
 
-Hard flat times: [`TRADING_CONSTANTS.md` §7](../../../../TRADING_CONSTANTS.md). Currently: **2:30 PM NIFTY/BANKNIFTY · 2:15 PM SENSEX.**
+Hard flat times: [`TRADING_CONSTANTS.md` §7](../../../../TRADING_CONSTANTS.md). Currently: **2:30 PM NIFTY/BANKNIFTY · 2:15 PM SENSEX** — applied on the **declared final session** (TC §1a).
+
+**If a multi-session hold is still open, the session does not close the trade.** Write the session's `learning.md` as normal, record the mark-to-market and that the hold continues, and re-verify the declared exit date. ⛔ Do **not** re-declare it — extending an open hold is a §12 violation (g).
 
 **Any of rows 1–6 failing = a behavioural violation → 5-session trading halt** ([`TRADING_CONSTANTS.md` §12](../../../../TRADING_CONSTANTS.md)), **even if the trade was profitable.** State the halt plainly and name its end date. Do not soften it because the day made money.
 

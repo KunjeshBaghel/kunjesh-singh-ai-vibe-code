@@ -3224,7 +3224,7 @@ ATM PREMIUM / IV THROUGH AN INDIAN TRADING DAY (typical range day)
 | **Monday** | 1 | 3 | Poor entry day for the workhorse — too little DTE on NIFTY, and weekend news is still being digested. Manage existing. |
 | **Tuesday** | **0 (expiry)** | 2 | Morning: 0-DTE fly if and only if the filter is clean ([§8.6.10](#8610-0-dte-hedged-iron-fly-under-cas--expiry-day-done-properly)). **Afternoon: the best entry of the week** — the new NIFTY weekly opens at 7 DTE with a full premium and no event risk yet priced. |
 | **Wednesday** | 6 | **1** | ✅ **Prime entry day.** NIFTY at 6 DTE sits exactly in the 5–10 DTE Theta/Gamma sweet spot. |
-| **Thursday** | 5 | **0 (expiry)** | SENSEX expiry day — **hard flat 2:15 PM**. NIFTY at 5 DTE is ⛔ blocked by Gate 1 (≥3 sessions). |
+| **Thursday** | 5 | **0 (expiry)** | SENSEX expiry day — **hard flat 2:15 PM**. NIFTY at 5 DTE is **not blocked** since 04-Sep-2026 (TC §6 row 1 retired) — it is tradeable as a declared 5-session hold if VIX ≥ 13. |
 | **Friday** | 4 | 6 | Acceptable. Weekend gap risk is *already in the price* — see below. |
 
 > **The weekend-theta myth, restated because it costs people money.** Options do not decay over the weekend in the way retail folklore claims. Market makers mark down the Friday close in anticipation of two non-trading days, and mark up Monday's open for weekend gap risk. **You are not paid to hold theta over a weekend — you are paid to hold gap risk over a weekend.** Selling Friday afternoon specifically "for the weekend decay" is selling gap risk for a premium that has already been removed. Covered in [§8.4](#84-instrument-selection--nifty-vs-banknifty-vs-sensex).
@@ -3703,6 +3703,13 @@ EXPECTANCY, WORKED
 > See [§8.11.6](#8116-the-feasibility-gate--can-todays-target-be-reached-at-all-added-28-aug-2026) for the arithmetic that decides, **before any analysis**, whether the day's target is reachable at all.
 
 ### 8.11.6 The feasibility gate — can today's target be reached *at all*? *(added 28-Aug-2026)*
+
+> ⚠️ **PARTIALLY SUPERSEDED 04-Sep-2026 — [`TRADING_CONSTANTS.md`](../../TRADING_CONSTANTS.md) §1a and §6 rows 1/1a win.**
+> The **credit-ceiling arithmetic below is still valid and still run.** What is retired is the
+> **calendar veto** this section fed (`sessions_to_expiry ≥ 3 → no trade`): holding period was measured
+> not to drive EV, and the block excluded the best-performing holding period. The gate is now
+> **VIX ≥ 13** plus the §10b VRP test. Read the arithmetic here; take the thresholds from the
+> constants file.
 
 Run this **at 9:15, before pricing a single structure.** It takes two minutes and on most days it ends the session's work honestly. Three consecutive no-trades (24, 27, 28-Aug-2026) were each diagnosed only after 2+ hours of chain analysis; all three were decidable at the open by the arithmetic below.
 

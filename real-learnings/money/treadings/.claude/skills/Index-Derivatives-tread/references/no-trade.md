@@ -31,7 +31,9 @@ ninety minutes.
 
 ## Why conflating them buries the fixable cause
 
-On 28-Aug-2026 the kill switch was 0/3, Go/No-Go 0 red, VRP positive and VIX falling — a **clean** day on which the then-target still needed 20–33 lots (**14.9–24.7% of capital**). The cause was calendar (sessions_to_expiry = 3), not regime.
+On 28-Aug-2026 the kill switch was 0/3, Go/No-Go 0 red, VRP positive and VIX falling — a **clean** day on which the then-target still needed 20–33 lots (**14.9–24.7% of capital**). It was logged at the time as a *calendar* block (sessions_to_expiry = 3).
+
+> ⚠️ **Re-read 04-Sep-2026.** That diagnosis was wrong, and the retirement of Gate 1 (TC §6 row 1) is what exposed it. The calendar was never the binding constraint — the structures could not be sized because the **premium was too thin to clear the caps**. `Too small` is the right code; "the calendar caused it" was the wrong cause, and it is the reason the real fix went unlooked-for for a week. **A code names what must change. If the named thing changes and the trade still does not exist, the code was wrong.**
 
 **When something is out of reach, quote the capital at risk, not the shortfall.** A ratio ends the discussion; an adjective invites size creep.
 
@@ -60,12 +62,14 @@ Today's `my-treads/<Month>/<DD-MM-YYYY>/` — append to `*-tread.md`, then the `
 |---|---|
 | §8.13 Kill switch | <N>/3 |
 | §7 Go/No-Go | score <N> = (2×<red>) + (1×<yellow>); sit-out at ≥4 |
-| Gate 1 Feasibility | <sessions> sessions → <verdict> |
+| Gate 1 Edge (TC §6 r1a) | VIX <X> vs floor 13 / ceiling 20 → <verdict> · holding period available: <N> sessions |
 | §8.11.7 Noise floor | <pass/fail> — (k−1)×credit vs 1.5× spread swing |
 | TC §10b VRP | realised <X> ÷ implied <Y> = <ratio> → <PAID / THIN / UNPAID> |
 | Gate 5 | <5A sentence> · FII/Pro ΔCE and ΔPE vs TC §9 limits |
 
-**What would change this:** <specific condition — e.g., "VIX drops below 12", "tomorrow is expiry day", "use 24,300 strike instead">
+**What would change this:** <specific condition — e.g., "VIX rises above 13", "use 24,300 strike instead">
+
+⛔ **Never write "tomorrow is expiry day" as the thing that would change it.** Since 04-Sep-2026 the calendar does not gate a trade (TC §6 row 1 retired); if the answer today is no, a nearer expiry does not make it yes. Name the variable that actually binds — almost always VIX/VRP, size, or spread quality.
 
 **Deployed ₹0. Risked ₹0.**
 ```
@@ -106,6 +110,7 @@ Then proceed to `session-close` to complete the learning.md.
 After completing, append to today's tread.md:
 
 ```
-09:45 — no-trade: reason "Too small" — sessions_to_expiry = 3 for all indexes → Gate 1 ⛔.
-        Will re-enter tomorrow (expiry eve).
+09:45 — no-trade: reason "UNPAID" — VIX 11.4 < 13 floor → Gate 1 (edge) ⛔, all indexes, all DTE.
+        sessions_to_expiry: NIFTY 3 / SENSEX 5 — recorded as available holding period, NOT a block.
+        Re-check when VIX regains 13. A nearer expiry does not fix this.
 ```

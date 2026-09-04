@@ -645,3 +645,47 @@ Volume***, i.e. contracts **traded**, not positions held. That file is **retired
 ΔPE +3,650 → **all under limit → Gate 5 SILENT.** The "hard ceiling / sell calls" reading recorded
 above came from the retired volume file and from the level, and it did not survive. The 31-Aug
 precedent does survive: Pro ΔCE **+109,002**, over 100,000 → Bull Put forbidden on 01-Sep.
+
+---
+
+## 03/09/2026 - FII DII FNO ACTIVITY
+
+| Participant | Instrument | Change | Activity | Trend |
+| :--- | :--- | :--- | :--- | :--- |
+| **FII** | Future | −5,939 | Sold Futures | Bearish |
+| | CE | −12,954 | Sold Calls | Bearish |
+| | PE | +56,826 | Bought Puts | Bearish |
+| **Pro** | Future | −7 | Sold Futures | Bearish |
+| | CE | −96,366 | Sold Calls | Bearish |
+| | PE | +30,824 | Bought Puts | Bearish |
+| **Client** | Future | +5,926 | Bought Futures | Bullish |
+| | CE | +109,470 | Bought Calls | Bullish |
+| | PE | −89,681 | Sold Puts | Bullish |
+| **DII** | Future | +20 | Bought Futures | Bullish |
+| | CE | −150 | Sold Calls | Bearish |
+| | PE | +2,031 | Bought Puts | Bearish |
+
+**OVERALL TREND: BEARISH** (FII activity score: −75,719)
+
+## 03/09/2026 - FII Activity for last 5 days
+
+| Period | Value | Trend |
+| :--- | :--- | :--- |
+| Today (T) | −75,719 | Bearish |
+| T-1 Day | −19,081 | Bearish |
+| T-2 Day | −36,481 | Bearish |
+| T-3 Day | +40,829 | Bullish |
+| T-4 Day | +62,995 | Bullish |
+| **Overall Trend** | By Count | Bearish (2B/3Be) |
+| **Overall Trend** | By Sentiment | Bearish (net −27,457) |
+
+## 03/09/2026 - Gate 5 inputs (T-1=03-Sep vs T-2=02-Sep, `fao_participant_oi_*.csv`)
+
+| Participant | Leg | level T-1 | level T-2 | CHANGE | limit | verdict |
+| :--- | :--- | ---: | ---: | ---: | ---: | :--- |
+| FII | CE | 312,207 | 299,253 | +12,954 | 65,000 | silent |
+| FII | PE | −650,049 | −593,223 | −56,826 | 65,000 | silent |
+| Pro | CE | 74,441 | −21,925 | +96,366 | 100,000 | silent |
+| Pro | PE | −119,733 | −88,909 | −30,824 | 100,000 | silent |
+
+**Gate 5: SILENT — no structure forbidden. NOT permission for either side.**

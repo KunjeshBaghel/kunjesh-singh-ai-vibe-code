@@ -10,18 +10,38 @@ If this file and that one ever disagree, **the constants file wins and this file
 
 ---
 
-## Gate 1 · Feasibility — is there a trade here at all?
+## Gate 1 · Edge — is the premium worth harvesting at all?
 
-Procedure and the counting convention: **[`check-expiry.md`](check-expiry.md)**.
+> ⚠️ **Rewritten 04-Sep-2026. This gate no longer counts sessions.** The old test
+> (`sessions_to_expiry ≥ 3 → NO TRADE`) is **retired** — see TC §6 row 1 and the measurement in
+> **TC §1a**. Holding period was found not to drive EV; **VIX does**. The gate was re-aimed, not
+> removed. If you remember the calendar version, that memory is now a bug.
+
+Expiry procedure and the counting convention still apply: **[`check-expiry.md`](check-expiry.md)** —
+`sessions_to_expiry` is now an **input** (it sets the holding period `N`), never a veto.
 
 ```text
-□ Fetch the expiry list for all 3 indexes.  NEVER guess a date.
-□ sessions_to_expiry per index (including today; expiry day = 1, expiry eve = 2).
-      ⛔ sessions ≥ 3  →  NO TRADE on that index. Hard stop. No smaller-size workaround.
-      sessions = 2     →  delta-driven, not theta-driven. Needs a Gate-5-clean directional view.
+□ Fetch the expiry list for all 3 indexes.  NEVER guess a date.        [SI-8 — unchanged]
+□ sessions_to_expiry per index.  Record it. It is NOT a pass/fail — it is the N you will
+      declare as the holding period and use to size and to test edge.
+□ ⛔ VOL BAND — PER INDEX. Outside it → NO TRADE for THAT index.       [TC §6 r1a/r8]
+      NIFTY    13 <= India VIX < 20
+      SENSEX   13 <= India VIX < 20     (proxy — log it as a proxy, not a measurement)
+      BANKNIFTY 16 <= sigma_ATM < 25    (its OWN straddle-implied vol, TC §10b Form B)
+      ⛔ India VIX is NIFTY's measure. It does NOT price BANKNIFTY. Never gate BN on it.
+      Below floor = UNPAID, at/above ceiling = HOSTILE. No strike, width or size fixes either.
+□ DECLARE THE HOLDING PERIOD NOW — intraday, or N sessions to a named exit date.
+      ⛔ N <= 10 sessions (TC §11 slot limit). Binding once entered; extending it is a
+      §12 behavioural violation. You may trade any expiry — you just may not hold past N.
+□ ⛔ VRP RATIO (TC §10b) — on the tenor you just declared, NOT the other one.
+      intraday hold -> Form A (pts/min).   multi-session hold -> Form B (annualised vol).
+      Ratio >= 1.0 -> NO TRADE. Code UNPAID.
+      Form B: report realised on 252/120/60 sessions and take the WORST ratio. Picking the
+      flattering window is how a negative VRP gets traded.
 □ MAX CREDIT = per-structure planned stop ÷ (k − 1)        [TC §4 · §6]
       ⚠️ The numerator is the PER-STRUCTURE stop, never the daily budget.
-□ REQUIRED CAPTURE = the fraction of that credit the structure must actually keep.
+□ REQUIRED CAPTURE = the fraction of that credit the structure must actually keep
+      OVER THE DECLARED HOLDING PERIOD — not over one session.
 □ If required capture > realistic capture → no structure and no size fixes it. Report and stop.
 ```
 
@@ -34,9 +54,22 @@ is a *theta* table, and theta stops dominating past ~10 DTE.
 > **When something is out of reach, quote the capital at risk, not the shortfall.** A ratio ends the
 > discussion; an adjective invites size creep.
 
-**BANKNIFTY fails this gate by construction** on all but the final ~2 sessions of its monthly cycle.
-State `BANKNIFTY: N sessions → Gate 1 ⛔, excluded` in one line and do not price it. ⛔ It is never the
-fallback when NIFTY and SENSEX are both blocked — that is a **no-trade day**.
+**BANKNIFTY is tradeable — unlocked 04-Sep-2026 (TC §11a).** Run this gate on all three indexes and
+price every one that passes. BANKNIFTY's differences are in its **band** (16–25 on its own `σ_ATM`),
+its **break-in cap** (first 3 trades at ₹5,250 → width 100 only), and its **monthly-only expiry**
+(so the 10-session declared-hold limit usually binds). Nothing else about it is special.
+
+⛔ **No index is ever "the fallback."** If NIFTY and SENSEX both fail, that is not a reason to look
+harder at BANKNIFTY — run BANKNIFTY's own gate and let it answer. Three failures is a **no-trade day**.
+
+⚠️ **The far-OTM trap (TC §11a).** On BANKNIFTY the model will offer 5–6% OTM structures with 91–98%
+win rates and headline EV around +33% of max loss. **Distrust them.** A monthly tenor gives only ~14
+*independent* windows in a year of data, so that EV is a tail asserted from 14 points. **When a
+strike-level EV and the model-free VRP disagree, VRP wins.** High win rate is not edge.
+
+> **A no-trade here is coded `UNPAID`, never `Too small`.** `Too small` now means only `LOTS < 2`
+> after §4 sizing. The two call for opposite responses — wait for volatility vs. wait for capital —
+> and the old calendar block used to blur them (TC §15).
 
 ---
 
