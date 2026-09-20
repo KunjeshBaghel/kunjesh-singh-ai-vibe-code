@@ -10,19 +10,21 @@
 
 **Fix (one-time per machine):**
 ```bash
-claude mcp remove dhan -s local
-claude mcp add --transport http --client-id "$DHAN_CLIENT_ID" dhan https://mcp.dhan.co/mcp
+codex mcp remove dhan
+source .broker_creds
+codex mcp add dhan --url https://mcp.dhan.co/mcp --oauth-client-id "$DHAN_CLIENT_ID"
+codex mcp login dhan
 ```
 
-Then in Claude Code: `/mcp` → open dhan → **Authenticate** (browser login).
+Then in Codex: `/mcp` → open dhan → **Authenticate** (browser login).
 
 **After the reset, data flows with no consent step at all.** Never run a login tool for this error.
 
 **Diagnose by error string:**
 - `API Error: Unauthorized` = reached Dhan, rejected there → do the reset above
-- `requires re-authorization (token expired)` = blocked locally by Claude Code OAuth → just `/mcp` → Authenticate
+- `requires re-authorization (token expired)` = blocked locally by Codex OAuth → just `/mcp` → Authenticate
 
-⛔ **`claude mcp list` showing ✔ Connected and `/mcp` showing `dhan · connected · 11 tools` are transport-level only** — they stayed green through four consecutive failures across 02–03 Sep. **Verify with `expirylist`, never `funds`.**
+⛔ **`codex mcp list` showing ✔ Connected and `/mcp` showing `dhan · connected · 11 tools` are transport-level only** — they stayed green through four consecutive failures across 02–03 Sep. **Verify with `expirylist`, never `funds`.**
 
 ---
 
@@ -58,7 +60,7 @@ Then in Claude Code: `/mcp` → open dhan → **Authenticate** (browser login).
 
 1. Call `mcp__dhan__login` → returns a browser URL: `https://auth.dhan.co/consent-login?consentId=...`
 2. User opens it, logs in, is redirected to `https://mcp.dhan.co/auth/callback?tokenId=...`
-3a. **If Claude says "token already consumed for this session"** → the MCP auto-bound. Proceed to verify.
+3a. **If Codex says "token already consumed for this session"** → the MCP auto-bound. Proceed to verify.
 3b. **If not auto-bound** → user pastes the full callback URL → call `mcp__dhan__complete_login` with the `tokenId`.
 4. **Verify:** `mcp__dhan__market_data_agent_tool` action=`expirylist`, payload `{"UnderlyingScrip": 13, "UnderlyingSeg": "IDX_I"}`.
 

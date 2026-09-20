@@ -2,7 +2,7 @@
 
 **Source:** [docs.dhanhq.co/mcp](https://docs.dhanhq.co/mcp)
 
-Dhan MCP connects your Dhan account to Claude. It covers **the full stack**: option chain with pre-calculated Greeks, live market data, historical OHLCV, portfolio, order placement, and conditional alerts with auto-order triggers.
+Dhan MCP connects your Dhan account to Codex. It covers **the full stack**: option chain with pre-calculated Greeks, live market data, historical OHLCV, portfolio, order placement, and conditional alerts with auto-order triggers.
 
 > ⚠️ **Safety rule:** Never let AI place an order without your explicit approval. Every order suggestion is a draft — you are the final executor.
 > **Link** [dhan-mcp](https://docs.dhanhq.co/mcp)
@@ -197,7 +197,7 @@ super_place example for a CE buy:
 
 ## Answering Your Three Questions
 
-### 1. Can I watch option chain and OI data via Claude Code?
+### 1. Can I watch option chain and OI data via Codex?
 
 **YES — this is Dhan MCP's strongest capability.**
 
@@ -207,7 +207,7 @@ super_place example for a CE buy:
 - Intraday + daily historical OHLCV with OI overlay (for tracking OI buildup over time)
 - Rate limit: 1 option chain request per 3 seconds
 
-You can ask Claude to pull the chain, compute PCR, highlight max-pain strikes, and track OI change as a session progresses — everything manually that Sensibull does, but inside Claude.
+You can ask Codex to pull the chain, compute PCR, highlight max-pain strikes, and track OI change as a session progresses — everything manually that Sensibull does, but inside Codex.
 
 ### 2. Can I do option trading via Dhan MCP?
 
@@ -215,9 +215,9 @@ You can ask Claude to pull the chain, compute PCR, highlight max-pain strikes, a
 
 Supports `NSE_FNO` and `BSE_FNO` exchange segments with LIMIT, MARKET, STOP_LOSS, STOP_LOSS_MARKET orders. Also supports **super orders** (bracket orders: entry + target + SL + trailing in one shot).
 
-> **Note on architecture:** CLAUDE.md currently designates Dhan as "data only" with Kite for execution. Now that Dhan MCP is connected and confirmed to have trading tools, you can choose to use Dhan for execution too — or keep the separation. Dhan's super orders are a meaningful advantage for F&O (bracket orders in one call).
+> **Note on architecture:** AGENTS.md designates Dhan as "data only" with Kite for execution. Now that Dhan MCP is connected and confirmed to have trading tools, you can choose to use Dhan for execution too — or keep the separation. Dhan's super orders are a meaningful advantage for F&O (bracket orders in one call).
 
-### 3. Can I create scanners or alerts / let Claude monitor the live market?
+### 3. Can I create scanners or alerts / let Codex monitor the live market?
 
 **PARTIALLY YES — alerts exist, live monitoring requires polling.**
 
@@ -226,9 +226,9 @@ Supports `NSE_FNO` and `BSE_FNO` exchange segments with LIMIT, MARKET, STOP_LOSS
 - Alerts can auto-trigger an order when fired
 - Works on equities and indices (IDX_I for NIFTY/BANKNIFTY)
 
-**Limitation — alerts don't work on F&O instruments directly.** You alert on the index (e.g., NIFTY), then the triggered order must be an equity order, not an option. To auto-trade options on an alert, you'd need a separate system outside Claude.
+**Limitation — alerts don't work on F&O instruments directly.** You alert on the index (e.g., NIFTY), then the triggered order must be an equity order, not an option. To auto-trade options on an alert, you'd need a separate system outside Codex.
 
-**For live monitoring via Claude:** Claude can't run a background loop, but you can ask it to `poll` by repeatedly calling `market_data → optionchain` or `quote` every few minutes during a session. It's manual polling, not a daemon.
+**For live monitoring via Codex:** Codex can't run a background loop, but you can ask it to `poll` by repeatedly calling `market_data → optionchain` or `quote` every few minutes during a session. It's manual polling, not a daemon.
 
 ---
 
@@ -257,59 +257,63 @@ Supports `NSE_FNO` and `BSE_FNO` exchange segments with LIMIT, MARKET, STOP_LOSS
 
 ## Login Flow
 
-Dhan uses a **2-phase auth**: a one-time OAuth setup (per Claude Code install) + a per-session consent login.
+Dhan uses a **2-phase auth**: a one-time OAuth setup (per Codex install) + a per-session consent login.
 
-### Phase 1 — One-time OAuth Setup (stored in `~/.claude.json`)
+### Phase 1 — One-time OAuth Setup (stored in `~/.codex/config.toml`)
 
 ```bash
 # Add Dhan as HTTP transport MCP (run once in terminal):
-claude mcp add --transport http --client-id <YOUR_DHAN_CLIENT_ID> dhan https://mcp.dhan.co/mcp
+source .broker_creds
+codex mcp add dhan --url https://mcp.dhan.co/mcp --oauth-client-id "$DHAN_CLIENT_ID"
+codex mcp login dhan
 # YOUR_DHAN_CLIENT_ID = your numeric Dhan account client ID (e.g. 1112807061)
 # stored in .broker_creds as DHAN_CLIENT_ID
 
-# Then authenticate via the /mcp menu in Claude Code → pick dhan → Authenticate
+# Then authenticate via the /mcp menu in Codex → pick dhan → Authenticate
 # Browser opens → complete Dhan consent → "Authentication successful" page appears
 # If you get {"error":"invalid_client"}: remove and re-add with --client-id flag (see above)
 ```
 
-Config is stored in `~/.claude.json` (NOT `.mcp.json`). The entry looks like:
-```json
-"dhan": {
-  "type": "http",
-  "url": "https://mcp.dhan.co/mcp",
-  "oauth": { "clientId": "<YOUR_DHAN_CLIENT_ID>" }
-}
+Config is stored in `~/.codex/config.toml`, separate from this repository so the client ID never enters Git.
+The entry looks like:
+```toml
+[mcp_servers.dhan]
+url = "https://mcp.dhan.co/mcp"
+
+[mcp_servers.dhan.oauth]
+client_id = "<YOUR_DHAN_CLIENT_ID>"
 ```
 
-### Phase 2 — Per-session Dhan Login (every Claude Code session)
+### Phase 2 — Per-session Dhan Login (every Codex session)
 
 ```
-1. Ask Claude: "Login to Dhan" or "Show my Dhan positions"
-2. Claude calls mcp__dhan__login → returns a browser consent URL
+1. Ask Codex: "Login to Dhan" or "Show my Dhan positions"
+2. Codex calls mcp__dhan__login → returns a browser consent URL
    Format: https://auth.dhan.co/consent-login?consentId=...
 3. Click the URL → log in with Dhan credentials in browser
 4. Browser redirects to: https://mcp.dhan.co/auth/callback?tokenId=...&consentId=...
 5a. If auto-binding works → "token already consumed" = SUCCESS, session active
-5b. If not auto-bound → copy tokenId from callback URL → tell Claude:
+5b. If not auto-bound → copy tokenId from callback URL → tell Codex:
     "complete_login with tokenId <value>"
 6. Verify: ask "Show my Dhan funds"
 ```
 
-Session is valid for the trading day. Re-login (Phase 2 only) required every new Claude Code session.
+Session is valid for the trading day. Re-login (Phase 2 only) required every new Codex session.
 
 ---
 
 ## Config
 
-Dhan uses **HTTP transport** stored in `~/.claude.json` (project-scoped), **not** `.mcp.json`.
+Dhan uses **HTTP transport** stored in `~/.codex/config.toml` (user-scoped), while this repository's
+`.codex/config.toml` contains the non-secret project servers.
 
-Kite and Kotak Neo use `.mcp.json` with `mcp-remote` (stdio transport). Dhan is different:
+Kite and Kotak Neo use `.codex/config.toml` with `mcp-remote` (stdio transport). Dhan is different:
 
 | Broker | Transport | Config file |
 |--------|-----------|-------------|
-| Kite (Zerodha) | stdio via `mcp-remote` | `.mcp.json` |
-| Kotak Neo | stdio via `mcp-remote` | `.mcp.json` |
-| Dhan | HTTP (OAuth) | `~/.claude.json` |
+| Kite (Zerodha) | stdio via `mcp-remote` | project `.codex/config.toml` |
+| Kotak Neo | stdio via `mcp-remote` | project `.codex/config.toml` |
+| Dhan | HTTP (OAuth) | user `~/.codex/config.toml` |
 
 ---
 
@@ -321,7 +325,7 @@ Kite and Kotak Neo use `.mcp.json` with `mcp-remote` (stdio transport). Dhan is 
 | Option Chain | 1 unique request / 3 seconds |
 | Historical (intraday) | ≤ 90 days per call |
 
-If you're polling the option chain every 30 seconds (the recommended OI re-check interval from CLAUDE.md), you're well within limits.
+If you're polling the option chain every 30 seconds (the recommended OI re-check interval from AGENTS.md), you're well within limits.
 
 ---
 

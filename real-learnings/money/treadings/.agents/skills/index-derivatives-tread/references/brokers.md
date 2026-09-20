@@ -29,7 +29,7 @@ Run all three in parallel at session start. Record the outcome in `tread.md` bef
 **Login:**
 ```
 1. Say: "Login to Zerodha"
-2. Click the auth link Claude returns
+2. Click the auth link Codex returns
 3. Complete Zerodha 2FA in browser
 4. Session valid for the trading day
 ```
@@ -62,10 +62,10 @@ mcp__kite__get_ltp(instrument_tokens=["NSE:NIFTY 50", "NSE:INDIA VIX"])
 **Login:**
 ```
 1. Say: "Login to Kotak Neo" (UCC = V6PZT)
-2. Claude calls get_login → you get a link with QR
+2. Codex calls get_login → you get a link with QR
 3. Open Kotak Neo mobile app → Profile → Web Login → scan QR
 4. Type "DONE" in chat
-5. Claude calls validate_login → session active
+5. Codex calls validate_login → session active
 ```
 
 **Verify:**
@@ -82,7 +82,7 @@ mcp__kotak-neo__get_limits(sessionid=<from validate_login>)
 **What it cannot do:**
 - Place orders — the MCP has no order tools, by design
 
-**Execution is manual in the Kotak Neo app.** Claude provides structure, strikes, sizing, levels; the user places the orders.
+**Execution is manual in the Kotak Neo app.** Codex provides structure, strikes, sizing, levels; the user places the orders.
 
 ⚠️ **NRML spreads must be legged in a specific order or Kotak rejects them** — the full entry sequence,
 the SL-Limit construction and the stop-out ordering all live in
@@ -124,4 +124,4 @@ See [`dhan-api.md`](./dhan-api.md) for the full reference. Summary:
 | **Execution venue** | **Manual in Kotak Neo app** — all three MCPs either cannot execute or are unfunded |
 | **Data architecture** | Kite: spot/VIX/OI/depth/historicals · Dhan: full chain (REST) · Kotak: margin |
 
-**Claude's role:** structure selection, strike pricing, sizing, stop levels. **Human executes.** No order may be placed without explicit user approval.
+**Codex's role:** structure selection, strike pricing, sizing, stop levels. **Human executes.** No order may be placed without explicit user approval.

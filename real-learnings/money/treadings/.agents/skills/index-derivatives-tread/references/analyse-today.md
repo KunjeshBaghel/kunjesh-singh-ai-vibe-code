@@ -1,6 +1,6 @@
 # analyse-today — Pre-session market view and setup
 
-**Loaded by:** `/Index-Derivatives-tread analyse-today`
+**Loaded by:** `$index-derivatives-tread analyse-today`
 
 **Also load:** [`gates.md`](gates.md) · [`brokers.md`](brokers.md) · [`check-expiry.md`](check-expiry.md) · [`dhan-api.md`](dhan-api.md) · [`kb/Market_View.md`](../../../../kb/Market_View.md)
 
@@ -265,7 +265,7 @@ State: what invalidates intraday.
 * SENSEX: F=<X> · Support <X> · Resistance <X>
 * BANKNIFTY: F=<X> · Support <X> · Resistance <X> · **σ_ATM <X>%** (own implied vol, TC §10b Form B)
     ⛔ Every session, not just monthly-expiry week — BANKNIFTY is unlocked (TC §11a) and all three
-    indexes are screened every session (CLAUDE.md SI-7a). India VIX does NOT price this one.
+    indexes are screened every session (AGENTS.md SI-7a). India VIX does NOT price this one.
 
 **What to Watch Before Taking a Trade**
 1. Opening 15-min: above/below PDC, gap direction
@@ -310,4 +310,4 @@ Pre-market completeness:
 
 Append broker connection table and preliminary snapshot to `tread.md`.
 
-**Next:** user types `find-trade` or `/Index-Derivatives-tread find-trade`.
+**Next:** user types `find-trade` or `$index-derivatives-tread find-trade`.

@@ -85,7 +85,7 @@ Sessions is an INPUT. It bounds the declarable holding period; it does not pass 
 ## No index is "the fallback"
 
 **All three indexes are tradeable and all three are screened every session** — BANKNIFTY was unlocked
-04-Sep-2026 ([`TRADING_CONSTANTS.md` §11a](../../../../TRADING_CONSTANTS.md), CLAUDE.md SI-7a).
+04-Sep-2026 ([`TRADING_CONSTANTS.md` §11a](../../../../TRADING_CONSTANTS.md), AGENTS.md SI-7a).
 Screen them together, from the start, each on its own gates.
 
 ⛔ **Never reach for an index *because* the others failed.** "Fallback" reasoning is how a structure

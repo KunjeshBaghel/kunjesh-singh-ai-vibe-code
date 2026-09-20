@@ -689,3 +689,47 @@ precedent does survive: Pro ΔCE **+109,002**, over 100,000 → Bull Put forbidd
 | Pro | PE | −119,733 | −88,909 | −30,824 | 100,000 | silent |
 
 **Gate 5: SILENT — no structure forbidden. NOT permission for either side.**
+
+---
+
+## 04/09/2026 - FII DII FNO ACTIVITY
+
+| Participant | Instrument | Change | Activity | Trend |
+| :--- | :--- | :--- | :--- | :--- |
+| **FII** | Future | −736 | Sold Futures | Bearish |
+| | CE | +8,753 | Bought Calls | Bullish |
+| | PE | −69,138 | Sold Puts | Bullish |
+| **Client** | Future | +3,846 | Bought Futures | Bullish |
+| | CE | −156,668 | Sold Calls | Bearish |
+| | PE | +85,563 | Bought Puts | Bearish |
+| **Pro** | Future | −1,192 | Sold Futures | Bearish |
+| | CE | +148,130 | Bought Calls | Bullish |
+| | PE | −16,493 | Sold Puts | Bullish |
+| **DII** | Future | −1,918 | Sold Futures | Bearish |
+| | CE | −215 | Sold Calls | Bearish |
+| | PE | +68 | Bought Puts | Bearish |
+
+**OVERALL TREND: BULLISH** (FII activity score: +77,155)
+
+## 04/09/2026 - FII Activity for last 5 days
+
+| Period | Value | Trend |
+| :--- | :--- | :--- |
+| Today (T) | +77,155 | Bullish |
+| T-1 Day | −75,719 | Bearish |
+| T-2 Day | −19,081 | Bearish |
+| T-3 Day | −36,481 | Bearish |
+| T-4 Day | +40,829 | Bullish |
+| **Overall Trend** | By Count | Bearish (2B/3Be) |
+| **Overall Trend** | By Sentiment | Bearish (net −13,297) |
+
+## 04/09/2026 - Gate 5 inputs (T-1=04-Sep vs T-2=03-Sep, `fao_participant_oi_*.csv`)
+
+| Participant | Leg | level T-1 | level T-2 | CHANGE | limit | verdict |
+| :--- | :--- | ---: | ---: | ---: | ---: | :--- |
+| FII | CE | 303,454 | 312,207 | −8,753 | 65,000 | silent |
+| FII | PE | −580,911 | −650,049 | +69,138 | 65,000 | **FORBIDS Bear Call** ⛔ |
+| Pro | CE | −73,689 | 74,441 | −148,130 | 100,000 | silent |
+| Pro | PE | −103,240 | −119,733 | +16,493 | 100,000 | silent |
+
+**Gate 5: FORBIDDEN → Bear Call Spread. NOT permission for Bull Put — all gates still apply.**

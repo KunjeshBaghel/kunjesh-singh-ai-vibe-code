@@ -13,7 +13,7 @@
 > daily cap said ₹10,500 and the sizing rule offered a "Standard ₹15-20K stop" eleven lines
 > later. The loss was ₹15,564.
 
-**Order of precedence, repo-wide:** `TRADING_CONSTANTS.md` → `SKILL.md` → `CLAUDE.md` →
+**Order of precedence, repo-wide:** `TRADING_CONSTANTS.md` → `SKILL.md` → `AGENTS.md` →
 `strategy_ref_book.md §8` → everything else. §1–§7 of `strategy_ref_book.md` is textbook
 background and **never** governs a live decision.
 

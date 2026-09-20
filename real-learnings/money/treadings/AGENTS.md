@@ -1,4 +1,4 @@
-# CLAUDE.md — the router
+# AGENTS.md — the router
 
 This repo is a personal knowledge base and trade journal for **Indian index options (NSE/BSE)**.
 It is all Markdown; there is no application code.
@@ -19,7 +19,7 @@ go/no-go calls. You analyse; the user executes.
 ## 🔒 Precedence
 
 ```
-TRADING_CONSTANTS.md  →  SKILL.md  →  CLAUDE.md  →  kb/kb1/strategy_ref_book.md §8  →  everything else
+TRADING_CONSTANTS.md  →  SKILL.md  →  AGENTS.md  →  kb/kb1/strategy_ref_book.md §8  →  everything else
 ```
 
 **Every number used in a live decision lives in [`TRADING_CONSTANTS.md`](TRADING_CONSTANTS.md) and
@@ -84,8 +84,8 @@ silently prices the wrong contract.
 | The ask | Go to |
 |---|---|
 | **Any number — a cap, target, time, threshold, lot size, ratio** | **[`TRADING_CONSTANTS.md`](TRADING_CONSTANTS.md). Only that. Stop there.** |
-| **Trade the session** — market view, find a trade, manage it, close it, size it, expiry, basis, stand down | **`/Index-Derivatives-tread`** → its `SKILL.md` routes to exactly one reference file per sub-command |
-| Second opinion on a day's `market_view.md` | `/market_view_kb` |
+| **Trade the session** — market view, find a trade, manage it, close it, size it, expiry, basis, stand down | **`$index-derivatives-tread`** → its `SKILL.md` routes to exactly one reference file per sub-command |
+| Second opinion on a day's `market_view.md` | `$market-view-kb` |
 | Which strategy / structure | `kb/kb1/strategy_ref_book.md` §8 (§8.0 is its own index). §8.6.0 is the only permitted structure |
 | Market-view theory — the 9 data points, five views, FII/DII scenarios | `kb/Market_View.md` |
 | Greeks, IV, option-chain columns, the Go/No-Go checklist | `kb/option_chain_n_greeks.md` |
@@ -101,8 +101,9 @@ silently prices the wrong contract.
 
 ## Starting a session
 
-`.claude/settings.json` runs a SessionStart hook that reports whether `kite`, `kotak-neo` and `dhan` are
-Connected. That is transport-level only and proves nothing about the data endpoints.
+The Codex SessionStart hook in `.codex/hooks/session_start.py` reports whether `kite`, `kotak-neo`, and
+`dhan` are configured or available. That is transport-level only and proves nothing about the data
+endpoints.
 
 Run the checklist in **`docs/broker-session-startup.md`**, then record the outcome in
 `docs/mcp-usage-log.md` §4. Flag any red broker before analysing anything.

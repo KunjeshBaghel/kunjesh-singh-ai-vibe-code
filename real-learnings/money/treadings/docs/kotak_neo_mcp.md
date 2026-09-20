@@ -148,9 +148,9 @@ Kotak Neo MCP
 
 ## Security Model
 
-- Claude receives **only the data needed** to answer your query
+- Codex receives **only the data needed** to answer your query
 - No credentials, MPIN, OTP, or passwords ever leave Kotak's systems
-- Session token is ephemeral — expires when Claude Code session ends
+- Session token is ephemeral — expires when Codex session ends
 - Every session requires a fresh QR scan login
 
 ---
@@ -161,7 +161,7 @@ Kotak Neo MCP
 1. "Login to Kotak Neo" → provide UCC (5-char code)
 2. Click login link → scan QR in Kotak Neo app (Profile → Web Login)
 3. Type "DONE" → session active
-4. Repeat every new Claude Code session
+4. Repeat every new Codex session
 ```
 
 ---

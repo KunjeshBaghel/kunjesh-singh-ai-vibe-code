@@ -1,7 +1,7 @@
 ---
-name: Index-Derivatives-tread
+name: index-derivatives-tread
 description: |
-  NSE/BSE F&O index options trading copilot for NIFTY50, BANKNIFTY, and SENSEX. Invoke with /Index-Derivatives-tread <sub-command>. Use this skill whenever the user says anything about today's trade, market analysis, open positions, session wrap-up, lot sizing, expiry check, or options trading workflow. Sub-commands: analyse-today | find-trade | followup | session-close | size-it | check-expiry | basis-check | no-trade. Trigger on: "analyse today's market", "what should I trade", "check my positions", "close the session", "how many lots", "when does nifty expire", "calculate sizing", "no trade today" — and any variant. This skill covers the full intraday trading lifecycle from pre-market setup to post-session learning.
+  NSE/BSE F&O index options trading copilot for NIFTY50, BANKNIFTY, and SENSEX. Invoke with $index-derivatives-tread and a sub-command. Use this skill whenever the user says anything about today's trade, market analysis, open positions, session wrap-up, lot sizing, expiry check, or options trading workflow. Sub-commands: analyse-today | find-trade | followup | session-close | size-it | check-expiry | basis-check | no-trade. Trigger on: "analyse today's market", "what should I trade", "check my positions", "close the session", "how many lots", "when does nifty expire", "calculate sizing", "no trade today" — and any variant. This skill covers the full intraday trading lifecycle from pre-market setup to post-session learning.
 ---
 
 # Index-Derivatives-tread

@@ -1,6 +1,6 @@
 # session-close — Post-session wrap and documentation
 
-**Loaded by:** `/Index-Derivatives-tread session-close`
+**Loaded by:** `$index-derivatives-tread session-close`
 **Also load:** [`trade-log.md`](trade-log.md), [`no-trade.md`](no-trade.md), [`TRADING_CONSTANTS.md` §2–§3, §7, §12–§15](../../../../TRADING_CONSTANTS.md)
 
 Closes the loop on all documentation, learning, and logging. Runs after the final exit is confirmed, OR after a no-trade decision.
@@ -238,7 +238,7 @@ Monthly target: [`TRADING_CONSTANTS.md` §2](../../../../TRADING_CONSTANTS.md).
 - The day's `learning.md`
 - **If it changes the routing:** also `SKILL.md`'s table and `docs/repo-map.md`
 
-⛔ **Numbers go to [`TRADING_CONSTANTS.md`](../../../../TRADING_CONSTANTS.md) and nowhere else — never mirror a fact into `CLAUDE.md`.**
+⛔ **Numbers go to [`TRADING_CONSTANTS.md`](../../../../TRADING_CONSTANTS.md) and nowhere else — never mirror a fact into `AGENTS.md`.**
 
 ---
 
@@ -246,5 +246,5 @@ Monthly target: [`TRADING_CONSTANTS.md` §2](../../../../TRADING_CONSTANTS.md).
 
 ```
 > Tomorrow's market view should be written after 3:30 PM today using post-close data.
-> Run /Index-Derivatives-tread analyse-today tomorrow morning before 9:15 AM to recheck and update.
+> Run $index-derivatives-tread analyse-today tomorrow morning before 9:15 AM to recheck and update.
 ```

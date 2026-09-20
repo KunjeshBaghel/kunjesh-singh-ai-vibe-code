@@ -1,6 +1,6 @@
 # find-trade — Structure selection and sizing
 
-**Loaded by:** `/Index-Derivatives-tread find-trade`
+**Loaded by:** `$index-derivatives-tread find-trade`
 
 **Also load:** [`gates.md`](gates.md) · [`check-expiry.md`](check-expiry.md) · [`basis-check.md`](basis-check.md) · [`kill-switch.md`](kill-switch.md) · [`dhan-api.md`](dhan-api.md) · [`size-it.md`](size-it.md) · [`entry-exit-orders.md`](entry-exit-orders.md) · [`trade-log.md`](trade-log.md) · [`TRADING_CONSTANTS.md`](../../../../TRADING_CONSTANTS.md)
 
@@ -45,7 +45,7 @@ See [`gates.md`](gates.md) for full definitions. Run all five, in order. Each ta
 **NIFTY 50 (NSE, Tue) + SENSEX (BSE, Thu) + BANKNIFTY (NSE, monthly only).** Never analyse only one.
 **Price every index that passes its gates, then rank.** All three are live — **BANKNIFTY was unlocked
 04-Sep-2026 ([`TRADING_CONSTANTS.md` §11a](../../../../TRADING_CONSTANTS.md))**; there is no
-categorical ban on any index (CLAUDE.md SI-7a).
+categorical ban on any index (AGENTS.md SI-7a).
 
 ⛔ **No index is "the fallback."** Do not go looking at a third index *because* the first two failed —
 screen all three from the start, on their own gates. Three failures is a **no-trade day**.

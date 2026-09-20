@@ -1,6 +1,6 @@
 # followup — Monitoring a live position
 
-**Loaded by:** `/Index-Derivatives-tread followup`
+**Loaded by:** `$index-derivatives-tread followup`
 **Also load:** [`kill-switch.md`](kill-switch.md), [`entry-exit-orders.md`](entry-exit-orders.md), [`adjustments-are-closed.md`](adjustments-are-closed.md), [`dhan-api.md`](dhan-api.md), [`TRADING_CONSTANTS.md` §7–§8](../../../../TRADING_CONSTANTS.md)
 
 ---
@@ -244,9 +244,9 @@ Summary for the user:
 1. BUY BACK THE SHORT LEG at market ask — always first.
 2. SELL the long leg at market bid — immediately after.
 3. Note both actual fill prices.
-4. Report to Claude for final P&L.
+4. Report to Codex for final P&L.
 ```
 
 ⚠️ **Sequence is not optional.** Closing the long first leaves a naked short. Budget **2.0 pts/leg slippage on a stop exit** ([`TRADING_CONSTANTS.md` §13](../../../../TRADING_CONSTANTS.md)), against 0.5 pts/leg on a planned one. (01-Sep-2026 observed 23.85 pts on a panicked manual close.)
 
-After the user confirms exit fills → immediately run `/Index-Derivatives-tread session-close`.
+After the user confirms exit fills → immediately run `$index-derivatives-tread session-close`.

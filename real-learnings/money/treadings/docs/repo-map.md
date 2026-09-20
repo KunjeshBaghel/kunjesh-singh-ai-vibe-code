@@ -1,9 +1,9 @@
 # Repo map
 
 Where every file lives and what owns what. **Loaded on demand, never at session start** —
-`CLAUDE.md` links here rather than carrying the tree.
+`AGENTS.md` links here rather than carrying the tree.
 
-There is no `README.md`. `CLAUDE.md` is the router; this file is the index.
+There is no `README.md`. `AGENTS.md` is the router; this file is the index.
 
 ---
 
@@ -13,29 +13,31 @@ Each layer holds exactly one kind of thing. If content is in the wrong layer, th
 
 | Layer | Files | Holds ONLY | Must NEVER hold |
 |---|---|---|---|
-| **1 · Router** | `CLAUDE.md` | role · precedence · routing table · session invariants true in every context | any number, any procedure, any directory listing, any war story |
+| **1 · Router** | `AGENTS.md` | role · precedence · routing table · session invariants true in every context | any number, any procedure, any directory listing, any war story |
 | **2 · Constants** | `TRADING_CONSTANTS.md` | every live-decision number: caps, targets, `k`, floors, times, lot sizes, thresholds, locks and their unlock keys | procedure, theory, broker status |
-| **3 · Procedure** | `.claude/skills/*/SKILL.md` + `references/*.md` | HOW to execute ONE task, step by step, with the actual tool calls. `SKILL.md` is a router only | numbers (link a TC row), theory |
+| **3 · Procedure** | `.agents/skills/*/SKILL.md` + `references/*.md` | HOW to execute ONE task, step by step, with the actual tool calls. `SKILL.md` is a router only | numbers (link a TC row), theory |
 | **4 · Knowledge** | `kb/**` | WHY — theory, catalogues, background | live limits, procedure, broker status |
 | **5 · Environment** | `docs/**` | what works, what is broken, the repo map, session history | rules, numbers |
-| **6 · Memory** | `~/.claude/projects/…/memory/` | only cross-session facts NOT derivable from the repo | anything the repo already records |
+| **6 · Memory** | `.remember/` (legacy local data) | historical Claude-session captures; preserve, but do not use as live instructions | anything the repo already records |
 
 ---
 
 ## Tree
 
 ```
-CLAUDE.md                    Layer 1 — the router. Read every session. Keep it small.
+AGENTS.md                    Layer 1 — the router. Read every session. Keep it small.
 TRADING_CONSTANTS.md         Layer 2 — ★ THE SINGLE SOURCE OF TRUTH for every number.
-                             Outranks every other file, including CLAUDE.md.
-everyday_prompt.md           Web-prompt templates for Gemini/Claude *web* sessions. Not used here.
+                             Outranks every other file, including AGENTS.md.
+everyday_prompt.md           Web-prompt templates for Gemini/Codex web sessions. Not used here.
 
-.claude/
-  settings.json              SessionStart hook: runs `claude mcp list`, warns if kite / kotak-neo /
-                             dhan are not Connected. Transport-level only — it does NOT test the
-                             data endpoints.
+.codex/
+  config.toml                Kite + Kotak Neo MCP configuration and the SessionStart hook.
+  hooks/session_start.py     Reports MCP transport availability; it does NOT test data endpoints.
+                             Dhan is deliberately user-level because its OAuth client ID is a secret.
+
+.agents/
   skills/
-    Index-Derivatives-tread/ ★ the trading lifecycle skill — 8 sub-commands, one job each
+    index-derivatives-tread/ ★ the trading lifecycle skill — 8 sub-commands, one job each
       SKILL.md               router only: sub-command → which files to load
       references/
         analyse-today.md       pre-session market view + the 5 gates
@@ -50,14 +52,13 @@ everyday_prompt.md           Web-prompt templates for Gemini/Claude *web* sessio
         brokers.md             shared — 3-broker login and verification
         kill-switch.md         shared — Gate 3 trend-day markers and escalation
         adjustments-are-closed.md  shared — the three permitted actions, A1–A5
-    market-view-kb/          /market_view_kb — critical second-opinion reviewer for a day's
+    market-view-kb/          $market-view-kb — critical second-opinion reviewer for a day's
       SKILL.md               market_view.md. Never writes without explicit approval.
       references/data_points.md    dimensions the skill must gather
       references/sources.md        trusted sources for those dimensions
 
-.mcp.json                    Kite + Kotak Neo MCP config (stdio via mcp-remote). Dhan is in ~/.claude.json
 .broker_creds                ⛔ gitignored. Client IDs / UCC / tokens. NEVER read into chat.
-.remember/                   hook-managed conversation history. Grep on request; do not curate.
+.remember/                   legacy Claude conversation history. Preserve as historical data; do not curate.
 
 kb/                          Layer 4 — knowledge
   Market_View.md               9-data-point system · the five views · six FII/DII scenarios
@@ -146,5 +147,5 @@ Update **one** place. If you find yourself updating two, one of them is the bug.
 | A sub-command is added or its file list changes | `SKILL.md`'s routing table + this file's tree |
 | Capital or execution venue moves | `TRADING_CONSTANTS.md` §1 |
 
-⛔ **Do not mirror a fact into `CLAUDE.md`.** The old maintenance table instructed exactly that, and it
+⛔ **Do not mirror a fact into `AGENTS.md`.** The old maintenance table instructed exactly that, and it
 is what produced 56 duplications and 14 live contradictions across the repo.

@@ -1,0 +1,23 @@
+# Codex project configuration. Codex loads this file only after this repository
+# has been trusted.
+
+[mcp_servers.kotak-neo]
+command = "npx"
+args = ["-y", "mcp-remote", "https://neo.kotaksecurities.com/mcp-server/mcp"]
+env = { npm_config_registry = "https://registry.npmjs.org" }
+startup_timeout_sec = 20
+
+[mcp_servers.kite]
+command = "npx"
+args = ["-y", "mcp-remote", "https://mcp.kite.trade/mcp"]
+env = { npm_config_registry = "https://registry.npmjs.org" }
+startup_timeout_sec = 20
+
+[[hooks.SessionStart]]
+matcher = "^(startup|resume|clear)$"
+
+[[hooks.SessionStart.hooks]]
+type = "command"
+command = 'python3 "$(git rev-parse --show-toplevel)/.codex/hooks/session_start.py"'
+timeout = 20
+statusMessage = "Checking trading MCP connections..."

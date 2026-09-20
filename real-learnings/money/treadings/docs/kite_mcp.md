@@ -2,7 +2,7 @@
 
 **Source:** [zerodha.com/z-connect/featured/connect-your-zerodha-account-to-ai-assistants-with-kite-mcp](https://zerodha.com/z-connect/featured/connect-your-zerodha-account-to-ai-assistants-with-kite-mcp)
 
-Kite MCP connects your Zerodha account to Claude. Unlike Kotak Neo MCP, **Kite MCP supports order placement** — use with caution and always confirm before executing.
+Kite MCP connects your Zerodha account to Codex. Unlike Kotak Neo MCP, **Kite MCP supports order placement** — use with caution and always confirm before executing.
 
 > ⚠️ **Safety rule:** Never let AI place an order without your explicit approval. Treat every order suggestion as a draft — you are the final executor.
 
@@ -135,11 +135,11 @@ Kite MCP
 
 ## Login Flow
 
-Kite MCP uses Zerodha's standard Kite Connect auth (2FA). No credentials pass through Claude.
+Kite MCP uses Zerodha's standard Kite Connect auth (2FA). No credentials pass through Codex.
 
 ```
-1. Ask Claude: "Login to Zerodha" or "Show my holdings"
-2. Claude generates an auth link → click it
+1. Ask Codex: "Login to Zerodha" or "Show my holdings"
+2. Codex generates an auth link → click it
 3. Login with Zerodha credentials + TOTP on Zerodha's site
 4. Redirected back → session active for the day
 ```
@@ -148,21 +148,18 @@ Session is valid for the trading day. Re-login required next session.
 
 ---
 
-## Config (.mcp.json)
+## Config (`.codex/config.toml`)
 
-Already added to project `.mcp.json`:
+Already added to project `.codex/config.toml`:
 
-```json
-"kite": {
-  "command": "npx",
-  "args": ["-y", "mcp-remote", "https://mcp.kite.trade/mcp"],
-  "env": {
-    "npm_config_registry": "https://registry.npmjs.org"
-  }
-}
+```toml
+[mcp_servers.kite]
+command = "npx"
+args = ["-y", "mcp-remote", "https://mcp.kite.trade/mcp"]
+env = { npm_config_registry = "https://registry.npmjs.org" }
 ```
 
-Restart Claude Code to pick up the new server.
+Restart Codex to pick up the new server.
 
 ---
 

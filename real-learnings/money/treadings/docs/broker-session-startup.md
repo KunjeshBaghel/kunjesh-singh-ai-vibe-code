@@ -1,6 +1,6 @@
 # Broker MCP — session startup checklist
 
-Run this **before any trading activity** each Claude Code session.
+Run this **before any trading activity** each Codex session.
 
 > **Read [`mcp-usage-log.md`](./mcp-usage-log.md) §1 before trusting any capability.** A successful login
 > proves nothing about the data endpoints, and **a populated field is not a verified field.**
@@ -22,7 +22,7 @@ Step 2 → Kotak Neo  → verify: mcp__kotak-neo__get_limits
 Step 3 → Dhan       → verify: mcp__dhan__market_data_agent_tool action=expirylist
 Step 4 → FII/DII    → ! python3 tools/fii-dii/fii_dii.py     (T-1 NSE archive, no login)
 Step 5 → Record the outcome as a row in mcp-usage-log.md §4
-Step 6 → All green? → /Index-Derivatives-tread analyse-today
+Step 6 → All green? → $index-derivatives-tread analyse-today
 ```
 
 **Verify each MCP with a call that exercises the capability you actually need.**
@@ -33,7 +33,7 @@ Step 6 → All green? → /Index-Derivatives-tread analyse-today
 ## 1 · Kite (Zerodha)
 
 ```
-1. Say "Login to Zerodha" → Claude returns an auth link
+1. Say "Login to Zerodha" → Codex returns an auth link
 2. Open it → Zerodha credentials + TOTP (2FA) → browser redirects back
 3. Verify: mcp__kite__get_ltp on NIFTY 50 and INDIA VIX
 ```
@@ -51,13 +51,13 @@ down, priming the process — and run `/mcp` again. If npm itself is broken glob
 ## 2 · Kotak Neo
 
 ```
-1. Say "Login to Kotak Neo"  (UCC = V6PZT)  → Claude calls get_login → you get a login link
+1. Say "Login to Kotak Neo"  (UCC = V6PZT)  → Codex calls get_login → you get a login link
 2. Kotak Neo mobile app → Profile → Web Login → scan the QR on that link
-3. Type "DONE" → Claude calls validate_login
+3. Type "DONE" → Codex calls validate_login
 4. Verify: get_limits
 ```
 
-Ephemeral — expires when the Claude Code session ends.
+Ephemeral — expires when the Codex session ends.
 
 ⚠️ **Kotak tools need an explicit `sessionid` argument.** A bare call returns a misleading
 "Session Expired". ⛔ **Never re-run `get_login` to fix that — it kills the working session.**
@@ -67,10 +67,10 @@ Ephemeral — expires when the Claude Code session ends.
 
 ## 3 · Dhan
 
-Full detail, curl blocks and scrip IDs: **`.claude/skills/Index-Derivatives-tread/references/dhan-api.md`**.
+Full detail, curl blocks and scrip IDs: **`.agents/skills/index-derivatives-tread/references/dhan-api.md`**.
 
 ```
-1. Say "Login to Dhan" → Claude calls mcp__dhan__login → browser consent URL
+1. Say "Login to Dhan" → Codex calls mcp__dhan__login → browser consent URL
 2. Log in → the browser redirects to .../auth/callback?tokenId=...
 3a. "token already consumed" → possibly bound. ⚠️ NOT proof — only a successful expirylist is.
 3b. Not auto-bound → "complete_login with tokenId <value>"
@@ -83,8 +83,10 @@ Full detail, curl blocks and scrip IDs: **`.claude/skills/Index-Derivatives-trea
 > the OAuth **client registration on this machine is stale**. ⛔ **Do not run a login tool for it.** Fix:
 >
 > ```bash
-> claude mcp remove dhan
-> claude mcp add --transport http --client-id <DHAN_CLIENT_ID> dhan https://mcp.dhan.co/mcp
+> codex mcp remove dhan
+> source .broker_creds
+> codex mcp add dhan --url https://mcp.dhan.co/mcp --oauth-client-id "$DHAN_CLIENT_ID"
+> codex mcp login dhan
 > # then /mcp → dhan → Authenticate
 > ```
 >
@@ -108,6 +110,6 @@ headers `access-token` **and** `client-id`. See `dhan-api.md`.
 
 - ⛔ Never share or display credentials, MPIN, OTP, passwords, tokens or session ids in the chat.
   They live in `.broker_creds` (gitignored) — source it into shell variables, never read it into chat.
-- **Kite and Dhan can place real orders.** Claude drafts; **you confirm** before any `place_order`,
+- **Kite and Dhan can place real orders.** Codex drafts; **you confirm** before any `place_order`,
   `modify_order` or `cancel_order`. All actual execution is manual in the Kotak Neo app.
-- All sessions expire when Claude Code closes. Re-login is not optional.
+- All sessions expire when Codex closes. Re-login is not optional.

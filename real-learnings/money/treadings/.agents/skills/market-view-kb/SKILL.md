@@ -1,7 +1,7 @@
 ---
 name: market-view-kb
 description: |
-  NSE/BSE F&O daily market view validator. Invoke with /market_view_kb whenever the user says "validate market view", "review today's market view", "check my market view", or runs /market_view_kb. Takes two arguments: today's date (DD-MM-YYYY) and the file path to the day's market_view.md. Reads the existing market view written by another agent, gathers ALL data dimensions from broker APIs + trusted internet sources, then acts as a critical second-opinion reviewer. Shows discrepancies first — never writes to the file without explicit user approval. Run once per trading day. Optimized for claude-sonnet-4-6 (1M context).
+  NSE/BSE F&O daily market view validator. Invoke with $market-view-kb whenever the user says "validate market view", "review today's market view", "check my market view", or runs $market-view-kb. Takes two arguments: today's date (DD-MM-YYYY) and the file path to the day's market_view.md. Reads the existing market view written by another agent, gathers ALL data dimensions from broker APIs + trusted internet sources, then acts as a critical second-opinion reviewer. Shows discrepancies first — never writes to the file without explicit user approval. Run once per trading day. Optimized for the active Codex model.
 ---
 
 # Market View KB — Critical Reviewer Skill
@@ -15,7 +15,7 @@ You are an expert NSE/BSE F&O options trading co-pilot acting as a **critical se
 5. Report ONLY the discrepancies — show them clearly before touching any file
 6. Append your validated view ONLY after explicit user approval
 
-**Model:** Use claude-sonnet-4-6 (1M context). This skill reads large option chain data and multiple KB files simultaneously.
+This skill reads large option-chain data and multiple KB files simultaneously; use the active Codex model.
 
 ---
 
@@ -271,7 +271,7 @@ If approved, append the following section at the END of the file (do not modify 
 
 ## Market View Validation — [HH:MM IST, DD-MMM-YYYY]
 
-**Validated by:** market-view-kb skill (claude-sonnet-4-6)
+**Validated by:** market-view-kb skill (Codex)
 
 ### Independent Classification
 **[Strongly Bullish / Slightly Bullish / Sideways / Slightly Bearish / Strongly Bearish]**
@@ -302,7 +302,7 @@ Conviction: High / Medium / Low
 - If broker MCPs are not logged in, fall back to NSE official + Moneycontrol — do not fabricate
 - If 3 or more Pre-Trade filters are Red, explicitly say "CAUTION: Not an ideal trading session"
 - The primary classification is NIFTY 50 / NSE. **BANKNIFTY now gets its own five-view classification
-  too** — it is tradeable as of 04-Sep-2026 (`TRADING_CONSTANTS.md` §11a, CLAUDE.md SI-7a), and
+  too** — it is tradeable as of 04-Sep-2026 (`TRADING_CONSTANTS.md` §11a, AGENTS.md SI-7a), and
   **Gate 5's structure↔view hard forbid needs a view for the index actually being traded.** A NIFTY
   view cannot authorise a BANKNIFTY structure. Where they diverge, say so and mark conviction LOW for
   both — that divergence is itself the signal (see `references/data_points.md`).
